@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 2,
+    "active_layer": 0,
     "active_layer_preset": "",
     "auto_track_width": true,
     "hidden_netclasses": [
@@ -25,7 +25,6 @@
       "unconnected-(J6-Pad9)",
       "unconnected-(J7-CC2-PadB5)",
       "unconnected-(J7-CC1-PadA5)",
-      "unconnected-(U1-RC12{slash}OSC1{slash}CLK-Pad63)",
       "unconnected-(U1-RC14{slash}SOSCO-Pad74)",
       "unconnected-(U1-RC13{slash}SOSCI-Pad73)",
       "unconnected-(U1-RC15{slash}OSC2{slash}CLKO-Pad64)",
@@ -109,8 +108,8 @@
       "conflict_shadows",
       "shapes"
     ],
-    "visible_layers": "ffffffff_ffffffff_fffffff7_55555555",
-    "zone_display_mode": 1
+    "visible_layers": "ffffffff_ffffffff_fffffff5_55555565",
+    "zone_display_mode": 0
   },
   "git": {
     "repo_type": "",
@@ -132,6 +131,8 @@
       false,
       false,
       false,
+      false,
+      false,
       false
     ],
     "col_order": [
@@ -144,9 +145,13 @@
       6,
       7,
       8,
-      9
+      9,
+      10,
+      11
     ],
     "col_widths": [
+      0,
+      0,
       0,
       0,
       0,
