@@ -528,10 +528,10 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
-      "pos_files": "",
+      "plot": "Gerber",
+      "pos_files": "Gerber",
       "specctra_dsn": "",
-      "step": "",
+      "step": "TerminalServer.stl",
       "svg": "",
       "vrml": ""
     },

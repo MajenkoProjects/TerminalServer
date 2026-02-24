@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 553-0121F
+D 553 Series CBI 3mm 2hx1w G,R
+K
+F https://s3-us-west-2.amazonaws.com/catsy.557/C17277.pdf
+$ENDCMP
+#
+#End Doc Library
