@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 08B0-1D1T-06-F
+D Conn RJ-45 F 6 POS 2.03mm Solder RA Thru-Hole 10 Terminal 1 Port Tray
+K
+F https://datasheet.datasheetarchive.com/originals/distributors/Datasheets_SAMA/2324c65ca93fd072f187737ff3c96afb.pdf
+$ENDCMP
+#
+#End Doc Library

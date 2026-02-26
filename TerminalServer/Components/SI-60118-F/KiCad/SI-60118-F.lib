@@ -1,0 +1,35 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#SamacSys ECAD Model SI-60118-F
+#/811332/1015067/2.50/14/3/Connector
+DEF SI-60118-F J 0 30 Y Y 1 F N
+F0 "J" 1250 300 50 H V L CNN
+F1 "SI-60118-F" 1250 200 50 H V L CNN
+F2 "SI60118F" 1250 100 50 H I L CNN
+F3 "https://componentsearchengine.com/Datasheets/1/SI-60118-F.pdf" 1250 0 50 H I L CNN
+F4 "MagJack 10/100BASE-T | 1X1 | G/G | -40 to 85C | Tab Down | RoHS " 1250 -100 50 H I L CNN "Description"
+F5 "15.21" 1250 -200 50 H I L CNN "Height"
+F6 "530-SI-60118-F" 1250 -300 50 H I L CNN "Mouser Part Number"
+F7 "https://www.mouser.com/Search/ProductDetail.aspx?qs=SRYZG9HaIQ1pVFtjOaj56g%3d%3d" 1250 -400 50 H I L CNN "Mouser Price/Stock"
+F8 "BelFuse" 1250 -500 50 H I L CNN "Manufacturer_Name"
+F9 "SI-60118-F" 1250 -600 50 H I L CNN "Manufacturer_Part_Number"
+DRAW
+X TD+ 1 0 0 200 R 50 50 0 0 P
+X TCT 2 0 -100 200 R 50 50 0 0 P
+X TD- 3 0 -200 200 R 50 50 0 0 P
+X RD+ 4 0 -300 200 R 50 50 0 0 P
+X RCT 5 0 -400 200 R 50 50 0 0 P
+X RD- 6 0 -500 200 R 50 50 0 0 P
+X NC_1 7 0 -600 200 R 50 50 0 0 P
+X NC_2 8 1400 0 200 L 50 50 0 0 P
+X A_GREEN_1 9 1400 -100 200 L 50 50 0 0 P
+X K_GREEN_1 10 1400 -200 200 L 50 50 0 0 P
+X A_GREEN_2 11 1400 -300 200 L 50 50 0 0 P
+X K_GREEN_2 12 1400 -400 200 L 50 50 0 0 P
+X MH1 MH1 1400 -500 200 L 50 50 0 0 P
+X MH2 MH2 1400 -600 200 L 50 50 0 0 P
+P 5 0 1 6 200 100 1200 100 1200 -700 200 -700 200 100 N
+ENDDRAW
+ENDDEF
+#
+#End Library

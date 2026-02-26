@@ -1,0 +1,27 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#SamacSys ECAD Model SSF-LXH340LYGID
+#/1135331/1015067/2.50/6/3/LED (Multiple)
+DEF SSF-LXH340LYGID LED 0 30 Y Y 1 F N
+F0 "LED" 1350 300 50 H V L CNN
+F1 "SSF-LXH340LYGID" 1350 200 50 H V L CNN
+F2 "SSFLXH340LYGID" 1350 100 50 H I L CNN
+F3 "https://www.lumex.com/datasheet/files/SSF-LXH340LYGID.pdf" 1350 0 50 H I L CNN
+F4 "LED Circuit Board Indicator LED Circuit Board Indicator 3 High Yellow, Green, Red Diffused Round with Domed Top 3mm, T-1 Through Hole, Right Angle,150mA,-40+85C" 1350 -100 50 H I L CNN "Description"
+F5 "15.24" 1350 -200 50 H I L CNN "Height"
+F6 "696-SSFLXH340LYGID" 1350 -300 50 H I L CNN "Mouser Part Number"
+F7 "https://www.mouser.co.uk/ProductDetail/Lumex/SSF-LXH340LYGID?qs=0O4ZBxfQx6uOfMXVdk28wg%3D%3D" 1350 -400 50 H I L CNN "Mouser Price/Stock"
+F8 "Lumex" 1350 -500 50 H I L CNN "Manufacturer_Name"
+F9 "SSF-LXH340LYGID" 1350 -600 50 H I L CNN "Manufacturer_Part_Number"
+DRAW
+X K_YELLOW 1 1500 0 200 L 50 50 0 0 P
+X A_YELLOW 2 0 0 200 R 50 50 0 0 P
+X K_GREEN 3 1500 -100 200 L 50 50 0 0 P
+X A_GREEN 4 0 -100 200 R 50 50 0 0 P
+X K_RED 5 1500 -200 200 L 50 50 0 0 P
+X A_RED 6 0 -200 200 R 50 50 0 0 P
+P 5 0 1 6 200 100 1300 100 1300 -300 200 -300 200 100 N
+ENDDRAW
+ENDDEF
+#
+#End Library
