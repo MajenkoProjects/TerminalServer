@@ -1,0 +1,20 @@
+#!/bin/bash
+
+PROJ=TerminalServer
+
+mkdir -p Render
+
+for A in B_Cu B_Paste F_Mask F_Silkscreen B_Mask B_Silkscreen F_Cu F_Paste; do
+	camv-rnd -x png --format PNG --monochrome --use-alpha --dpi 1000 --outfile Render/${PROJ}-${A}.png Gerber/${PROJ}-${A}.gbr
+done
+
+W=$(identify -ping -format '%w' Render/${PROJ}-F_Cu.png)
+H=$(identify -ping -format '%h' Render/${PROJ}-F_Cu.png)
+X=0
+Y=167
+
+magick Render/${PROJ}-F_Silkscreen.png -crop ${W}x${H}+${X}+${Y} Render/${PROJ}-F_Silkscreen.png
+
+#magick Render/${PROJ}-F_Paste.png -background white -alpha background -alpha off -blur 0x2 Render/${PROJ}-F_Paste.png
+magick Render/${PROJ}-F_Paste.png -background white -alpha background -alpha off Render/${PROJ}-F_Paste_bw.png
+
