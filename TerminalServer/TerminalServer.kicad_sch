@@ -20874,7 +20874,7 @@
 				)
 			)
 		)
-		(property "Value" "1N5819WS"
+		(property "Value" "V8PAN50-M3/I"
 			(at 82.8675 266.7 0)
 			(effects
 				(font
@@ -20882,7 +20882,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-323"
+		(property "Footprint" "Diode_SMD:Vishay_SMPA"
 			(at 82.55 274.955 0)
 			(effects
 				(font
@@ -27443,7 +27443,7 @@
 				)
 			)
 		)
-		(property "Value" "1N5819WS"
+		(property "Value" "V8PAN50-M3/I"
 			(at 211.1375 232.41 0)
 			(effects
 				(font
@@ -27451,7 +27451,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-323"
+		(property "Footprint" "Diode_SMD:Vishay_SMPA"
 			(at 210.82 240.665 0)
 			(effects
 				(font
@@ -28790,7 +28790,7 @@
 				)
 			)
 		)
-		(property "Value" "1N5819WS"
+		(property "Value" "V8PAN50-M3/I"
 			(at 108.2675 210.82 0)
 			(effects
 				(font
@@ -28798,7 +28798,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-323"
+		(property "Footprint" "Diode_SMD:Vishay_SMPA"
 			(at 107.95 219.075 0)
 			(effects
 				(font
