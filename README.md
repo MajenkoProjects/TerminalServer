@@ -7,5 +7,3 @@ connectivity.
 **NOTE: THIS IS WORK IN PROGRESS AND NOT COMPLETE YET**
 
 ![Terminal Server](TerminalServer/TerminalServer.png)
-![Terminal Server](https://github.com/MajenkoProjects/TerminalServer/blob/main/TerminalServer/TerminalServer.png?raw=true)
-
