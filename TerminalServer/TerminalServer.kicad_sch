@@ -993,252 +993,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "564-0100-132F:564-0100-132F"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "LED"
-				(at 44.45 7.62 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Value" "564-0100-132F"
-				(at 44.45 5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Footprint" "5640100222F"
-				(at 44.45 -94.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Datasheet" "https://www.mouser.co.uk/datasheet/2/109/DIAC_S_A0007930131_1-2541634.pdf"
-				(at 44.45 -194.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Description" "Dialight 564-0100-132F, Red/Yellow/Green Right Angle PCB LED Indicator, 3 LEDs, Through Hole"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Height" "15.24"
-				(at 44.45 -394.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Mouser Part Number" "645-564-0100-132F"
-				(at 44.45 -494.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Dialight/564-0100-132F?qs=0KZIkTEbAAvHMFIBWgRq8A%3D%3D"
-				(at 44.45 -594.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Manufacturer_Name" "Dialight"
-				(at 44.45 -694.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Manufacturer_Part_Number" "564-0100-132F"
-				(at 44.45 -794.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(symbol "564-0100-132F_1_1"
-				(rectangle
-					(start 5.08 2.54)
-					(end 43.18 -7.62)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin passive line
-					(at 48.26 -5.08 180)
-					(length 5.08)
-					(name "K_POSITION_3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -5.08 0)
-					(length 5.08)
-					(name "A_POSITION_3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 48.26 -2.54 180)
-					(length 5.08)
-					(name "K_POSITION_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -2.54 0)
-					(length 5.08)
-					(name "A_POSITION_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 48.26 0 180)
-					(length 5.08)
-					(name "K_POSITION_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 0 0)
-					(length 5.08)
-					(name "A_POSITION_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Connector:Barrel_Jack_Switch"
 			(pin_names
 				(hide yes)
@@ -9490,6 +9244,237 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "XINGLIGHT:XL-DZ234SYGD/4"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at -7.874 6.604 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Green"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "XINGLIGHT:XL-DZ234SYGD-4"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C7545670.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Green 565nm LED Indication - Discrete 1.8V~2.2V DIP-8-2.54mm"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "LED GREEN GREEN LENS TH"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "XL-DZ234SYGD/4_0_1"
+				(rectangle
+					(start -8.89 5.08)
+					(end 8.89 -5.08)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "XL-DZ234SYGD/4_1_1"
+				(pin passive line
+					(at 11.43 3.81 180)
+					(length 2.54)
+					(name "LED_K1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -11.43 3.81 0)
+					(length 2.54)
+					(name "LED_A1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 11.43 1.27 180)
+					(length 2.54)
+					(name "LED_K2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -11.43 1.27 0)
+					(length 2.54)
+					(name "LED_A2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 11.43 -1.27 180)
+					(length 2.54)
+					(name "LED_K3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -11.43 -1.27 0)
+					(length 2.54)
+					(name "LED_A3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 11.43 -3.81 180)
+					(length 2.54)
+					(name "LED_K4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -11.43 -3.81 0)
+					(length 2.54)
+					(name "LED_A4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "power:GND"
 			(power global)
 			(pin_numbers
@@ -9956,6 +9941,12 @@
 		(uuid "1fa17310-aca5-425d-9490-715ed4b661d7")
 	)
 	(junction
+		(at 365.76 367.03)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2182953c-ceef-4ba2-aac7-086f7a204902")
+	)
+	(junction
 		(at 220.98 135.89)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -10340,7 +10331,7 @@
 		(uuid "b44845ae-808e-408b-9c26-1a19e8e0d9fc")
 	)
 	(junction
-		(at 387.35 344.17)
+		(at 365.76 364.49)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b701935e-f7d4-4d49-8e55-46f9c692b6dc")
@@ -10406,7 +10397,7 @@
 		(uuid "cb029a14-1f16-4359-acb0-279cca75bb1f")
 	)
 	(junction
-		(at 387.35 341.63)
+		(at 365.76 361.95)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "cb5d7cb1-cce5-45b8-ab7c-91238464cdcf")
@@ -10668,6 +10659,16 @@
 			(type default)
 		)
 		(uuid "03a5fb80-7508-4ad9-8c5a-4fdcb1ea08f1")
+	)
+	(wire
+		(pts
+			(xy 365.76 367.03) (xy 365.76 370.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "03a648bb-58f1-4105-a269-a76da4a68009")
 	)
 	(wire
 		(pts
@@ -13501,6 +13502,16 @@
 	)
 	(wire
 		(pts
+			(xy 361.95 367.03) (xy 365.76 367.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d74fd8c-7038-4425-b24e-821091865ec0")
+	)
+	(wire
+		(pts
 			(xy 142.24 140.97) (xy 151.13 140.97)
 		)
 		(stroke
@@ -13851,7 +13862,7 @@
 	)
 	(wire
 		(pts
-			(xy 331.47 341.63) (xy 335.28 341.63)
+			(xy 335.28 361.95) (xy 339.09 361.95)
 		)
 		(stroke
 			(width 0)
@@ -14261,7 +14272,7 @@
 	)
 	(wire
 		(pts
-			(xy 331.47 339.09) (xy 335.28 339.09)
+			(xy 335.28 364.49) (xy 339.09 364.49)
 		)
 		(stroke
 			(width 0)
@@ -14401,7 +14412,7 @@
 	)
 	(wire
 		(pts
-			(xy 387.35 339.09) (xy 387.35 341.63)
+			(xy 365.76 359.41) (xy 365.76 361.95)
 		)
 		(stroke
 			(width 0)
@@ -14511,7 +14522,7 @@
 	)
 	(wire
 		(pts
-			(xy 383.54 339.09) (xy 387.35 339.09)
+			(xy 361.95 359.41) (xy 365.76 359.41)
 		)
 		(stroke
 			(width 0)
@@ -14841,7 +14852,7 @@
 	)
 	(wire
 		(pts
-			(xy 314.96 341.63) (xy 326.39 341.63)
+			(xy 318.77 361.95) (xy 330.2 361.95)
 		)
 		(stroke
 			(width 0)
@@ -14861,7 +14872,7 @@
 	)
 	(wire
 		(pts
-			(xy 383.54 341.63) (xy 387.35 341.63)
+			(xy 361.95 361.95) (xy 365.76 361.95)
 		)
 		(stroke
 			(width 0)
@@ -14961,7 +14972,7 @@
 	)
 	(wire
 		(pts
-			(xy 314.96 339.09) (xy 326.39 339.09)
+			(xy 318.77 364.49) (xy 330.2 364.49)
 		)
 		(stroke
 			(width 0)
@@ -15031,7 +15042,7 @@
 	)
 	(wire
 		(pts
-			(xy 383.54 344.17) (xy 387.35 344.17)
+			(xy 361.95 364.49) (xy 365.76 364.49)
 		)
 		(stroke
 			(width 0)
@@ -15981,7 +15992,7 @@
 	)
 	(wire
 		(pts
-			(xy 331.47 344.17) (xy 335.28 344.17)
+			(xy 335.28 359.41) (xy 339.09 359.41)
 		)
 		(stroke
 			(width 0)
@@ -16151,7 +16162,7 @@
 	)
 	(wire
 		(pts
-			(xy 314.96 344.17) (xy 326.39 344.17)
+			(xy 318.77 359.41) (xy 330.2 359.41)
 		)
 		(stroke
 			(width 0)
@@ -16931,7 +16942,7 @@
 	)
 	(wire
 		(pts
-			(xy 387.35 341.63) (xy 387.35 344.17)
+			(xy 365.76 361.95) (xy 365.76 364.49)
 		)
 		(stroke
 			(width 0)
@@ -16948,6 +16959,16 @@
 			(type default)
 		)
 		(uuid "ea3c0da8-0ec6-4ac5-88d0-ac75f6de5dbe")
+	)
+	(wire
+		(pts
+			(xy 335.28 367.03) (xy 339.09 367.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eb306c3b-41f2-4a70-a2d0-ccec397808e0")
 	)
 	(wire
 		(pts
@@ -17128,6 +17149,16 @@
 			(type default)
 		)
 		(uuid "efdb63f6-a843-46cb-8484-2c44f22e0667")
+	)
+	(wire
+		(pts
+			(xy 318.77 367.03) (xy 330.2 367.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "efe11ecd-6915-46b7-a5cb-d1ea358252bb")
 	)
 	(wire
 		(pts
@@ -17441,7 +17472,7 @@
 	)
 	(wire
 		(pts
-			(xy 387.35 344.17) (xy 387.35 350.52)
+			(xy 365.76 364.49) (xy 365.76 367.03)
 		)
 		(stroke
 			(width 0)
@@ -17979,6 +18010,16 @@
 		)
 		(uuid "2188539d-b9a9-45ea-bc0b-1e24f997a2da")
 	)
+	(label "LED4"
+		(at 318.77 367.03 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "22d7a579-b290-4877-9c55-16b44adead6c")
+	)
 	(label "R3DTR"
 		(at 142.24 143.51 0)
 		(effects
@@ -18330,7 +18371,7 @@
 		(uuid "3fee084a-3724-4702-8c17-3850a1760628")
 	)
 	(label "LED1"
-		(at 314.96 344.17 0)
+		(at 318.77 359.41 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -19460,7 +19501,7 @@
 		(uuid "a3907bc6-f9b1-4b77-913c-39caede571e6")
 	)
 	(label "LED3"
-		(at 314.96 339.09 0)
+		(at 318.77 364.49 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20370,7 +20411,7 @@
 		(uuid "f8a004af-2530-4374-8bac-0b0d1dd53098")
 	)
 	(label "LED2"
-		(at 314.96 341.63 0)
+		(at 318.77 361.95 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -21781,160 +21822,6 @@
 			(project "TerminalServer"
 				(path "/9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
 					(reference "#PWR037")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "564-0100-132F:564-0100-132F")
-		(at 335.28 339.09 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "0fa1dc40-ede2-4141-9425-fb8c75767a87")
-		(property "Reference" "D4"
-			(at 359.41 331.47 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "564-0100-132F"
-			(at 359.41 334.01 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "5640100222F"
-			(at 379.73 434.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Datasheet" "https://www.mouser.co.uk/datasheet/2/109/DIAC_S_A0007930131_1-2541634.pdf"
-			(at 379.73 534.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Description" "Dialight 564-0100-132F, Red/Yellow/Green Right Angle PCB LED Indicator, 3 LEDs, Through Hole"
-			(at 335.28 339.09 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Height" "15.24"
-			(at 379.73 734.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Mouser Part Number" "645-564-0100-132F"
-			(at 379.73 834.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Dialight/564-0100-132F?qs=0KZIkTEbAAvHMFIBWgRq8A%3D%3D"
-			(at 379.73 934.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Manufacturer_Name" "Dialight"
-			(at 379.73 1034.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Manufacturer_Part_Number" "564-0100-132F"
-			(at 379.73 1134.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "6"
-			(uuid "77c8a50d-8b4f-4a61-9755-ea343d62ea94")
-		)
-		(pin "4"
-			(uuid "60b5006b-05fb-4ddd-8f42-d1103a800512")
-		)
-		(pin "1"
-			(uuid "72c21b11-f137-4054-8eac-a778205dbd2d")
-		)
-		(pin "3"
-			(uuid "2be64ca2-d0ef-4070-8bb5-c3f1e88f7416")
-		)
-		(pin "2"
-			(uuid "88045c9a-88c8-48d9-87c4-99615d915216")
-		)
-		(pin "5"
-			(uuid "35c5d246-2aa0-41cd-bcb1-e31ae473c7a9")
-		)
-		(instances
-			(project "TerminalServer"
-				(path "/9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
-					(reference "D4")
 					(unit 1)
 				)
 			)
@@ -24178,6 +24065,104 @@
 		)
 	)
 	(symbol
+		(lib_id "XINGLIGHT:XL-DZ234SYGD/4")
+		(at 350.52 363.22 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "358a9f89-b70d-45d2-81a6-3e74a45e32cd")
+		(property "Reference" "D4"
+			(at 350.52 353.06 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Green"
+			(at 350.52 355.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "XINGLIGHT:XL-DZ234SYGD-4"
+			(at 350.52 363.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C7545670.pdf"
+			(at 350.52 363.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Green 565nm LED Indication - Discrete 1.8V~2.2V DIP-8-2.54mm"
+			(at 350.52 363.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "8"
+			(uuid "d836511a-08ea-46db-b891-eb3f6d09994f")
+		)
+		(pin "5"
+			(uuid "d36a0e57-e65b-418b-9f99-8a3e0ad53dd0")
+		)
+		(pin "7"
+			(uuid "4df9349c-e670-4e13-b6a0-1ddb45cedec2")
+		)
+		(pin "4"
+			(uuid "f34fe55d-580b-423f-aad1-1778b4797791")
+		)
+		(pin "6"
+			(uuid "b1993072-3b09-4c2d-9f26-5faab975f0bc")
+		)
+		(pin "3"
+			(uuid "e338903c-3ce7-41bd-ba29-766d171861e5")
+		)
+		(pin "2"
+			(uuid "a3533b36-acb1-4458-a0bc-494b5afd200b")
+		)
+		(pin "1"
+			(uuid "c169af1b-e55e-4238-82dc-b3bce2d2eb0b")
+		)
+		(instances
+			(project "TerminalServer"
+				(path "/9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
+					(reference "D4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Switch:SW_Push")
 		(at 101.6 246.38 0)
 		(unit 1)
@@ -26405,7 +26390,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 328.93 341.63 90)
+		(at 332.74 361.95 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -26415,7 +26400,7 @@
 		(dnp no)
 		(uuid "56cc6bc0-5e1b-4fff-8fdd-c2c395bce08f")
 		(property "Reference" "R32"
-			(at 328.93 341.63 90)
+			(at 332.74 361.95 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -26425,7 +26410,7 @@
 			)
 		)
 		(property "Value" "100R"
-			(at 324.612 340.614 90)
+			(at 328.422 360.934 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -26435,7 +26420,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 328.93 341.63 0)
+			(at 332.74 361.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -26446,7 +26431,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 328.93 341.63 0)
+			(at 332.74 361.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -26457,7 +26442,7 @@
 			)
 		)
 		(property "Description" "Resistor, small symbol"
-			(at 328.93 341.63 0)
+			(at 332.74 361.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -28974,7 +28959,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 328.93 344.17 90)
+		(at 332.74 359.41 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -28984,7 +28969,7 @@
 		(dnp no)
 		(uuid "72e476a3-dfe1-4233-8cdb-164182346c8c")
 		(property "Reference" "R31"
-			(at 328.93 344.17 90)
+			(at 332.74 359.41 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -28994,7 +28979,7 @@
 			)
 		)
 		(property "Value" "100R"
-			(at 324.612 343.154 90)
+			(at 328.422 358.394 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -29004,7 +28989,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 328.93 344.17 0)
+			(at 332.74 359.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -29015,7 +29000,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 328.93 344.17 0)
+			(at 332.74 359.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -29026,7 +29011,7 @@
 			)
 		)
 		(property "Description" "Resistor, small symbol"
-			(at 328.93 344.17 0)
+			(at 332.74 359.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -29719,7 +29704,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 387.35 350.52 0)
+		(at 365.76 370.84 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -29730,7 +29715,7 @@
 		(fields_autoplaced yes)
 		(uuid "7ff16581-f714-4e22-9644-556383cde0fe")
 		(property "Reference" "#PWR0110"
-			(at 387.35 356.87 0)
+			(at 365.76 377.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -29741,7 +29726,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 387.35 355.6 0)
+			(at 365.76 375.92 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -29751,7 +29736,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 387.35 350.52 0)
+			(at 365.76 370.84 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -29762,7 +29747,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 387.35 350.52 0)
+			(at 365.76 370.84 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -29773,7 +29758,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 387.35 350.52 0)
+			(at 365.76 370.84 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -38346,6 +38331,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R_Small")
+		(at 332.74 367.03 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "d92cafaa-69b8-4db5-b516-5555f071d2a4")
+		(property "Reference" "R34"
+			(at 332.486 367.03 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100R"
+			(at 328.422 366.014 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+			(at 332.74 367.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 332.74 367.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 332.74 367.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "e8424e59-6522-48bb-9cf4-01bb320dc8a4")
+		)
+		(pin "1"
+			(uuid "8f7df69d-3a7c-4ed9-9994-2e58670f193d")
+		)
+		(instances
+			(project "TerminalServer"
+				(path "/9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
+					(reference "R34")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C_Small")
 		(at 317.5 57.15 180)
 		(unit 1)
@@ -40131,7 +40195,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 328.93 339.09 90)
+		(at 332.74 364.49 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -40141,7 +40205,7 @@
 		(dnp no)
 		(uuid "f3082dd2-56db-49fe-a5ee-3d552bccbda1")
 		(property "Reference" "R33"
-			(at 328.676 339.09 90)
+			(at 332.486 364.49 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -40151,7 +40215,7 @@
 			)
 		)
 		(property "Value" "100R"
-			(at 324.612 338.074 90)
+			(at 328.422 363.474 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -40161,7 +40225,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 328.93 339.09 0)
+			(at 332.74 364.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -40172,7 +40236,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 328.93 339.09 0)
+			(at 332.74 364.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -40183,7 +40247,7 @@
 			)
 		)
 		(property "Description" "Resistor, small symbol"
-			(at 328.93 339.09 0)
+			(at 332.74 364.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
