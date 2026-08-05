@@ -10331,6 +10331,12 @@
 		(uuid "b44845ae-808e-408b-9c26-1a19e8e0d9fc")
 	)
 	(junction
+		(at 184.15 261.62)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b550fc33-5b70-4cdd-b744-de75538e48f5")
+	)
+	(junction
 		(at 365.76 364.49)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -11029,6 +11035,16 @@
 			(type default)
 		)
 		(uuid "0eb1e303-5391-492e-90bc-c4268007dade")
+	)
+	(wire
+		(pts
+			(xy 185.42 261.62) (xy 184.15 261.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0ebf86d3-8ce3-46d7-bf4b-0f2c31f2216b")
 	)
 	(wire
 		(pts
@@ -11829,6 +11845,16 @@
 			(type default)
 		)
 		(uuid "29969855-6253-4c0c-99ea-a073ef927055")
+	)
+	(wire
+		(pts
+			(xy 185.42 269.24) (xy 185.42 275.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "29b09b13-396b-4c87-8f47-7bc344bdde5f")
 	)
 	(wire
 		(pts
@@ -13062,6 +13088,16 @@
 	)
 	(wire
 		(pts
+			(xy 166.37 273.05) (xy 182.88 273.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5b756bc3-dc25-4058-a9f2-2481211f7d10")
+	)
+	(wire
+		(pts
 			(xy 377.19 208.28) (xy 392.43 208.28)
 		)
 		(stroke
@@ -13159,6 +13195,16 @@
 			(type default)
 		)
 		(uuid "5f7862cf-8c77-442c-86d8-3aca4f222978")
+	)
+	(wire
+		(pts
+			(xy 182.88 261.62) (xy 184.15 261.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5fb3de3e-05f0-4ba3-912a-de52764adaf0")
 	)
 	(wire
 		(pts
@@ -13619,6 +13665,16 @@
 			(type default)
 		)
 		(uuid "7208ee6a-4dd8-4f67-8222-da8f587c670e")
+	)
+	(wire
+		(pts
+			(xy 185.42 264.16) (xy 185.42 261.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "72908e9a-058e-49dc-a2e7-51abcb8a1bfe")
 	)
 	(wire
 		(pts
@@ -15092,6 +15148,16 @@
 	)
 	(wire
 		(pts
+			(xy 166.37 275.59) (xy 185.42 275.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aa96a4f5-6b58-4a1f-9d01-1ee2a46fec8c")
+	)
+	(wire
+		(pts
 			(xy 91.44 246.38) (xy 96.52 246.38)
 		)
 		(stroke
@@ -15349,6 +15415,16 @@
 			(type default)
 		)
 		(uuid "b281e987-f488-402f-9b42-619afda2126e")
+	)
+	(wire
+		(pts
+			(xy 182.88 269.24) (xy 182.88 273.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b2b9df33-0aad-4550-8c5d-286c6163be22")
 	)
 	(wire
 		(pts
@@ -16449,6 +16525,16 @@
 			(type default)
 		)
 		(uuid "d959ec0e-4441-421b-b001-3433fa22b139")
+	)
+	(wire
+		(pts
+			(xy 182.88 264.16) (xy 182.88 261.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d9906061-d290-4512-9410-c88b1dcfeeb4")
 	)
 	(wire
 		(pts
@@ -18950,6 +19036,16 @@
 		)
 		(uuid "725a1e93-d8ef-41f6-8681-072266150973")
 	)
+	(label "ESP_INT"
+		(at 166.37 273.05 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "73339b24-c7b2-4c43-97c4-695dc81e5a0d")
+	)
 	(label "ESP_RX"
 		(at 198.12 220.98 180)
 		(effects
@@ -19799,6 +19895,16 @@
 			(justify left bottom)
 		)
 		(uuid "c20949a1-e616-4912-b5f6-7a24f20ca626")
+	)
+	(label "ENC_INT"
+		(at 166.37 275.59 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c41075e7-8571-4c42-8d82-17daacffdfd8")
 	)
 	(label "U4DSR"
 		(at 236.22 59.69 0)
@@ -21734,6 +21840,17 @@
 				)
 			)
 		)
+		(property "Mouser" "78-V8PAN50-M3/I "
+			(at 82.55 270.51 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "aeeca89e-410a-41e4-b78c-d91e4cdc4e0f")
 		)
@@ -22799,6 +22916,17 @@
 				)
 			)
 		)
+		(property "Mouser" " 737-MTJ-88ARX1-LH "
+			(at 367.03 205.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "5"
 			(uuid "07902e7c-f6f3-4471-b777-d99877945dc0")
 		)
@@ -23319,6 +23447,17 @@
 			)
 		)
 		(property "Description" "USB Type B connector"
+			(at 106.68 196.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Mouser" " 200-USBBSFBTHFR "
 			(at 106.68 196.85 0)
 			(hide yes)
 			(show_name no)
@@ -24119,6 +24258,17 @@
 			)
 		)
 		(property "Description" "Green 565nm LED Indication - Discrete 1.8V~2.2V DIP-8-2.54mm"
+			(at 350.52 363.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Mouser" "604-WP914CK4GDT "
 			(at 350.52 363.22 0)
 			(hide yes)
 			(show_name no)
@@ -26787,6 +26937,87 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R_Small")
+		(at 182.88 266.7 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "5b2b88e1-3d34-4747-b128-9dcb5038713e")
+		(property "Reference" "R35"
+			(at 177.546 265.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 177.546 267.97 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+			(at 182.88 266.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 182.88 266.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 182.88 266.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "fa657c36-e195-411b-b700-80c7a46c548b")
+		)
+		(pin "2"
+			(uuid "108b5b7c-efd5-4cb3-9f65-c05c2ca8fbab")
+		)
+		(instances
+			(project "TerminalServer"
+				(path "/9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
+					(reference "R35")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
 		(at 115.57 330.2 0)
 		(unit 1)
@@ -27007,6 +27238,17 @@
 				)
 			)
 		)
+		(property "Mouser" " 737-MTJ-88ARX1-LH "
+			(at 367.03 106.68 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "5"
 			(uuid "27358342-be5d-48ff-a7c5-bb6f2136c426")
 		)
@@ -27186,6 +27428,17 @@
 			)
 		)
 		(property "Description" "RJ connector, 8P8C (8 positions 8 connected), two LEDs"
+			(at 367.03 139.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Mouser" " 737-MTJ-88ARX1-LH "
 			(at 367.03 139.7 0)
 			(hide yes)
 			(show_name no)
@@ -29197,6 +29450,166 @@
 		)
 	)
 	(symbol
+		(lib_id "power:VDD")
+		(at 184.15 261.62 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "766ee0f3-0154-4edd-8fa1-3e954d002282")
+		(property "Reference" "#PWR0111"
+			(at 184.15 265.43 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "VDD"
+			(at 184.15 256.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 184.15 261.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 184.15 261.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 184.15 261.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e9ae6f9d-2804-48a8-a8fe-dfb7e4883b4a")
+		)
+		(instances
+			(project "TerminalServer"
+				(path "/9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
+					(reference "#PWR0111")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 185.42 266.7 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7a7f2ed9-0161-4a91-a2a8-4f716b3ffb17")
+		(property "Reference" "R36"
+			(at 187.96 265.4299 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 187.96 267.9699 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+			(at 185.42 266.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 266.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 185.42 266.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4250770c-68bb-4a3f-b41a-b1fbd19acefb")
+		)
+		(pin "2"
+			(uuid "9047e425-d911-4d8f-99e7-0b396b127dc6")
+		)
+		(instances
+			(project "TerminalServer"
+				(path "/9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
+					(reference "R36")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C_Small")
 		(at 299.72 138.43 90)
 		(unit 1)
@@ -29330,6 +29743,17 @@
 			)
 		)
 		(property "Description" "RJ connector, 8P8C (8 positions 8 connected), two LEDs"
+			(at 367.03 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Mouser" " 737-MTJ-88ARX1-LH "
 			(at 367.03 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -29519,6 +29943,17 @@
 			)
 		)
 		(property "Description" "40V 600mV@1A 1A SOD-323 Schottky Barrier Diodes, SOD-323"
+			(at 210.82 236.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Mouser" "78-V8PAN50-M3/I "
 			(at 210.82 236.22 0)
 			(hide yes)
 			(show_name no)
@@ -31375,6 +31810,17 @@
 			)
 		)
 		(property "Description" "40V 600mV@1A 1A SOD-323 Schottky Barrier Diodes, SOD-323"
+			(at 127 171.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Mouser" "78-V8PAN50-M3/I "
 			(at 127 171.45 0)
 			(hide yes)
 			(show_name no)
@@ -35311,6 +35757,17 @@
 				)
 			)
 		)
+		(property "Mouser" " 710-694106301002 "
+			(at 62.23 273.05 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "288d0e39-1fff-4e7a-815f-e3794a3dd8d9")
 		)
@@ -39031,6 +39488,17 @@
 				)
 			)
 		)
+		(property "Mouser" " 737-MTJ-88ARX1-LH "
+			(at 367.03 172.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "5"
 			(uuid "951eacaa-004b-4c1c-a756-93adb42848d4")
 		)
@@ -40621,7 +41089,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_Slide_SP3T_Straight_CK_OS103012MU1QP1"
+		(property "Footprint" "Library:34ASP23B4M7RT"
 			(at 139.7 246.38 0)
 			(hide yes)
 			(show_name no)
@@ -40726,6 +41194,17 @@
 			)
 		)
 		(property "Description" "RJ connector, 8P8C (8 positions 8 connected), two LEDs"
+			(at 367.03 40.64 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Mouser" " 737-MTJ-88ARX1-LH "
 			(at 367.03 40.64 0)
 			(hide yes)
 			(show_name no)

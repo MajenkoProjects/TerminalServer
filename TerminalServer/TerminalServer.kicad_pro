@@ -703,7 +703,7 @@
         "uuid": "9a0cdbf2-fa1a-49b2-bde3-abeebf0387a4"
       }
     ],
-    "used_designators": "D5,R34,LED1",
+    "used_designators": "#PWR111,R35-36",
     "variants": []
   },
   "sheets": [
