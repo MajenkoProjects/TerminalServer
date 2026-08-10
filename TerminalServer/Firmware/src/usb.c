@@ -49,7 +49,6 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
             break;
 
         case USB_DEVICE_CDC_EVENT_READ_COMPLETE:
-            led_on(11);
             eventDataRead =  (USB_DEVICE_CDC_EVENT_DATA_READ_COMPLETE *)pData;
             if(eventDataRead->status != USB_DEVICE_CDC_RESULT_ERROR) {
                 usb_data[index].read_data_length = eventDataRead->length;
@@ -57,7 +56,6 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
                 usb_data[index].read_data_length = 0;                
             }
             usb_data[index].read_complete = true;
-            led_off(11);
             break;
 
         case USB_DEVICE_CDC_EVENT_CONTROL_TRANSFER_DATA_RECEIVED:
@@ -68,7 +66,6 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
             break;
 
         case USB_DEVICE_CDC_EVENT_WRITE_COMPLETE:
-            led_off(8);
             usb_data[index].write_running = false;
             
             // If anything is in output CB then queue it here
@@ -196,14 +193,10 @@ static void USB_Tasks(void *pvParameters) {
 #if 1  
         
         if (usb_data[0].write_running) {
-            led_on(9);
         } else {
-            led_off(9);
         }
         if (usb_data[0].read_complete) {
-            led_on(10);
         } else {
-            led_off(10);
         }
         if (usb_is_configured) {
 
@@ -269,11 +262,8 @@ void test_write() {
     taskENTER_CRITICAL();
     if (USB_DEVICE_CDC_Write(
             0, &usb_data[0].writeTransferHandle, usb_data[0].write_buffer, strlen((char *)usb_data[0].write_buffer), USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE) == USB_DEVICE_CDC_RESULT_OK) {
-        led_on(8);
-        led_off(10);
         usb_data[0].write_running = true;
     } else {
-        led_on(10);
     }
     taskEXIT_CRITICAL();
 }
@@ -282,6 +272,5 @@ void test_write() {
 void fail_write() {
     sprintf((char *)usb_data[0].write_buffer, "Failed\r\n");
     USB_DEVICE_CDC_Write(0, &usb_data[0].writeTransferHandle, usb_data[0].write_buffer, 8, USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
-    led_on(8);
     usb_data[0].write_running = true;
 }

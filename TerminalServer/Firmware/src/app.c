@@ -32,6 +32,9 @@
 #include "port.h"
 #include "task.h"
 #include "leds.h"
+#include "pin.h"
+#include "uart.h"
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Global Data Definitions
@@ -95,6 +98,7 @@ void APP_Initialize ( void )
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
 
+
     USB_Initialize();
 
     /* TODO: Initialize your application's state machine and other
@@ -155,6 +159,10 @@ void APP_Tasks ( void )
         port_write_byte(ports, port_read_byte(ports));
     }
 */
+    
+    uart_boot();
+    
+    return;
 
 //vTaskDelay(1000);
 //port_printf(ports, "Tick %d\r\n", count);

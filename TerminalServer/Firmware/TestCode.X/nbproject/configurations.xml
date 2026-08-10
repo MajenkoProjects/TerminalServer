@@ -296,6 +296,8 @@
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/leds.h</itemPath>
       <itemPath>../src/command.h</itemPath>
+      <itemPath>../src/uart.h</itemPath>
+      <itemPath>../src/pin.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -445,6 +447,8 @@
       <itemPath>../src/app.c</itemPath>
       <itemPath>../src/leds.c</itemPath>
       <itemPath>../src/command.c</itemPath>
+      <itemPath>../src/uart.c</itemPath>
+      <itemPath>../src/pin.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

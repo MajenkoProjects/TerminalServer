@@ -10712,12 +10712,12 @@
         &lt;ElementPosition dnOrder=&quot;9&quot; id=&quot;spi1&quot; x=&quot;789&quot; y=&quot;583&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;10&quot; id=&quot;sys_fs&quot; x=&quot;1287&quot; y=&quot;502&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;11&quot; id=&quot;sys_time&quot; x=&quot;623&quot; y=&quot;11&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;12&quot; id=&quot;uart1&quot; x=&quot;13&quot; y=&quot;719&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;13&quot; id=&quot;uart2&quot; x=&quot;14&quot; y=&quot;785&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;14&quot; id=&quot;uart3&quot; x=&quot;15&quot; y=&quot;852&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;15&quot; id=&quot;uart4&quot; x=&quot;15&quot; y=&quot;915&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;16&quot; id=&quot;uart5&quot; x=&quot;12&quot; y=&quot;983&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;17&quot; id=&quot;uart6&quot; x=&quot;15&quot; y=&quot;1050&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;12&quot; id=&quot;uart1&quot; x=&quot;229&quot; y=&quot;162&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;13&quot; id=&quot;uart2&quot; x=&quot;230&quot; y=&quot;228&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;14&quot; id=&quot;uart3&quot; x=&quot;231&quot; y=&quot;295&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;15&quot; id=&quot;uart4&quot; x=&quot;231&quot; y=&quot;358&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;16&quot; id=&quot;uart5&quot; x=&quot;228&quot; y=&quot;426&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;17&quot; id=&quot;uart6&quot; x=&quot;231&quot; y=&quot;493&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;18&quot; id=&quot;usb_device&quot; x=&quot;34&quot; y=&quot;60&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;19&quot; id=&quot;usb_device_cdc&quot; x=&quot;13&quot; y=&quot;320&quot;/&gt;
       &lt;/ElementPositions&gt;
@@ -18416,7 +18416,7 @@
       </entry>
       <entry>
          <file>../src/config/default/definitions.h</file>
-         <hash>6dc130bd2e812476f146fbfc20e0768bab094544058ad97f30e9eb403afa21d5</hash>
+         <hash>73f1e3fdeb52dfdc4f11e217ecd34ec598e76621f25236e7bdf32baec3d700b8</hash>
       </entry>
       <entry>
          <file>../src/config/default/device.h</file>
@@ -18968,7 +18968,7 @@
       </entry>
       <entry>
          <file>../src/config/default/initialization.c</file>
-         <hash>7718ed3f10de315748531ca286678c74dd677898ad7fdd53623bb65f45d209c1</hash>
+         <hash>516648b911cd5d16edb1d420eba2a2094044aeac53b2f7a2cf6f489569046df8</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts.c</file>

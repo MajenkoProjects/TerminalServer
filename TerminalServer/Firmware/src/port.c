@@ -14,7 +14,6 @@ int cb_available(struct circular_buffer *buf) {
         o = (PORT_BUFFER_SIZE + buf->head - buf->tail) % PORT_BUFFER_SIZE;
         xSemaphoreGive(buf->mutex);
     }
-    led_num(o);
     return o;
 }
 

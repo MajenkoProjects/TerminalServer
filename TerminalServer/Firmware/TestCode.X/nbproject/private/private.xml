@@ -4,12 +4,19 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/app.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/usb.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/usb.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/app.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/uart.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/config/default/usb_device_init_data.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/pin.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/leds.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/uart.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/pin.h</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.h</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/leds.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/usb.c</file>
         </group>
     </open-files>
 </project-private>
