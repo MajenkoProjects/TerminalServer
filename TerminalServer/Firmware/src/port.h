@@ -8,6 +8,7 @@
 
 #define PORT_BUFFER_SIZE    64
 #define PORT_MAX_NAME       8
+#define MAX_PORTS           20
 
 enum port_mode {
     MODE_INTERACTIVE = 0,
@@ -15,7 +16,8 @@ enum port_mode {
 };
 
 enum port_type {
-    PORT_CDC = 0,
+    PORT_NONE = 0,
+    PORT_CDC,
     PORT_SERIAL,
     PORT_NET_IN,
     PORT_NET_OUT
@@ -29,7 +31,6 @@ struct circular_buffer {
 };
 
 struct port {
-    struct port *next;
     enum port_type type;
     enum port_mode mode;
     int remote_port;
@@ -38,14 +39,17 @@ struct port {
     void *port_data;
     char command[MAX_COMMAND];
     int command_len;
+    int no;
 };
 
-extern struct port *ports;
+extern struct port ports[MAX_PORTS];
 
 
 extern struct port *add_port(enum port_type type, void *data);
 extern int cb_write(struct circular_buffer *buf, uint8_t b);
 extern int cb_read(struct circular_buffer *buf);
+extern int cb_free(struct circular_buffer *buf);
+extern int cb_available(struct circular_buffer *buf);
 extern int port_read_byte(struct port *port);
 extern int port_write_byte(struct port *port, uint8_t b);
 extern int port_available(struct port *port);

@@ -1,4 +1,7 @@
 #include "uart.h"
+#include "port.h"
+
+//struct port *uart_ports[6];
 
 struct uart_data uart_settings[] = {
     UARTDEF(6),
@@ -9,22 +12,22 @@ struct uart_data uart_settings[] = {
     UARTDEF(1),
 };
 
+TaskHandle_t uart_tasks_handle;
+
 void uart_init(struct uart_data *data) {
+    pin_set(data->txled, 1);
+    pin_set(data->rxled, 1);
+
     pin_mode(data->txled, PIN_OUTPUT);
     pin_mode(data->rxled, PIN_OUTPUT);
+    pin_mode(data->shutdown, PIN_OUTPUT);
+    pin_set(data->shutdown, 1);
     
-    
-    pin_set(data->txled, 1);
-    vTaskDelay(100);
-    pin_set(data->rxled, 1);
-    vTaskDelay(1000);
     data->fn_init();
     uart_config(data);
     
     pin_set(data->txled, 0);
-    vTaskDelay(100);
     pin_set(data->rxled, 0);
-    vTaskDelay(1000);
 }
 
 void uart_config(struct uart_data *data) {
@@ -73,11 +76,52 @@ void uart_config(struct uart_data *data) {
     data->fn_setup(&setup, 0);
 }
 
+int uart_write_byte(struct uart_data *data, uint8_t b) {
+    data->fn_write(&b, 1);
+    return 1;
+}
+
+static void UART_Tasks(void *pvParameters) {
+    while (1) {
+        for (int i = 0; i < MAX_PORTS; i++) {
+            if (ports[i].type == PORT_SERIAL) {   
+                struct uart_data *data = (struct uart_data *)(ports[i].port_data);
+                if (cb_available(&(ports[i].write_buffer))) {
+                    if (data->fn_free() > 0) {
+                        uart_write_byte(data, cb_read(&(ports[i].write_buffer)));
+                    }
+                }
+                if (data->fn_avail() > 0) {
+                    if (cb_free(&(ports[i].read_buffer)) > 0) {
+                        pin_mode(data->rxled, 0);
+                        pin_set(data->rxled, 1);
+                        uint8_t b;
+                        data->fn_read(&b, 1);
+                        cb_write(&(ports[i].read_buffer), b);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 void uart_boot() {
-    uart_init(&uart_settings[0]);
-    uart_init(&uart_settings[1]);
-    uart_init(&uart_settings[2]);
-    uart_init(&uart_settings[3]);
-    uart_init(&uart_settings[4]);
-    uart_init(&uart_settings[5]);
+
+    for (int i = 0; i < 6; i++) {
+        struct port *p = add_port(PORT_SERIAL, &uart_settings[i]);
+        uart_init(&uart_settings[i]);
+ //       char hello[50];
+//        sprintf(hello, "\r\n\r\nThis is port %d\r\n", p->no);
+        //uart_settings[i].fn_write(hello, strlen(hello));
+        port_printf(p, "\r\n\r\nThis is port %d\r\n", p->no);
+    }
+
+    (void) xTaskCreate(
+           (TaskFunction_t) UART_Tasks,
+           "UART_Tasks",
+           1024,   
+           NULL,
+           1U ,
+           &uart_tasks_handle);
 }

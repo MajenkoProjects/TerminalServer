@@ -234,7 +234,6 @@ static void USB_Tasks(void *pvParameters) {
 
 
 void USB_Initialize() {
-#if 1
     for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
         usb_ports[i] = add_port(PORT_CDC, &usb_data[i]);
         usb_data[i].write_running = false;
@@ -242,7 +241,6 @@ void USB_Initialize() {
     }
     usb_sm_state = USB_STATE_INIT;
 
-    
     /* Create OS Thread for APP_Tasks. */
     (void) xTaskCreate(
            (TaskFunction_t) USB_Tasks,
@@ -251,7 +249,6 @@ void USB_Initialize() {
            NULL,
            1U ,
            &usb_tasks_handle);
-#endif
 }
 
 int count = 0;

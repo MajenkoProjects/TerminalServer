@@ -98,8 +98,8 @@ void APP_Initialize ( void )
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
 
-
     USB_Initialize();
+    uart_boot();
 
     /* TODO: Initialize your application's state machine and other
      * parameters.
@@ -160,19 +160,33 @@ void APP_Tasks ( void )
     }
 */
     
-    uart_boot();
+//    uart_boot();
+  /*  
+    char temp[100];
+    sprintf(temp, "Spoons %d\r\n", count++);
     
-    return;
+    while (UART6_WriteFreeBufferCountGet() < strlen(temp)) {
+        vTaskDelay(1);
+    }
+    
+    UART6_Write(temp, strlen(temp));
+    
+    //vTaskDelay(1000);
+   */ 
+    //return;
 
 //vTaskDelay(1000);
-//port_printf(ports, "Tick %d\r\n", count);
+//port_printf(&ports[1], "Tick %d\r\n", count);
 //count++;
 
-   // port_write_byte(ports, 'X');
-    for (struct port *scan = ports; scan; scan = scan->next) {
-        if (port_available(scan)) {
-            int c = port_read_byte(scan);
-            command_process(scan, c);
+    //port_write_byte(ports, 'X');
+    for (int i = 0; i < MAX_PORTS; i++) {
+        if (ports[i].type != PORT_NONE) {
+            if (port_available(&ports[i])) {
+               int c = port_read_byte(&ports[i]);
+      //         port_printf(&ports[1], "[%d]", c);
+               command_process(&ports[i], c);
+            }
         }
     }
 }

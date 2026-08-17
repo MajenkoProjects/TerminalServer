@@ -3,8 +3,9 @@
 #include "app.h"
 #include "port.h"
 #include "leds.h"
+#include "pin.h"
 
-struct port *ports = NULL;
+struct port ports[MAX_PORTS] = {0};
 
 #define MUTEX_TICKS 100
 
@@ -18,12 +19,17 @@ int cb_available(struct circular_buffer *buf) {
 }
 
 int cb_free(struct circular_buffer *buf) {
-    int o = 0;
     if (xSemaphoreTake(buf->mutex, MUTEX_TICKS) == pdTRUE) {
-        o = (PORT_BUFFER_SIZE + buf->tail - buf->head) % PORT_BUFFER_SIZE;
-        xSemaphoreGive(buf->mutex);
+        size_t newhead = (buf->head + 1) % PORT_BUFFER_SIZE;
+        if (newhead != buf->tail) {
+            xSemaphoreGive(buf->mutex);
+            return 1;
+        } else {
+            xSemaphoreGive(buf->mutex);
+            return 0;
+        }
     }
-    return o;
+    return 0;
 }
 
 // Add a new byte to the circular buffer. Returns 1 for a byte
@@ -99,24 +105,22 @@ int port_write_byte(struct port *port, uint8_t b) {
 }
 
 struct port *add_port(enum port_type type, void *data) {
-    struct port *newport = malloc(sizeof(struct port));
-    memset(newport, 0, sizeof(struct port));
+
     
-    newport->type = type;
-    newport->port_data = data;
-    
-    newport->read_buffer.mutex = xSemaphoreCreateMutex();
-    newport->write_buffer.mutex = xSemaphoreCreateMutex();
-    
-    if (ports == NULL) {
-        ports = newport;
-        return newport;
+    for (int i = 0; i < MAX_PORTS; i++) {
+        if (ports[i].type == PORT_NONE) {
+            ports[i].type = type;
+            ports[i].no = i;
+            ports[i].port_data = data;
+            ports[i].read_buffer.mutex = xSemaphoreCreateMutex();
+            ports[i].write_buffer.mutex = xSemaphoreCreateMutex();
+            return &ports[i];
+        }
     }
     
-    struct port *scan = ports;
-    while (scan->next) scan = scan->next;
-    scan->next = newport;
-    return newport;
+
+
+    return NULL;
 }
 
 int port_available(struct port *port) {
