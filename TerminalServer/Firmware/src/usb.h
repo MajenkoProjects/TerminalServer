@@ -4,6 +4,10 @@
 #include <stdint.h>
 #include "usb/usb_device.h"
 #include "usb/usb_device_cdc.h"
+#include <FreeRTOS.h>
+#include <semphr.h>
+
+#include "port.h"
 
 
 #define USB_BUFFER_SIZE 64
@@ -61,12 +65,18 @@ struct usb_port_data {
     /* This variable saves number of bytes of data received from the Host.
      * Application uses this variable to send back same amount of data to Host.*/
     uint32_t read_data_length;
+    uint32_t read_data_pos;
     uint8_t read_buffer[USB_BUFFER_SIZE] USB_ALIGN;
     uint8_t write_buffer[USB_BUFFER_SIZE] USB_ALIGN;
-    volatile bool write_running;
+    SemaphoreHandle_t write_running;
 
 };
 
 
 extern void USB_Initialize();
+extern void usb_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data);
+
+extern void usb_set_name(struct port *port, const char *name);
+
+extern void usb_create_ports();
 #endif

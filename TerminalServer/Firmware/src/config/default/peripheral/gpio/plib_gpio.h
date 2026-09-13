@@ -62,6 +62,36 @@
 // *****************************************************************************
 
 
+/*** Macros for SCK pin ***/
+#define SCK_Get()               ((PORTA >> 2) & 0x1)
+#define SCK_GetLatch()          ((LATA >> 2) & 0x1)
+#define SCK_PIN                  GPIO_PIN_RA2
+
+/*** Macros for SDA pin ***/
+#define SDA_Get()               ((PORTA >> 3) & 0x1)
+#define SDA_GetLatch()          ((LATA >> 3) & 0x1)
+#define SDA_PIN                  GPIO_PIN_RA3
+
+/*** Macros for GPIO_RA4 pin ***/
+#define GPIO_RA4_Set()               (LATASET = (1<<4))
+#define GPIO_RA4_Clear()             (LATACLR = (1<<4))
+#define GPIO_RA4_Toggle()            (LATAINV= (1<<4))
+#define GPIO_RA4_OutputEnable()      (TRISACLR = (1<<4))
+#define GPIO_RA4_InputEnable()       (TRISASET = (1<<4))
+#define GPIO_RA4_Get()               ((PORTA >> 4) & 0x1)
+#define GPIO_RA4_GetLatch()          ((LATA >> 4) & 0x1)
+#define GPIO_RA4_PIN                  GPIO_PIN_RA4
+
+/*** Macros for GPIO_RA5 pin ***/
+#define GPIO_RA5_Set()               (LATASET = (1<<5))
+#define GPIO_RA5_Clear()             (LATACLR = (1<<5))
+#define GPIO_RA5_Toggle()            (LATAINV= (1<<5))
+#define GPIO_RA5_OutputEnable()      (TRISACLR = (1<<5))
+#define GPIO_RA5_InputEnable()       (TRISASET = (1<<5))
+#define GPIO_RA5_Get()               ((PORTA >> 5) & 0x1)
+#define GPIO_RA5_GetLatch()          ((LATA >> 5) & 0x1)
+#define GPIO_RA5_PIN                  GPIO_PIN_RA5
+
 
 // *****************************************************************************
 /* GPIO Port

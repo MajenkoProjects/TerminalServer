@@ -49,32 +49,20 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "bsp/bsp.h"
-#include "peripheral/clk/plib_clk.h"
-#include "peripheral/gpio/plib_gpio.h"
-#include "peripheral/evic/plib_evic.h"
 #include "usb/usb_chapter_9.h"
 #include "usb/usb_device.h"
-#include "driver/sdspi/drv_sdspi.h"
 #include "peripheral/uart/plib_uart5.h"
 #include "system/time/sys_time.h"
 #include "peripheral/uart/plib_uart6.h"
+#include "peripheral/coretimer/plib_coretimer.h"
 #include "peripheral/uart/plib_uart3.h"
 #include "usb/usb_device_cdc.h"
 #include "usb/usb_cdc.h"
-#include "peripheral/coretimer/plib_coretimer.h"
 #include "peripheral/uart/plib_uart4.h"
 #include "peripheral/uart/plib_uart1.h"
 #include "peripheral/uart/plib_uart2.h"
-#include "system/fs/sys_fs.h"
-#include "system/fs/sys_fs_media_manager.h"
-#include "system/fs/sys_fs_fat_interface.h"
-#include "system/fs/fat_fs/file_system/ff.h"
-#include "system/fs/fat_fs/file_system/ffconf.h"
-#include "system/fs/fat_fs/hardware_access/diskio.h"
 #include "driver/usb/usbfs/drv_usbfs.h"
 #include "peripheral/spi/spi_master/plib_spi1_master.h"
-#include "FreeRTOS.h"
-#include "task.h"
 #include "driver/spi/drv_spi.h"
 #include "system/int/sys_int.h"
 #include "system/ports/sys_ports.h"
@@ -82,6 +70,21 @@
 #include "system/reset/sys_reset.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
+#include "library/tcpip/tcpip.h"
+#include "system/sys_time_h2_adapter.h"
+#include "system/sys_random_h2_adapter.h"
+#include "driver/enc28j60/drv_enc28j60.h"
+#include "peripheral/clk/plib_clk.h"
+#include "peripheral/gpio/plib_gpio.h"
+#include "peripheral/evic/plib_evic.h"
+#include "peripheral/dmac/plib_dmac.h"
+#include "peripheral/i2c/master/plib_i2c2_master.h"
+#include "net_pres/pres/net_pres.h"
+#include "net_pres/pres/net_pres_encryptionproviderapi.h"
+#include "net_pres/pres/net_pres_transportapi.h"
+#include "net_pres/pres/net_pres_socketapi.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "app.h"
 
 
@@ -213,16 +216,22 @@ Remarks:
 
 typedef struct
 {
-    /* SDSPI0 Driver Object */
-    SYS_MODULE_OBJ drvSDSPI0;
-
     SYS_MODULE_OBJ  usbDevObject0;
+
+    SYS_MODULE_OBJ  sysTime;
+    SYS_MODULE_OBJ  drvUSBFSObject;
+
+
+    SYS_MODULE_OBJ  tcpip;
+
+
+    /* ENC28J60 System object */
+    SYS_MODULE_OBJ          enc28j60Object;
 
     /* SPI0 Driver Object */
     SYS_MODULE_OBJ drvSPI0;
 
-    SYS_MODULE_OBJ  sysTime;
-    SYS_MODULE_OBJ  drvUSBFSObject;
+    SYS_MODULE_OBJ  netPres;
 
 
 } SYSTEM_OBJECTS;

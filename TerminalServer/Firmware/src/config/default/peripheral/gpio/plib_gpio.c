@@ -61,6 +61,8 @@ void GPIO_Initialize ( void )
     AD1PCFGSET = 0x2; /* Digital Mode Enable */
 
     /* PORTA Initialization */
+    LATA = 0x30; /* Initial Latch Value */
+    TRISACLR = 0x30; /* Direction Control */
 
     /* PORTB Initialization */
 

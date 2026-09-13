@@ -21,6 +21,10 @@
 #ifndef _APP_H
 #define _APP_H
 
+#define VERSION "1.0.0"
+
+
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Included Files
@@ -62,6 +66,10 @@ typedef enum
 {
     /* Application's state machine's initial state. */
     APP_STATE_INIT=0,
+    APP_STATE_LOAD_SETTINGS,
+    APP_STATE_INIT_UARTS,
+    APP_STATE_INIT_USB,
+    APP_STATE_INIT_ETHERNET,
     APP_STATE_SERVICE_TASKS,
     /* TODO: Define states used by the application state machine. */
 
@@ -169,6 +177,9 @@ void APP_Initialize ( void );
  */
 
 void APP_Tasks( void );
+
+
+
 
 //DOM-IGNORE-BEGIN
 #ifdef __cplusplus

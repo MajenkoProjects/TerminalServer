@@ -13,6 +13,8 @@
 #define PINDEF(P, B) { &TRIS##P, &PORT##P, &LAT##P, B }
 
 struct pin pins[] = {
+    PINDEF(F, 8),   // U1TX
+    PINDEF(F, 2),   // U1RX
     PINDEF(D, 6),   // U1TXLED
     PINDEF(D, 7),  // U1RXLED
     PINDEF(D, 12),  // U1CTS
@@ -22,6 +24,8 @@ struct pin pins[] = {
     PINDEF(D, 3),   // U1STATUS
     PINDEF(D, 2),   // U1SHTDN
 
+    PINDEF(F, 5),   // U2TX
+    PINDEF(F, 4),   // U2RX
     PINDEF(F, 0),   // U2TXLED
     PINDEF(F, 1),   // U2RXLED
     PINDEF(D, 9),   // U2CTS
@@ -31,6 +35,8 @@ struct pin pins[] = {
     PINDEF(D, 8),   // U2STATUS
     PINDEF(F, 3),   // U2SHTDN
     
+    PINDEF(G, 8),   // U3TX
+    PINDEF(G, 7),   // U3RX
     PINDEF(E, 0),   // U3TXLED
     PINDEF(E, 1),   // U3RXLED
     PINDEF(C, 2),   // U3CTS
@@ -40,6 +46,8 @@ struct pin pins[] = {
     PINDEF(C, 1),   // U3STATUS
     PINDEF(E, 7),   // U3SHTDN
     
+    PINDEF(D, 15),  // U4TX
+    PINDEF(D, 14),  // U4RX
     PINDEF(G, 1),   // U4TXLED
     PINDEF(G, 0),   // U4RXLED
     PINDEF(B, 8),   // U4CTS
@@ -49,6 +57,8 @@ struct pin pins[] = {
     PINDEF(A, 10),  // U4STATUS
     PINDEF(A, 9),   // U4SHTDN
     
+    PINDEF(F, 13),  // U5TX
+    PINDEF(F, 12),  // U5RX
     PINDEF(A, 6),   // U5TXLED
     PINDEF(A, 7),   // U5RXLED
     PINDEF(B, 3),   // U5CTS
@@ -58,6 +68,8 @@ struct pin pins[] = {
     PINDEF(B, 4),   // U5STATUS
     PINDEF(B, 5),   // U5SHTDN
     
+    PINDEF(G, 6),   // U6TX
+    PINDEF(G, 9),   // U6RX
     PINDEF(G, 14),  // U6TXLED
     PINDEF(G, 12),  // U6RXLED
     PINDEF(E, 3),   // U6CTS
@@ -66,6 +78,8 @@ struct pin pins[] = {
     PINDEF(E, 4),   // U6DSR
     PINDEF(E, 2),   // U6STATUS
     PINDEF(G, 13),  // U6SHTDN
+    
+    PINDEF(A, 5),   // ENC_RESET
 };
 
 void pin_mode(struct pin *pin, uint8_t mode) {

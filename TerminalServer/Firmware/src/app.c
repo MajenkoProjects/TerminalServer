@@ -1,31 +1,9 @@
-/*******************************************************************************
-  MPLAB Harmony Application Source File
-
-  Company:
-    Microchip Technology Inc.
-
-  File Name:
-    app.c
-
-  Summary:
-    This file contains the source code for the MPLAB Harmony application.
-
-  Description:
-    This file contains the source code for the MPLAB Harmony application.  It
-    implements the logic of the application's state machine and it may call
-    API routines of other MPLAB Harmony modules in the system, such as drivers,
-    system services, and middleware.  However, it does not call any of the
-    system interfaces (such as the "Initialize" and "Tasks" functions) of any of
-    the modules in the system or make any assumptions about when those functions
-    are called.  That is the responsibility of the configuration-specific system
-    files.
- *******************************************************************************/
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Included Files
-// *****************************************************************************
-// *****************************************************************************
+#include <string.h>
+#include <fcntl.h>
+#include <stdio.h>
+//#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
 
 #include "app.h"
 #include "usb.h"
@@ -34,164 +12,135 @@
 #include "leds.h"
 #include "pin.h"
 #include "uart.h"
+#include "command.h"
+#include "telnet_in.h"
+#include "settings.h"
+#include "session.h"
+#include "network.h"
 
-// *****************************************************************************
-// *****************************************************************************
-// Section: Global Data Definitions
-// *****************************************************************************
-// *****************************************************************************
-
-// *****************************************************************************
-/* Application Data
-
-  Summary:
-    Holds application data
-
-  Description:
-    This structure holds the application's data.
-
-  Remarks:
-    This structure should be initialized by the APP_Initialize function.
-
-    Application strings and buffers are be defined outside this structure.
-*/
+extern      ssize_t write(int fildes, const void *buf, size_t nbyte);
+extern      int close(int fildes);
 
 APP_DATA appData;
 
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Callback Functions
-// *****************************************************************************
-// *****************************************************************************
+void input_username(struct port *port) {
+    
+    char *username = strtok(port->command, " \t");
+    if (!username) {        
+        return;
+    }
+    if (strlen(username) == 0) {
+        return;        
+    }
+    memset(port->username, 0, 9);
+    int l = strlen(port->command);
+    if (l > 8) l = 8;
+    memcpy(port->username, port->command, l);
+    port->mode = MODE_LOCAL;
+}
 
-/* TODO:  Add any necessary callback functions.
-*/
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Local Functions
-// *****************************************************************************
-// *****************************************************************************
-
-
-/* TODO:  Add any necessary local functions.
-*/
-
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Initialization and State Machine Functions
-// *****************************************************************************
-// *****************************************************************************
-
-/*******************************************************************************
-  Function:
-    void APP_Initialize ( void )
-
-  Remarks:
-    See prototype in app.h.
- */
-
-void APP_Initialize ( void )
-{
-    init_leds();
-    /* Place the App state machine in its initial state. */
+void APP_Initialize ( void ) {
     appData.state = APP_STATE_INIT;
-
-    USB_Initialize();
-    uart_boot();
-
-    /* TODO: Initialize your application's state machine and other
-     * parameters.
-     */
 }
 
-
-/******************************************************************************
-  Function:
-    void APP_Tasks ( void )
-
-  Remarks:
-    See prototype in app.h.
- */
-
-static int count = 0;
-
-void APP_Tasks ( void )
-{
-
-    /* Check the application's current state. */
-    switch ( appData.state )
-    {
-        /* Application's initial state. */
-        case APP_STATE_INIT:
-        {
-            bool appInitialized = true;
-
-            if (appInitialized)
-            {
-
-                appData.state = APP_STATE_SERVICE_TASKS;
-            }
+void APP_Tasks ( void ) {    
+    switch ( appData.state ) {
+        case APP_STATE_INIT:        
+            system_init_defaults();
+            uart_create_ports();
+            usb_create_ports();
+            ethernet_init_defaults();
+            appData.state = APP_STATE_LOAD_SETTINGS;
             break;
-        }
-
+        case APP_STATE_LOAD_SETTINGS:
+            load_settings(); 
+            appData.state = APP_STATE_INIT_UARTS;
+            break;
+        case APP_STATE_INIT_UARTS:
+            uart_boot();
+            port_printf(CONSOLE, "\x0c\n\nMajenko Technologies Terminal Server V" VERSION "\r\n");
+            port_printf(CONSOLE, "(c) 2026 Majenko Technologies, All Rights Reserved\r\n");
+            port_printf(CONSOLE, "\r\n\n\n");
+            appData.state = APP_STATE_INIT_USB;
+            break;
+        case APP_STATE_INIT_USB:
+            USB_Initialize();
+            appData.state = APP_STATE_INIT_ETHERNET;
+            break;
+        case APP_STATE_INIT_ETHERNET:
+            ethernet_boot();
+            telnet_in_initialize();
+            port_printf(CONSOLE, "\nSystem initialized. Press <RETURN> to activate console.\r\n\n");
+            appData.state = APP_STATE_SERVICE_TASKS;
+            break;
         case APP_STATE_SERVICE_TASKS:
-        {
-
-            break;
-        }
-
-        /* TODO: implement your application state machine.*/
-
-
-        /* The default state should never be executed. */
-        default:
-        {
-            /* TODO: Handle error in application's state machine. */
-            break;
-        }
-    }
-
- /*
-
-    if (port_available(ports)>0) {
-        port_write_byte(ports, port_read_byte(ports));
-    }
-*/
-    
-//    uart_boot();
-  /*  
-    char temp[100];
-    sprintf(temp, "Spoons %d\r\n", count++);
-    
-    while (UART6_WriteFreeBufferCountGet() < strlen(temp)) {
-        vTaskDelay(1);
-    }
-    
-    UART6_Write(temp, strlen(temp));
-    
-    //vTaskDelay(1000);
-   */ 
-    //return;
-
-//vTaskDelay(1000);
-//port_printf(&ports[1], "Tick %d\r\n", count);
-//count++;
-
-    //port_write_byte(ports, 'X');
-    for (int i = 0; i < MAX_PORTS; i++) {
-        if (ports[i].type != PORT_NONE) {
-            if (port_available(&ports[i])) {
-               int c = port_read_byte(&ports[i]);
-      //         port_printf(&ports[1], "[%d]", c);
-               command_process(&ports[i], c);
+            for (struct port *scan = ports; scan; scan = scan->next) {
+                if (scan->type != PORT_NONE) {
+                    switch (scan->mode) {
+                        case MODE_IDLE:
+                            if (scan->access == ACCESS_LOCAL) {
+                                if (scan->type == PORT_SERIAL) {
+                                    if (port_available(scan)) {
+                                        int c = port_read_byte(scan);
+                                        if (c == 13) {
+                                            scan->mode = MODE_GREET;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case MODE_PREGREET:
+                            if (scan->ticks == 0) {
+                                scan->ticks = xTaskGetTickCount();
+                            } else if (xTaskGetTickCount() - scan->ticks > 1000) {
+                                scan->ticks = 0;
+                                scan->mode = MODE_GREET;
+                            }
+                            break;
+                        case MODE_GREET:
+                            if (scan->access == ACCESS_LOCAL) {
+                                greet(scan);
+                            }
+                            break;
+                        case MODE_USERNAME:
+                            if (scan->access == ACCESS_LOCAL) {
+                                if (port_available(scan)) {
+                                    int c = port_read_byte(scan);
+                                    command_process(scan, c, &input_username);
+                                }
+                            }
+                            break;
+                        case MODE_LOCAL:
+                            if (scan->access == ACCESS_LOCAL) {
+                                if (port_available(scan)) {
+                                    int c = port_read_byte(scan);
+                                    command_process(scan, c, &command_execute);
+                                }
+                            }
+                            break;
+                        case MODE_SESSION:
+                            if (scan->active_session) {
+                                if (port_available(scan) && (cb_free(&scan->active_session->target->write_buffer))) {
+                                    int c = port_read_byte(scan);
+                                    port_write_byte(scan->active_session->target, c);
+                                }
+                                if (port_available(scan->active_session->target) && cb_free(&scan->write_buffer)) {
+                                    int c = port_read_byte(scan->active_session->target);
+                                    port_write_byte(scan, c);               
+                                }
+                            }
+                            break;
+ 
+                        default:
+                            break;
+                    }
+                }
             }
-        }
+            break;
+       
+        default:
+            break;
     }
+
 }
 
-
-/*******************************************************************************
- End of File
- */

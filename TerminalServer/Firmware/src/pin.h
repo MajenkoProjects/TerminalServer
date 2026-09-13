@@ -14,7 +14,9 @@ struct pin {
 };
 
 enum pinname {
-    U1TXLED = 0,
+    U1TX = 0,
+    U1RX,
+    U1TXLED,
     U1RXLED,
     U1CTS,
     U1RTS,
@@ -22,7 +24,9 @@ enum pinname {
     U1DSR,
     U1STATUS,
     U1SHTDN,
-    
+
+    U2TX,
+    U2RX,
     U2TXLED,
     U2RXLED,
     U2CTS,
@@ -32,6 +36,8 @@ enum pinname {
     U2STATUS,
     U2SHTDN,
     
+    U3TX,
+    U3RX,
     U3TXLED,
     U3RXLED,
     U3CTS,
@@ -41,6 +47,8 @@ enum pinname {
     U3STATUS,
     U3SHTDN,
     
+    U4TX,
+    U4RX,
     U4TXLED,
     U4RXLED,
     U4CTS,
@@ -50,6 +58,8 @@ enum pinname {
     U4STATUS,
     U4SHTDN,
     
+    U5TX,
+    U5RX,
     U5TXLED,
     U5RXLED,
     U5CTS,
@@ -59,6 +69,8 @@ enum pinname {
     U5STATUS,
     U5SHTDN,
     
+    U6TX,
+    U6RX,
     U6TXLED,
     U6RXLED,
     U6CTS,
@@ -67,6 +79,8 @@ enum pinname {
     U6DSR,
     U6STATUS,
     U6SHTDN,
+    
+    ENC_RESET,
     
 };
 

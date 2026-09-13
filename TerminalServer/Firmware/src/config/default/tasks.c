@@ -60,15 +60,6 @@
 // Section: RTOS "Tasks" Routine
 // *****************************************************************************
 // *****************************************************************************
-static void lDRV_SDSPI_0_Tasks(  void *pvParameters  )
-{
-    while(true)
-    {
-        DRV_SDSPI_Tasks(sysObj.drvSDSPI0);
-        vTaskDelay(10U / portTICK_PERIOD_MS);
-    }
-}
-
 static void F_USB_DEVICE_Tasks(  void *pvParameters  )
 {
     while(true)
@@ -78,17 +69,6 @@ static void F_USB_DEVICE_Tasks(  void *pvParameters  )
         vTaskDelay(10U / portTICK_PERIOD_MS);
     }
 }
-
-
-static void lSYS_FS_Tasks(  void *pvParameters  )
-{
-    while(true)
-    {
-        SYS_FS_Tasks();
-        vTaskDelay(10U / portTICK_PERIOD_MS);
-    }
-}
-
 
 
 
@@ -102,6 +82,26 @@ static void lAPP_Tasks(  void *pvParameters  )
     while(true)
     {
         APP_Tasks();
+    }
+}
+
+
+void _TCPIP_STACK_Task(  void *pvParameters  )
+{
+    while(1)
+    {
+        TCPIP_STACK_Task(sysObj.tcpip);
+        vTaskDelay(1 / portTICK_PERIOD_MS);
+    }
+}
+
+
+void _NET_PRES_Tasks(  void *pvParameters  )
+{
+    while(1)
+    {
+        NET_PRES_Tasks(sysObj.netPres);
+        vTaskDelay(1 / portTICK_PERIOD_MS);
     }
 }
 
@@ -125,26 +125,9 @@ void SYS_Tasks ( void )
 {
     /* Maintain system services */
     
-    (void) xTaskCreate( lSYS_FS_Tasks,
-        "SYS_FS_TASKS",
-        SYS_FS_STACK_SIZE,
-        (void*)NULL,
-        SYS_FS_PRIORITY ,
-        (TaskHandle_t*)NULL
-    );
-
-
 
     /* Maintain Device Drivers */
-        (void) xTaskCreate( lDRV_SDSPI_0_Tasks,
-        "DRV_SD_0_TASKS",
-        DRV_SDSPI_STACK_SIZE_IDX0,
-        (void*)NULL,
-        DRV_SDSPI_PRIORITY_IDX0 ,
-        (TaskHandle_t*)NULL
-    );
-
-
+    
 
     /* Maintain Middleware & Other Libraries */
         /* Create OS Thread for USB_DEVICE_Tasks. */
@@ -158,6 +141,26 @@ void SYS_Tasks ( void )
 
 
 
+    xTaskCreate( _TCPIP_STACK_Task,
+        "TCPIP_STACK_Tasks",
+        TCPIP_RTOS_STACK_SIZE,
+        (void*)NULL,
+        TCPIP_RTOS_PRIORITY,
+        (TaskHandle_t*)NULL
+    );
+
+
+
+    xTaskCreate( _NET_PRES_Tasks,
+        "NET_PRES_Tasks",
+        NET_PRES_RTOS_STACK_SIZE,
+        (void*)NULL,
+        NET_PRES_RTOS_TASK_PRIORITY,
+        (TaskHandle_t*)NULL
+    );
+
+
+
 
     /* Maintain the application's state machine. */
     
@@ -165,7 +168,7 @@ void SYS_Tasks ( void )
     (void) xTaskCreate(
            (TaskFunction_t) lAPP_Tasks,
            "APP_Tasks",
-           1024,
+           2048,
            NULL,
            1U ,
            &xAPP_Tasks);

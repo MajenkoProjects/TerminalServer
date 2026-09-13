@@ -56,7 +56,7 @@ static volatile SPI_OBJECT spi1Obj;
 #define SPI1_CON_CKE                        (1UL << _SPI1CON_CKE_POSITION)
 #define SPI1_CON_MODE_32_MODE_16            (0UL << _SPI1CON_MODE16_POSITION)
 #define SPI1_CON_ENHBUF                     (1UL << _SPI1CON_ENHBUF_POSITION)
-#define SPI1_CON_MSSEN                      (0UL << _SPI1CON_MSSEN_POSITION)
+#define SPI1_CON_MSSEN                      (1UL << _SPI1CON_MSSEN_POSITION)
 #define SPI1_CON_SMP                        (0UL << _SPI1CON_SMP_POSITION)
 
 void SPI1_Initialize ( void )
@@ -81,7 +81,7 @@ void SPI1_Initialize ( void )
     IFS0CLR = 0x2000000;
 
     /* BAUD Rate register Setup */
-    SPI1BRG = 39;
+    SPI1BRG = 3;
 
     /* CLear the Overflow */
     SPI1STATCLR = _SPI1STAT_SPIROV_MASK;
@@ -92,7 +92,7 @@ void SPI1_Initialize ( void )
     CKE = 1
     MODE<32,16> = 0
     ENHBUF = 1
-    MSSEN = 0
+    MSSEN = 1
     */
     SPI1CONSET = (SPI1_CON_MSSEN | SPI1_CON_ENHBUF | SPI1_CON_MODE_32_MODE_16 | SPI1_CON_CKE | SPI1_CON_CKP | SPI1_CON_MSTEN | SPI1_CON_SMP);
 

@@ -16,7 +16,6 @@ enum usb_state usb_sm_state = USB_STATE_INIT;
 
 TaskHandle_t usb_tasks_handle;
 
-
 USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX index, USB_DEVICE_CDC_EVENT event, void* pData, uintptr_t userData) {
 
     USB_CDC_CONTROL_LINE_STATE * controlLineStateData;
@@ -38,6 +37,11 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
         case USB_DEVICE_CDC_EVENT_SET_CONTROL_LINE_STATE:
             controlLineStateData = (USB_CDC_CONTROL_LINE_STATE *)pData;
             usb_data[index].controlLineStateData.dtr = controlLineStateData->dtr;
+            if (usb_data[index].controlLineStateData.carrier != controlLineStateData->carrier) {
+                if (controlLineStateData->carrier == 1) {
+                    usb_ports[index]->mode = MODE_GREET;
+                }
+            }
             usb_data[index].controlLineStateData.carrier = controlLineStateData->carrier;
             USB_DEVICE_ControlStatus(USBDeviceHandle, USB_DEVICE_CONTROL_STATUS_OK);
             break;
@@ -56,6 +60,7 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
                 usb_data[index].read_data_length = 0;                
             }
             usb_data[index].read_complete = true;
+            usb_data[index].read_data_pos = 0;
             break;
 
         case USB_DEVICE_CDC_EVENT_CONTROL_TRANSFER_DATA_RECEIVED:
@@ -66,8 +71,7 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
             break;
 
         case USB_DEVICE_CDC_EVENT_WRITE_COMPLETE:
-            usb_data[index].write_running = false;
-            
+            xSemaphoreTakeFromISR(usb_data[index].write_running, NULL);
             // If anything is in output CB then queue it here
             break;
 
@@ -190,57 +194,62 @@ static void USB_Tasks(void *pvParameters) {
             default:
                 break;
         }
-#if 1  
         
-        if (usb_data[0].write_running) {
-        } else {
-        }
-        if (usb_data[0].read_complete) {
-        } else {
-        }
+
         if (usb_is_configured) {
 
             for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
-                taskENTER_CRITICAL();
-                if (usb_data[i].write_running == false) {
+                if (uxSemaphoreGetCount(usb_data[i].write_running) == 0) {
                     int a = cb_available(&usb_ports[i]->write_buffer);
+                    if (a > USB_BUFFER_SIZE) a = USB_BUFFER_SIZE;
                     if (a > 0) {
                         for (int j = 0; j < a; j++) {
                             usb_data[i].write_buffer[j] = cb_read(&usb_ports[i]->write_buffer);
                         }
+                        xSemaphoreGive(usb_data[i].write_running);
                         USB_DEVICE_CDC_Write(i, 
                             &usb_data[i].writeTransferHandle, 
                             usb_data[i].write_buffer, 
                             a, 
                             USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
-                        usb_data[i].write_running = true;
                     }
                 }
-                taskEXIT_CRITICAL();
                 if (usb_data[i].read_complete == true) {
-                    usb_data[i].read_complete = false;
-                    for (int j = 0; j < usb_data[i].read_data_length; j++) {
-                        cb_write(&usb_ports[i]->read_buffer, usb_data[i].read_buffer[j]);
+                    if (usb_data[i].read_data_pos >= usb_data[i].read_data_length) {
+                        usb_data[i].read_complete = false;
+                        usb_data[i].read_data_pos = 0;
+                        USB_DEVICE_CDC_Read(i,
+                            &usb_data[i].readTransferHandle,
+                            usb_data[i].read_buffer, USB_BUFFER_SIZE);                
+                    } else {
+                        //debugf("%d / %d\r\n", usb_data[i].read_data_pos, usb_data[i].read_data_length);
+                        while (cb_free(&usb_ports[i]->read_buffer) && (usb_data[i].read_data_pos < usb_data[i].read_data_length)) {
+                            cb_write(&usb_ports[i]->read_buffer, usb_data[i].read_buffer[usb_data[i].read_data_pos++]);
+                        }
                     }
-                    USB_DEVICE_CDC_Read(i,
-                        &usb_data[i].readTransferHandle,
-                        usb_data[i].read_buffer, USB_BUFFER_SIZE);
                 }
-}        }
+            }        
+        }
     
-#endif
     }
+}
+
+void usb_create_ports() {
+    for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
+        usb_ports[i] = add_port(PORT_CDC, &usb_data[i]);
+        usb_data[i].write_running = xSemaphoreCreateBinary();
+        usb_data[i].read_complete = false;
+    }    
 }
 
 
 void USB_Initialize() {
-    for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
-        usb_ports[i] = add_port(PORT_CDC, &usb_data[i]);
-        usb_data[i].write_running = false;
-        usb_data[i].read_complete = false;
-    }
     usb_sm_state = USB_STATE_INIT;
-
+    if (USB_DEVICE_CDC_INSTANCES_NUMBER != 1) {
+        port_printf(CONSOLE, "%d USB CDC/ACM ports initialized\r\n", USB_DEVICE_CDC_INSTANCES_NUMBER);
+    } else {
+        port_printf(CONSOLE, "%d USB CDC/ACM port initialized\r\n", USB_DEVICE_CDC_INSTANCES_NUMBER);        
+    }
     /* Create OS Thread for APP_Tasks. */
     (void) xTaskCreate(
            (TaskFunction_t) USB_Tasks,
@@ -259,7 +268,7 @@ void test_write() {
     taskENTER_CRITICAL();
     if (USB_DEVICE_CDC_Write(
             0, &usb_data[0].writeTransferHandle, usb_data[0].write_buffer, strlen((char *)usb_data[0].write_buffer), USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE) == USB_DEVICE_CDC_RESULT_OK) {
-        usb_data[0].write_running = true;
+        //usb_data[0].write_running = true;
     } else {
     }
     taskEXIT_CRITICAL();
@@ -269,5 +278,13 @@ void test_write() {
 void fail_write() {
     sprintf((char *)usb_data[0].write_buffer, "Failed\r\n");
     USB_DEVICE_CDC_Write(0, &usb_data[0].writeTransferHandle, usb_data[0].write_buffer, 8, USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
-    usb_data[0].write_running = true;
+    //usb_data[0].write_running = true;
+}
+
+void usb_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {
+}
+
+void usb_set_name(struct port *port, const char *name) {
+    snprintf(port->name, 9, name);
+    port->name[8] = 0;
 }

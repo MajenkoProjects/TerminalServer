@@ -62,6 +62,7 @@
 
 
 /* All the handlers are defined here.  Each will call its PLIB-specific function. */
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: System Interrupt Vector declarations
@@ -72,6 +73,9 @@ void SPI_1_Handler (void);
 void UART_1_Handler (void);
 void UART_3_Handler (void);
 void UART_2_Handler (void);
+void I2C_2_Handler (void);
+void DMA_0_Handler (void);
+void DMA_1_Handler (void);
 void USB_1_Handler (void);
 void UART_4_Handler (void);
 void UART_6_Handler (void);
@@ -110,6 +114,21 @@ void __attribute__((used)) UART_2_Handler (void)
     UART_2_InterruptHandler();
 }
 
+void __attribute__((used)) I2C_2_Handler (void)
+{
+    I2C_2_InterruptHandler();
+}
+
+void __attribute__((used)) DMA_0_Handler (void)
+{
+    DMA_0_InterruptHandler();
+}
+
+void __attribute__((used)) DMA_1_Handler (void)
+{
+    DMA_1_InterruptHandler();
+}
+
 void __attribute__((used)) USB_1_Handler (void)
 {
     DRV_USBFS_USB_Handler();
@@ -129,7 +148,6 @@ void __attribute__((used)) UART_5_Handler (void)
 {
     UART_5_InterruptHandler();
 }
-
 
 
 
