@@ -85,14 +85,13 @@ TaskHandle_t telnet_in_thread_handle;
 
 static void telnet_in_close_port(struct port *port) {
     struct telnet_in_data *data = (struct telnet_in_data *)port->port_data;
-    closesocket(data->fd);
-    free(port->port_data);
-    delete_port(port);
+    vTaskDelay(100);
+    data->queue_close = true;
 }
 
 static void telnet_in_thread(void *args) {
 
-    vTaskDelay(1000);
+  //  vTaskDelay(1000);
     struct sockaddr_in sa;
     telnet_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (telnet_fd < 0) {
@@ -117,10 +116,16 @@ static void telnet_in_thread(void *args) {
             if (scan->type == PORT_TELNET_IN) {
                 struct telnet_in_data *data = (struct telnet_in_data *)scan->port_data;
 
-                if (NET_PRES_SocketWasDisconnected(TCPIP_BSD_PresSocket(data->fd))) {
-                    close_port(scan);
+                if (data->queue_close) {
+                    closesocket(data->fd);
                     delete_port(scan);
-                } else {
+                    continue;
+                }
+ //               if (NET_PRES_SocketWasDisconnected(TCPIP_BSD_PresSocket(data->fd))) {
+  //                  port_printf(CONSOLE, "Close 3\r\n");
+        //            close_port(scan);
+//                    delete_port(scan);
+   //             } else {
 
                     if (cb_free(&(scan->read_buffer)) > 0) {
                         uint8_t b;
@@ -262,6 +267,13 @@ static void telnet_in_thread(void *args) {
                                         }
                                 }
                             }
+                        } else {
+                            if (errno != EWOULDBLOCK) {
+                                closesocket(data->fd);
+                                close_port(scan);
+                                delete_port(scan);
+                                continue;
+                            }
                         }
                     }
 
@@ -275,6 +287,14 @@ static void telnet_in_thread(void *args) {
                         int count = 0;
                         while (num > 0) {
                             int sent = send(data->fd, &tmp[count], num, 0);
+                            if (sent != num) {
+                                if (errno != EWOULDBLOCK) {
+                                    closesocket(data->fd);
+                                    delete_port(scan);
+                                    close_port(scan);
+                                    break;
+                                }
+                            }
                             if (sent > 0) {
                                 count += sent;
                                 num -= sent;
@@ -282,8 +302,9 @@ static void telnet_in_thread(void *args) {
                         }
 //                        vTaskDelay(10);
                     }
-                }
+                //}
             }
+            
         }
         
         struct sockaddr_in isa;
@@ -298,10 +319,11 @@ static void telnet_in_thread(void *args) {
             struct port *p = add_port(PORT_TELNET_IN, td);
             p->mode = MODE_PREGREET;
             p->fn_close = &telnet_in_close_port;
+            p->fn_show_detail = &print_telnet_in_info;
             snprintf(p->name, 9, "Telnt%d", p->no);
             p->name[8] = 0;
             p->breakmode = BREAK_LOCAL;
-        }       
+        }   
     }
 }
 
@@ -317,10 +339,12 @@ void telnet_in_initialize() {
 
 void print_telnet_in_info(struct port *port, struct port *target) {
     struct telnet_in_data *data = (struct telnet_in_data *)target->port_data;
-    port_printf(port, "Remote address: %d.%d.%d.%d\r\n", 
+    char ip[16];
+    snprintf(ip, 16, "%d.%d.%d.%d\r\n", 
             data->sin.sin_addr.S_un.S_un_b.s_b1,
             data->sin.sin_addr.S_un.S_un_b.s_b2,
             data->sin.sin_addr.S_un.S_un_b.s_b3,
             data->sin.sin_addr.S_un.S_un_b.s_b4
             );
+    port_printf(port, "   Remote Address:  %15s\r\n", ip);
 }

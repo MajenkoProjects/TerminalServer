@@ -17,6 +17,7 @@
 #include "settings.h"
 #include "session.h"
 #include "network.h"
+#include "telnet_out.h"
 
 extern      ssize_t write(int fildes, const void *buf, size_t nbyte);
 extern      int close(int fildes);
@@ -25,7 +26,7 @@ APP_DATA appData;
 
 void input_username(struct port *port) {
     
-    char *username = strtok(port->command, " \t");
+    char *username = strtok(port->commands[port->cmdno], " \t");
     if (!username) {        
         return;
     }
@@ -33,17 +34,30 @@ void input_username(struct port *port) {
         return;        
     }
     memset(port->username, 0, 9);
-    int l = strlen(port->command);
+    int l = strlen(port->commands[port->cmdno]);
     if (l > 8) l = 8;
-    memcpy(port->username, port->command, l);
+    memcpy(port->username, port->commands[port->cmdno], l);
     port->mode = MODE_LOCAL;
 }
 
 void APP_Initialize ( void ) {
     appData.state = APP_STATE_INIT;
+    pin_mode(&pins[U1TXLED], PIN_OUTPUT);
 }
 
+//uint32_t ts = 0;
+//int v = 0;
 void APP_Tasks ( void ) {    
+/*
+    if ((xTaskGetTickCount() - ts) > 500) {
+        v = 1 - v;
+        pin_set(&pins[U1TXLED], v);
+        ts = xTaskGetTickCount();
+    }
+*/
+
+
+
     switch ( appData.state ) {
         case APP_STATE_INIT:        
             system_init_defaults();
@@ -70,10 +84,11 @@ void APP_Tasks ( void ) {
         case APP_STATE_INIT_ETHERNET:
             ethernet_boot();
             telnet_in_initialize();
+            telnet_out_initialize();
             port_printf(CONSOLE, "\nSystem initialized. Press <RETURN> to activate console.\r\n\n");
             appData.state = APP_STATE_SERVICE_TASKS;
             break;
-        case APP_STATE_SERVICE_TASKS:
+        case APP_STATE_SERVICE_TASKS: 
             for (struct port *scan = ports; scan; scan = scan->next) {
                 if (scan->type != PORT_NONE) {
                     switch (scan->mode) {
@@ -89,7 +104,7 @@ void APP_Tasks ( void ) {
                                 }
                             }
                             break;
-                        case MODE_PREGREET:
+                        case MODE_PREGREET: 
                             if (scan->ticks == 0) {
                                 scan->ticks = xTaskGetTickCount();
                             } else if (xTaskGetTickCount() - scan->ticks > 1000) {

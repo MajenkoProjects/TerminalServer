@@ -5,8 +5,10 @@
 #include "errors.h"
 #include "command.h"
 #include "cbuff.h"
+#include "ttype.h"
 
-#define MAX_COMMAND         128
+#define MAX_COMMAND         80
+#define NUM_HISTORY         4
 
 #define PORT_MAX_NAME       8
 
@@ -35,6 +37,7 @@ enum port_type {
     PORT_NET_IN,
     PORT_NET_OUT,
     PORT_TELNET_IN,
+    PORT_TELNET_OUT,
 };
 
 enum access_mode {
@@ -51,17 +54,16 @@ enum break_mode {
 
 #define LOCAL_SWITCH_NONE -1
 
-
 struct port {
     struct port *next;
     enum port_type type;
     enum port_mode mode;
-    struct port *remote_port;
     struct circular_buffer read_buffer;
     struct circular_buffer write_buffer;       
     void *port_data;
-    char command[MAX_COMMAND];
-    int command_len;
+    char commands[NUM_HISTORY][MAX_COMMAND];
+    int cmdno;
+    int cpos;
     int no;
     char name[9];
     char username[9];
@@ -77,6 +79,9 @@ struct port {
     uint16_t lines;
     uint32_t ticks;
     char ttype[17];
+    const struct ttype *tinfo;
+    char keybuf[9];
+    uint8_t keybuf_pos;
     struct session *active_session;
     void (*fn_stop)(struct port *);
     void (*fn_start)(struct port *);
@@ -95,6 +100,7 @@ extern int port_read_byte(struct port *port);
 extern int port_write_byte(struct port *port, uint8_t b);
 extern int port_available(struct port *port);
 extern int port_printf(struct port *port, const char *fmt, ...);
+extern int port_rprintf(struct port *port, const char *fmt, ...);
 extern void port_flush(struct port *port);
 extern struct port *get_port_by_number(int pno);
 extern struct port *get_port_by_name(const char *name);

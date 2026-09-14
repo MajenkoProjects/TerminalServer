@@ -13,6 +13,7 @@ struct telnet_in_data {
     uint8_t iac_sub[40];
     int iac_sub_pos;
     bool iac_sb_iac;
+    bool queue_close;
 };
 
 extern void telnet_in_initialize();

@@ -11,6 +11,8 @@
 #include "session.h"
 #include "util.h"
 #include "network.h"
+#include "ttype.h"
+#include "telnet_out.h"
 
 COMMAND(help) {
     port_printf(port, "%s", "Sorry, I haven't written the help tree parser yet.\r\n");
@@ -179,6 +181,7 @@ static const struct command commands[] = {
     {"SEND", NULL, 0, send_sub},
     {"SET", NULL, 0, set_sub},
     {"SHOW", NULL, 0, show_sub},
+    {"TELNET", &telnet, 0, NULL},
     {0, 0, 0, 0}
 };
 
@@ -296,7 +299,10 @@ void command_execute(struct port *port) {
     char *ptr = NULL;
     char *bit;
     
-    bit = strtok_r(port->command, " \t", &ptr);
+    char cmdline[MAX_COMMAND];
+    strcpy(cmdline, port->commands[port->cmdno]);
+    
+    bit = strtok_r(cmdline, " \t", &ptr);
     while (bit && (argc < MAX_ARGS)) {
         argv[argc++] = bit;
         bit = strtok_r(NULL, " \t", &ptr);
@@ -308,51 +314,164 @@ void command_execute(struct port *port) {
         port_printf(port, "%s\r\n", error_strings[ret]);
     }
 }
- 
+
+int fancy_read(struct port *port, char c, uint16_t *buf) {
+    port->keybuf[port->keybuf_pos++] = c;
+    port->keybuf[port->keybuf_pos] = 0;
+
+    if (port->keybuf_pos == 8) {
+        memcpy(buf, port->keybuf, 8);
+        port->keybuf_pos = 0;
+        port->keybuf[0] = 0;
+        return 8;
+    }
+    
+    int num_found = 0;
+    int exact = -1;
+    for (int i = 0; i < NUM_KEYS; i++) {
+        if (port->tinfo->keys[i]) {
+            if (strncmp(port->tinfo->keys[i], port->keybuf, port->keybuf_pos) == 0) {
+                num_found++;
+                if (strcmp(port->tinfo->keys[i], port->keybuf) == 0) {
+                    exact = i;
+                    break;
+                }
+            }
+        }
+    }
+    
+    if (num_found == 0) {
+        for (int i = 0; i < port->keybuf_pos; i++) {
+            buf[i] = port->keybuf[i];
+        }
+        int r = port->keybuf_pos;
+        port->keybuf_pos = 0;
+        port->keybuf[0] = 0;
+        return r;
+    }
+    
+    if (num_found > 1) {
+        return 0;
+    }
+    
+    if (exact == -1) {
+        return 0;
+    }
+    
+    buf[0] = SPECIAL_KEY | exact;
+    buf[1] = 0;
+    port->keybuf_pos = 0;
+    port->keybuf[0] = 0;    
+//    port_printf(port, "Special key %04x\r\n", buf[0]);
+    return 1;
+}
 
 int command_process(struct port *port, char c, void (*func)(struct port *)) {
-    switch (c) {
-        case 0:
-            break;
-        case '\n':
-            break;
-        case '\r':
-            port_write_byte(port, '\r');
-            port_write_byte(port, '\n');
-            if (port->command_len > 0) {
-                func(port);
-            }
-            
-            switch (port->mode) {
-                case MODE_LOCAL:
-                    port_printf(port, "Local>");
-                    break;
-                case MODE_USERNAME:
-                    port_printf(port, "Username> ");
-                    break;
-                default:
-                    break;
-            }
-            port->command_len = 0;
-            port->command[0] = 0;
-            break;
-        case 8:
-        case 127:
-            if (port->command_len > 0) {
-                port_write_byte(port, 8);
-                port_write_byte(port, ' ');
-                port_write_byte(port, 8);
-                port->command_len--;
-                port->command[port->command_len] = 0;
-            }
-            break;
-        default:
-            if (port->command_len < MAX_COMMAND-1) {
-                port->command[port->command_len++] = c;
-                port->command[port->command_len] = 0;
-                port_write_byte(port, c);
-            }
-            break;
+    
+    uint16_t buf[9];
+    
+    int len = fancy_read(port, c, buf);
+
+    for (int i = 0; i < len; i++) {
+        switch (buf[i]) {
+            case SPECIAL_KEY | KEY_RETURN:
+                port_write_byte(port, '\r');
+                port_write_byte(port, '\n');
+                
+                if (strlen(port->commands[port->cmdno]) > 0) {
+                    if (port->cmdno == 0) {
+                        for (int i = NUM_HISTORY-1; i > 0; i--) {
+                            strcpy(port->commands[i], port->commands[i-1]);
+
+                        }
+                    }
+                    func(port);
+                }
+
+                switch (port->mode) {
+                    case MODE_LOCAL:
+                        port_printf(port, "Local>");
+                        break;
+                    case MODE_USERNAME:
+                        port_printf(port, "Username> ");
+                        break;
+                    default:
+                        break;
+                }
+                port->cmdno = 0;
+                port->commands[0][0] = 0;
+                port->cpos = 0;
+                break;
+            case SPECIAL_KEY | KEY_BACKSPACE:
+                if (port->cpos > 0) {
+                    port->cpos--;
+                    
+                    for (int i = port->cpos; i <= strlen(port->commands[port->cmdno]); i++) {
+                        port->commands[port->cmdno][i] = port->commands[port->cmdno][i+1];
+                    }
+
+                    if (port->tinfo->delchar) {
+                        port_printf(port, port->tinfo->cleft);
+                        port_printf(port, port->tinfo->delchar);
+                    } else {
+                        port_printf(port, port->tinfo->cleft);
+                        port_printf(port, "%s ", &port->commands[port->cmdno][port->cpos]);
+                    }
+                }
+                break;
+            case SPECIAL_KEY | KEY_UP:
+                if (port->cmdno < NUM_HISTORY-1) {
+                    port->cmdno ++;
+                }
+                
+                if (port->tinfo->clreol) {
+                    port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                } else {
+                    port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
+                }
+                port->cpos = strlen(port->commands[port->cmdno]);
+                break;
+            case SPECIAL_KEY | KEY_DOWN:
+                if (port->cmdno > 0) {
+                    port->cmdno --;
+                }
+                
+                if (port->tinfo->clreol) {
+                    port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                } else {
+                    port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
+                }
+                port->cpos = strlen(port->commands[port->cmdno]);
+                break;
+            case SPECIAL_KEY | KEY_LEFT:
+                if (port->cpos > 0) {
+                    port->cpos--;
+                    port_printf(port, port->tinfo->cleft);
+                }
+                break;
+            case SPECIAL_KEY | KEY_RIGHT:
+                if (port->cpos < strlen(port->commands[port->cmdno])) {
+                    port->cpos++;
+                    port_printf(port, port->tinfo->cright);
+                }
+                break;
+            default:
+                if (!IS_SPECIAL(buf[i]) && (buf[i] >= ' ')) {
+                    if (strlen(port->commands[port->cmdno]) < MAX_COMMAND-1) {
+                        for (int i = strlen(port->commands[port->cmdno])+1; i > port->cpos; i--) {
+                            port->commands[port->cmdno][i] = port->commands[port->cmdno][i-1];
+                        }
+                        port->commands[port->cmdno][port->cpos++] = buf[i];
+//                        port->commands[port->cmdno].command[port->cpos] = 0;
+                        if (port->tinfo->inschar) {
+                            port_printf(port, "%s%c", port->tinfo->inschar, buf[i]);
+                        }
+                    }
+                } else if (IS_SPECIAL(buf[i])) {
+                    port_printf(port, "Special key %04x\r\n", buf[i]);
+                }
+                break;
+        }
     }
     return 0;
 }

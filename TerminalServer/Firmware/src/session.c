@@ -124,3 +124,16 @@ COMMAND(disconnect_session) {
     port_printf(port, "Disconnecting session %d\r\n", session->id);
     return ERR_OK;
 }
+
+
+void session_slave_close(struct port *port) {
+    for (struct session *scan = sessions; scan; scan = scan->next) {
+        if (scan->target == port) {
+            port_printf(scan->parent, "Connection closed\r\n");
+            scan->parent->active_session = NULL;
+            scan->parent->mode = MODE_LOCAL;
+            delete_session(scan);
+            return;
+        }
+    }
+}

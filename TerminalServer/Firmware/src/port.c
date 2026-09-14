@@ -20,7 +20,8 @@ const char *port_types[] = {
     "EIA-232",
     "Network In",
     "Network Out",
-    "Telnet Login"
+    "Telnet Login",
+    "Telnet Outbound",
 };
 
 const char *access_names[] = {
@@ -81,22 +82,25 @@ struct port *add_port(enum port_type type, void *data) {
     for (scan = ports; scan; scan = scan->next) {
         if (scan->type == PORT_NONE) {
             scan->type = type;
+            scan->mode = MODE_IDLE;
             scan->access = ACCESS_LOCAL;
             scan->local_switch = LOCAL_SWITCH_NONE;
-            scan->mode = MODE_IDLE;
+            scan->port_data = data;
             scan->low_water = 16;
-            scan->high_water = 48;
+            scan->high_water = CIRCULAR_BUFFER_SIZE - 16;
             scan->waterlevel = 0;
             snprintf(scan->name, 9, "Port_%d", scan->no);
             scan->name[8] = 0;
-            scan->port_data = data;
             scan->fn_stop = NULL;
             scan->fn_start = NULL;
             scan->fn_can_tx = NULL;
             scan->fn_close = NULL;
+            scan->fn_show_detail = NULL;
             scan->lines = 24;
             scan->columns = 80;
             strcpy(scan->ttype, "VT100");
+            scan->keybuf_pos = 0;
+            scan->tinfo = &vt102;
             return scan;
         }
     }
@@ -108,7 +112,6 @@ struct port *add_port(enum port_type type, void *data) {
     }
     memset(newport, 0, sizeof(struct port));
  
-    newport->type = type;
     newport->type = type;
     newport->mode = MODE_IDLE;
     newport->access = ACCESS_LOCAL;
@@ -123,10 +126,13 @@ struct port *add_port(enum port_type type, void *data) {
     newport->fn_start = NULL;
     newport->fn_can_tx = NULL;
     newport->fn_close = NULL;
+    newport->fn_show_detail = NULL;
     newport->lines = 24;
     newport->columns = 80;
+    newport->keybuf_pos = 0;
     strcpy(newport->ttype, "VT100");
-
+    newport->tinfo = &vt102;
+    
     int maxno = 0;    
     for (scan = ports; scan; scan = scan->next) {
         if (scan->no > maxno) {
@@ -154,10 +160,31 @@ struct port *add_port(enum port_type type, void *data) {
 }
 
 void delete_port(struct port *port) {
-    struct port *saved_next = port->next;
-    memset(port, 0, sizeof(struct port));
-    port->next = saved_next;
     port->type = PORT_NONE;
+    port->mode = MODE_IDLE;
+    port->read_buffer.head = 0;
+    port->read_buffer.tail = 0;
+    port->write_buffer.head = 0;
+    port->write_buffer.tail = 0;
+    if (port->port_data) free(port->port_data);
+    port->port_data = NULL;
+    port->cmdno = 0;
+    port->name[0] = 0;
+    port->username[0] = 0;
+    port->waterlevel = 0;
+    port->stopped = false;
+    port->local_switch = LOCAL_SWITCH_NONE;
+    port->breakmode = BREAK_DISABLED;
+    port->access = ACCESS_LOCAL;
+    port->columns = 80;
+    port->lines = 24;
+    port->ticks = 0;
+    port->active_session = NULL;
+    port->fn_stop = NULL;
+    port->fn_start = NULL;
+    port->fn_can_tx = NULL;
+    port->fn_close = NULL;
+    port->fn_show_detail = NULL;    
 }
 
 struct port *get_port_by_number(int num) {
@@ -206,10 +233,40 @@ int port_printf(struct port *port, const char *fmt, ...) {
 
     // Send it to the output buffer
     for (int i = 0; i < n; i++) {
-        while (cb_free(&port->write_buffer) == 0) {
+        while (cb_free(&port->write_buffer) < 3) {
             vTaskDelay(1);
         }
         cb_write(&port->write_buffer, str[i]);
+        count++;
+    }
+
+    return count;
+}
+
+
+int port_rprintf(struct port *port, const char *fmt, ...) {
+    va_list ap;
+    int count = 0;
+    
+    // Calculate the amount of space needed
+    va_start(ap, fmt);
+    int n = vsnprintf(NULL, 0, fmt, ap);
+    va_end(ap);
+    if (n < 0) return -1;
+
+    // Allocate that plus one byte on the stack
+    char *str = alloca(n + 1);
+    // Print it
+    va_start(ap, fmt);
+    vsnprintf(str, n+1, fmt, ap);
+    va_end(ap);
+
+    // Send it to the output buffer
+    for (int i = 0; i < n; i++) {
+        while (cb_free(&port->read_buffer) < 3) {
+            vTaskDelay(1);
+        }
+        cb_write(&port->read_buffer, str[i]);
         count++;
     }
 
@@ -353,7 +410,9 @@ COMMAND(show_port_status) {
 
 COMMAND(list_ports) {
     for (struct port *scan = ports; scan; scan = scan->next) {
-        port_printf(port, "%-2d | %-16s | %s\r\n", scan->no, port_types[scan->type], scan->name);
+        if (scan->type != PORT_NONE) {
+            port_printf(port, "%-2d | %-16s | %s\r\n", scan->no, port_types[scan->type], scan->name);
+        }
     }
     return ERR_OK;
 }

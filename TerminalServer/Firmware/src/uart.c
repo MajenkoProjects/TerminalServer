@@ -31,6 +31,7 @@ const char *parity_names[] = {
 TaskHandle_t uart_tasks_handle;
 
 void uart_stop(struct port *port) {
+    port_printf(CONSOLE, "STOP\r\n");
     struct uart_data *data = (struct uart_data *)port->port_data;
     uint8_t c;
     switch (data->flow) {
@@ -50,6 +51,7 @@ void uart_stop(struct port *port) {
 }
 
 void uart_start(struct port *port) {
+    port_printf(CONSOLE, "START\r\n");
     struct uart_data *data = (struct uart_data *)port->port_data;
     uint8_t c;
     switch (data->flow) {
@@ -214,31 +216,47 @@ static void UART_Tasks(void *pvParameters) {
                 }
                 
 
-                if (cb_available(&(scan->write_buffer)) && scan->fn_can_tx(scan)) {
-                    if (data->fn_free() > 0) {
-                        pin_set(data->txled, 1);
-                        data->txled_ts = ts;
-                        uart_write_byte(data, cb_read(&(scan->write_buffer)));
+                int av = cb_available(&scan->write_buffer);
+                if ((av > 0) && scan->fn_can_tx(scan)) {
+                    int fr = data->fn_free();
+                    if (fr > 0) {                        
+                        if (av > fr) {
+                            av = fr;
+                        }
+                        uint8_t tmp[8];
+                        for (int i = 0; i < av; i++) {
+                            tmp[i] = cb_read(&scan->write_buffer);
+                        }
+                        data->fn_write(tmp, av);
                     }
                 }
-                if (data->fn_avail() > 0) {
-                    if (cb_free(&(scan->read_buffer)) > 0) {
+                
+                av = data->fn_avail();
+                if (av > 0) {
+                    
+                    int fr = cb_free(&scan->read_buffer);
+                    if (fr > 0) {
+                        if (av > fr) av = fr;
                         pin_set(data->rxled, 1);
                         data->rxled_ts = ts;
-                        uint8_t b;
-                        data->fn_read(&b, 1);
-                        
-                        if ((data->flow == UART_FLOW_XONXOFF) && (b == 17)) {
-                            data->paused = false;
-                        } else if ((data->flow == UART_FLOW_XONXOFF) && (b == 19)) {
-                            data->paused = true;
-                        } else {
-                            int lev1 = cb_available(&scan->read_buffer);
-                            cb_write(&(scan->read_buffer), b);
-                            int lev2 = cb_available(&scan->read_buffer);
-                            if ((!scan->stopped) && (lev1 < scan->high_water) && (lev2 >= scan->high_water)) {
-                                scan->fn_stop(scan);
-                                scan->stopped = true;
+
+                        uint8_t tmp[CIRCULAR_BUFFER_SIZE];
+                        data->fn_read(tmp, av);
+
+                        for (int i = 0; i < av; i++) {
+                            uint8_t b = tmp[i];
+                            if ((data->flow == UART_FLOW_XONXOFF) && (b == 17)) {
+                                data->paused = false;
+                            } else if ((data->flow == UART_FLOW_XONXOFF) && (b == 19)) {
+                                data->paused = true;
+                            } else {
+                                int lev1 = cb_available(&scan->read_buffer);
+                                cb_write(&(scan->read_buffer), b);
+                                int lev2 = cb_available(&scan->read_buffer);
+                                if ((!scan->stopped) && (lev1 < scan->high_water) && (lev2 >= scan->high_water)) {
+                                    scan->fn_stop(scan);
+                                    scan->stopped = true;
+                                }
                             }
                         }
                     }

@@ -11,17 +11,13 @@ int cb_available(struct circular_buffer *buf) {
 }
 
 int cb_free(struct circular_buffer *buf) {
+    int o = 0;
     if (xSemaphoreTake(buf->mutex, MUTEX_TICKS) == pdTRUE) {
-        size_t newhead = (buf->head + 1) % CIRCULAR_BUFFER_SIZE;
-        if (newhead != buf->tail) {
-            xSemaphoreGive(buf->mutex);
-            return 1;
-        } else {
-            xSemaphoreGive(buf->mutex);
-            return 0;
-        }
+        o = CIRCULAR_BUFFER_SIZE - ((CIRCULAR_BUFFER_SIZE + buf->head - buf->tail) % CIRCULAR_BUFFER_SIZE);
+        xSemaphoreGive(buf->mutex);
+        o -= 1;
     }
-    return 0;
+    return o;
 }
 
 // Add a new byte to the circular buffer. Returns 1 for a byte

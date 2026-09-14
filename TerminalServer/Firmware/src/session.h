@@ -28,5 +28,5 @@ extern COMMAND(show_sessions);
 extern COMMAND(resume_session);
 extern COMMAND(disconnect_session);
 extern struct session *get_session_by_number(int sid);
-
+extern void session_slave_close(struct port *);
 #endif
