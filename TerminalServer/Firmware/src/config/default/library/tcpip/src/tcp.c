@@ -5673,7 +5673,7 @@ static void F_TcpHandleSeg(TCB_STUB* pSkt, TCP_HEADER* h, uint16_t tcpLen, TCPIP
     // will throw them away instead
     if((localHeaderFlags & URG) != 0U)
     {
-        return;
+//        return;
     }
 
     //

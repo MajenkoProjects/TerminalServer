@@ -11,5 +11,6 @@ const char *error_strings[ERR_LAST_ERROR] = {
     "No active session",
     "Spaces not allowed",
     "Option too long",
-    "Invalid argument"
+    "Invalid argument",
+    "Command is privileged"
 };

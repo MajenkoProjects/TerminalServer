@@ -31,11 +31,11 @@ struct session *add_session(struct port *parent, struct port *target, enum sessi
         return new_session;
     }
 
-    uint32_t max_session = 0;
     struct session *scan = sessions;
+    uint32_t max_session = scan->id;
     while (scan->next) {
-        if (scan->id > max_session) {
-            max_session = scan->id;
+        if (scan->next->id > max_session) {
+            max_session = scan->next->id;
         }
         scan = scan->next;
     }
@@ -68,7 +68,7 @@ COMMAND(connect_local) {
     port->active_session = s;
     port->mode = MODE_SESSION;
     char tmp[20];
-    format_local_switch(port->local_switch, tmp);
+    format_local_switch(port->local_switch, tmp, 20);
     port_printf(port, "Local protocol emulation 1.0  - Local Switch: <%s>.\r\n", tmp);
     return ERR_OK;
 }
@@ -92,7 +92,16 @@ COMMAND(show_sessions) {
     }
     for (struct session *scan = sessions; scan; scan = scan->next) {
         if (scan->parent == target) {
-            port_printf(port, "     Session %2d  Local:%8s      Interactive   (Cr,Del)\r\n", scan->id, scan->target->name);
+            switch (scan->type) {
+                case SESSION_DIRECT:
+                    port_printf(port, "     Session %2d  Local:%8s      Interactive   (Cr,Del)\r\n", scan->id, scan->target->name);
+                    break;
+                case SESSION_CLOSING:
+                    port_printf(port, "     Session %2d  Local:%8s      Closing       (Cr,Del)\r\n", scan->id, scan->target->name);
+                    break;
+                default:
+                    break;
+            }
         }
     }
     return ERR_OK;
@@ -129,9 +138,12 @@ COMMAND(disconnect_session) {
 void session_slave_close(struct port *port) {
     for (struct session *scan = sessions; scan; scan = scan->next) {
         if (scan->target == port) {
-            port_printf(scan->parent, "Connection closed\r\n");
-            scan->parent->active_session = NULL;
+            //port_printf(CONSOLE, "Found session to kill\r\n");
             scan->parent->mode = MODE_LOCAL;
+//            port_printf(scan->parent, "Connection closed\r\n");
+            //port_flush(scan->target);
+            //port_flush(scan->parent);
+            scan->parent->active_session = NULL;
             delete_session(scan);
             return;
         }

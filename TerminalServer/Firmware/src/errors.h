@@ -13,6 +13,7 @@ typedef enum error {
     ERR_SPACES,
     ERR_TOOLONG,
     ERR_INVALID,
+    ERR_PRIV,
     ERR_LAST_ERROR
 } error_t;
 

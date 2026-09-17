@@ -42,6 +42,11 @@ void system_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8
             if (length > 32) length = 32;
             strncpy(system_settings.nodename, (char *)data, length);
             break;
+        case SETTINGS_SYSTEM_DOMAIN:
+            memset(system_settings.domain, 0, 64);
+            if (length > 63) length = 63;
+            strncpy(system_settings.domain, (char *)data, length);
+            break;
     }
 }
 
@@ -212,11 +217,14 @@ void settings_dump(struct port *port) {
 }
 
 void system_init_defaults() {
-    strcpy(system_settings.nodename, "muppet");
+    sprintf(system_settings.nodename, "ts-%02x%02x", (DEVCFG3bits.USERID >> 8) & 0xFF, DEVCFG3bits.USERID & 0xFF);
+    strcpy(system_settings.domain, "local");
+    strcpy(system_settings.password, "system");
 }
 
 void print_system_settings(struct port *port) {
     port_printf(port, "Server Name:    %s\r\n", system_settings.nodename);
+    port_printf(port, "Domain Name:    %s\r\n", system_settings.domain);
 }
 
 COMMAND(system_define_name) {
@@ -233,5 +241,29 @@ COMMAND(system_define_name) {
     }
     
     setting_set(MODULE_SYSTEM, SETTINGS_SYSTEM_NAME, 0, strlen(argv[0]), (uint8_t *)argv[0]);
+    return ERR_OK;
+}
+
+COMMAND(system_define_domain) {
+    if (argc == 0) {
+        return ERR_INCOMPLETE;
+    }
+    
+    if (argc > 1) {
+        return ERR_SPACES;
+    }
+    
+    if (strlen(argv[0]) > 63) {
+        return ERR_TOOLONG;
+    }
+    
+    setting_set(MODULE_SYSTEM, SETTINGS_SYSTEM_DOMAIN, 0, strlen(argv[0]), (uint8_t *)argv[0]);
+    return ERR_OK;
+}
+
+COMMAND(system_factory_reset) {
+    port_printf(port, "Erasing NVRAM and rebooting. Please wait.\r\n");
+    settings_erase();
+    SYS_RESET_SoftwareReset();
     return ERR_OK;
 }

@@ -35,6 +35,7 @@
 #define SETTINGS_TYPE_STRING        0x04
 
 #define SETTINGS_SYSTEM_NAME        0x01
+#define SETTINGS_SYSTEM_DOMAIN      0x02
 
 
 #define SETTINGS_WIFI_IP            0x01
@@ -62,6 +63,8 @@ struct setting {
 
 struct system_settings {
     char nodename[33];
+    char domain[64];
+    char password[32];
 };
 
 extern void load_settings();
@@ -74,5 +77,7 @@ extern void system_init_defaults();
 extern struct system_settings system_settings;
 
 extern COMMAND(system_define_name);
+extern COMMAND(system_define_domain);
+extern COMMAND(system_factory_reset);
 
 #endif

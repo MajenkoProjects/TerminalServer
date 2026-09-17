@@ -17,6 +17,10 @@
 enum port_setting {
     SETTING_PORT_BREAKMODE = 1,
     SETTING_PORT_ACCESS,
+    SETTING_PORT_TERMINAL_TYPE,
+    SETTING_PORT_LOCAL_SWITCH,
+    SETTING_PORT_BACKWARD_SWITCH,
+    SETTING_PORT_FORWARD_SWITCH,
 };
 
 
@@ -28,6 +32,7 @@ enum port_mode {
     MODE_USERNAME,
     MODE_LOCAL,
     MODE_SESSION,
+    MODE_PASSWORD,
 };
 
 enum port_type {
@@ -53,11 +58,13 @@ enum break_mode {
 };
 
 #define LOCAL_SWITCH_NONE -1
+#define LOCAL_SWITCH_ERROR -2
 
 struct port {
     struct port *next;
     enum port_type type;
     enum port_mode mode;
+    enum port_mode previous_mode;
     struct circular_buffer read_buffer;
     struct circular_buffer write_buffer;       
     void *port_data;
@@ -72,6 +79,8 @@ struct port {
     int waterlevel;
     bool stopped;
     int local_switch;
+    int forward_switch;
+    int backward_switch;
     enum break_mode breakmode;
     enum access_mode access;
     bool send_break;
@@ -83,6 +92,7 @@ struct port {
     char keybuf[9];
     uint8_t keybuf_pos;
     struct session *active_session;
+    bool priv;
     void (*fn_stop)(struct port *);
     void (*fn_start)(struct port *);
     bool (*fn_can_tx)(struct port *);
@@ -105,6 +115,12 @@ extern void port_flush(struct port *port);
 extern struct port *get_port_by_number(int pno);
 extern struct port *get_port_by_name(const char *name);
 extern int debugf(const char *fmt, ...);
+
+extern void greet(struct port *port);
+extern void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data);
+extern const char *port_type(struct port *port);
+extern void set_terminal_type(struct port *port, const char *ttype);
+
 
 //extern error_t port_set_cmd(struct port *port, int argc, const char **argv);
 extern COMMAND(show_port_characteristics);
@@ -138,17 +154,17 @@ extern COMMAND(port_define_access_remote);
 extern COMMAND(port_set_break_disabled);
 extern COMMAND(port_set_break_local);
 extern COMMAND(port_set_break_remote);
-
 extern COMMAND(port_define_break_disabled);
 extern COMMAND(port_define_break_local);
 extern COMMAND(port_define_break_remote);
+extern COMMAND(port_set_terminal_type);
+extern COMMAND(port_define_terminal_type);
 
-extern void greet(struct port *port);
-
-extern void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data);
-
-
-const char *port_type(struct port *port);
-
+extern COMMAND(port_set_local_switch);
+extern COMMAND(port_set_forward_switch);
+extern COMMAND(port_set_backward_switch);
+extern COMMAND(port_define_local_switch);
+extern COMMAND(port_define_forward_switch);
+extern COMMAND(port_define_backward_switch);
 #endif 
 

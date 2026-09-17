@@ -2,6 +2,7 @@
 #define _TTYPE_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define SPECIAL_KEY 0x8000
 
@@ -60,8 +61,18 @@ struct ttype {
     const char *delchar;
 };
 
+struct ttype_map {
+    const char *name;
+    const struct ttype *ttype;
+    bool prefix;
+};
 
-extern const struct ttype dumb;
-extern const struct ttype vt100;
-extern const struct ttype vt102;
+extern const struct ttype ttype_dumb;
+extern const struct ttype ttype_vt100;
+extern const struct ttype ttype_vt102;
+extern const struct ttype ttype_ansi;
+
+extern const struct ttype_map ttype_map[];
+extern const char *key_names[NUM_KEYS];
+
 #endif

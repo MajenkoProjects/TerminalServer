@@ -6,7 +6,7 @@
 #include <semphr.h>
 
 
-#define CIRCULAR_BUFFER_SIZE 512
+#define CIRCULAR_BUFFER_SIZE 128
 #define MUTEX_TICKS 100
 
 

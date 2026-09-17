@@ -29,7 +29,19 @@ COMMAND(logout) {
 
 COMMAND(show_server) {
     print_system_settings(port);
+    port_printf(port, "\n");
     print_network_settings(port);
+    port_printf(port, "\n");
+    return ERR_OK;
+}
+
+COMMAND(set_priv) {
+    port->mode = MODE_PASSWORD;
+    return ERR_OK;
+}
+
+COMMAND(set_nopriv) {
+    port->priv = false;
     return ERR_OK;
 }
 
@@ -67,88 +79,114 @@ static const struct command set_port_break_sub[] = {
     {0, 0, 0, 0}
 };
 
-static const struct command set_port_access_sub[] = {
-    {"DYNAMIC", &port_set_access_dynamic, 0, NULL},
-    {"LOCAL", &port_set_access_local, 0, NULL},
-    {"REMOTE", &port_set_access_remote, 0, NULL},
+//static const struct command set_port_access_sub[] = {
+//    {"DYNAMIC", &port_set_access_dynamic, NULL},
+//    {"LOCAL", &port_set_access_local, 0, NULL},
+//    {"REMOTE", &port_set_access_remote, 0, NULL},
+//    {0, 0, 0, 0}
+//};
+
+static const struct command set_port_terminal_sub[] = {
+    {"TYPE", &port_set_terminal_type, 0, NULL},
+    {0, 0, 0, 0}
+};
+
+static const struct command set_port_local_sub[] = {
+    {"SWITCH", &port_set_local_switch, 0, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command set_port_sub[] = {
-    {"ACCESS", NULL, 0, set_port_access_sub},
+    //{"ACCESS", NULL, 0, set_port_access_sub},
+    {"BACKWARD", &port_set_backward_switch, 0, NULL},
     {"BREAK", NULL, 0, set_port_break_sub},
     {"FLOW", NULL, 0, set_port_flow_sub},
-    {"NAME", &port_set_name, 0, NULL},
+    {"FORWARD", &port_set_forward_switch, 0, NULL},
+    {"LOCAL", &port_set_local_switch, 0, set_port_local_sub},
+    //{"NAME", &port_set_name, 0, NULL},
     {"SPEED", &port_set_speed, 0, NULL},
+    {"TERMINAL", NULL, 0, set_port_terminal_sub},
     {0, 0, 0, 0}
 };
 
 static const struct command set_sub[] = {
+    {"NOPRIVILEGED", &set_nopriv, 0, NULL},
     {"PORT", NULL, CMD_TARGET, set_port_sub},
+    {"PRIVILEGED", &set_priv, 0, NULL},
     {0, 0, 0, 0}
 };
 
 
 static const struct command define_port_break_sub[] = {
-    {"DISABLED", &port_define_break_disabled, 0, NULL},
-    {"LOCAL", &port_define_break_local, 0, NULL},
-    {"REMOTE", &port_define_break_remote, 0, NULL},
+    {"DISABLED", &port_define_break_disabled, CMD_PRIV, NULL},
+    {"LOCAL", &port_define_break_local, CMD_PRIV, NULL},
+    {"REMOTE", &port_define_break_remote, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command define_port_flow_sub[] = {
-    {"NONE", &port_define_flow_none, 0, NULL},
-    {"RTSCTS", &port_define_flow_rts, 0, NULL},
-    {"DTRDSR", &port_define_flow_dtr, 0, NULL},
-    {"XONXOFF", &port_define_flow_xon, 0, NULL},
+    {"NONE", &port_define_flow_none, CMD_PRIV, NULL},
+    {"RTSCTS", &port_define_flow_rts, CMD_PRIV, NULL},
+    {"DTRDSR", &port_define_flow_dtr, CMD_PRIV, NULL},
+    {"XONXOFF", &port_define_flow_xon, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command define_port_access_sub[] = {
-    {"DYNAMIC", &port_define_access_dynamic, 0, NULL},
-    {"LOCAL", &port_define_access_local, 0, NULL},
-    {"REMOTE", &port_define_access_remote, 0, NULL},
+    {"DYNAMIC", &port_define_access_dynamic, CMD_PRIV, NULL},
+    {"LOCAL", &port_define_access_local, CMD_PRIV, NULL},
+    {"REMOTE", &port_define_access_remote, CMD_PRIV, NULL},
+    {0, 0, 0, 0}
+};
+
+static const struct command define_port_terminal_sub[] = {
+    {"TYPE", &port_define_terminal_type, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command define_port_sub[] = {
     {"ACCESS", NULL, 0, define_port_access_sub},
+    {"BACKWARD", &port_define_backward_switch, CMD_PRIV, NULL},
     {"BREAK", NULL, 0, define_port_break_sub},
-    {"NAME", &port_define_name, 0, NULL},
-    {"SPEED", &port_define_speed, 0, NULL},
     {"FLOW", NULL, 0, define_port_flow_sub},
+    {"FORWARD", &port_define_forward_switch, CMD_PRIV, NULL},
+    {"LOCAL", &port_define_local_switch, CMD_PRIV, NULL},
+    {"NAME", &port_define_name, CMD_PRIV, NULL},
+    {"SPEED", &port_define_speed, CMD_PRIV, NULL},
+    {"TERMINAL", NULL, 0, define_port_terminal_sub},
     {0, 0, 0, 0}
 };
 
 static const struct command define_server_mac_sub[] = {
-    {"ADDRESS", &ethernet_define_mac_address, 0, NULL},
+    {"ADDRESS", &ethernet_define_mac_address, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command define_server_subnet_sub[] = {
-    {"MASK", &ethernet_define_subnet, 0, NULL},
+    {"MASK", &ethernet_define_subnet, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command define_server_secondary_sub[] = {
-    {"NAMESERVER", &ethernet_define_secdns, 0, NULL},
+    {"NAMESERVER", &ethernet_define_secdns, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command define_server_dhcp_sub[] = {
-    {"DISABLED", &ethernet_define_dhcp_disabled, 0, NULL},
-    {"ENABLED", &ethernet_define_dhcp_enabled, 0, NULL},
+    {"DISABLED", &ethernet_define_dhcp_disabled, CMD_PRIV, NULL},
+    {"ENABLED", &ethernet_define_dhcp_enabled, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
 static const struct command define_server_sub[] = {
     {"DHCP", NULL, 0, define_server_dhcp_sub},
-    {"IPADDRESS", &ethernet_define_ip, 0, NULL},
-    {"SUBNET", &ethernet_define_subnet, 0, define_server_subnet_sub},
-    {"GATEWAY", &ethernet_define_gateway, 0, NULL},
-    {"MAC", &ethernet_define_mac_address, 0, define_server_mac_sub},
-    {"NAME", &system_define_name, 0, NULL},
-    {"NAMESERVER", &ethernet_define_pridns, 0, NULL},
+    {"DOMAIN", &system_define_domain, CMD_PRIV, NULL},
+    {"IPADDRESS", &ethernet_define_ip, CMD_PRIV, NULL},
+    {"SUBNET", &ethernet_define_subnet, CMD_PRIV, define_server_subnet_sub},
+    {"GATEWAY", &ethernet_define_gateway, CMD_PRIV, NULL},
+    {"MAC", &ethernet_define_mac_address, CMD_PRIV, define_server_mac_sub},
+    {"NAME", &system_define_name, CMD_PRIV, NULL},
+    {"NAMESERVER", &ethernet_define_pridns, CMD_PRIV, NULL},
     {"SECONDARY", NULL, 0, define_server_secondary_sub},
     {0, 0, 0, 0}
 };
@@ -167,6 +205,12 @@ static const struct command send_sub[] = {
 
 static const struct command connect_sub[] = {
     {"LOCAL", &connect_local, 0, NULL},
+    {"TELNET", &telnet, 0, NULL},
+    {0, 0, 0, 0}
+};
+
+static const struct command initialize_sub[] = {
+    {"FACTORY", &system_factory_reset, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
@@ -175,19 +219,16 @@ static const struct command commands[] = {
     {"DEFINE", NULL, 0, define_sub},
     {"DISCONNECT", &disconnect_session, CMD_SESSION, NULL},
     {"HELP", &help, 0, NULL},
+    {"INITIALIZE", NULL, 0, initialize_sub},
     {"LIST", NULL, 0, list_sub},
     {"LOGOUT", &logout, 0, NULL},
+    {"OPEN", &telnet, 0, NULL},
     {"RESUME", &resume_session, CMD_SESSION, NULL},
     {"SEND", NULL, 0, send_sub},
     {"SET", NULL, 0, set_sub},
     {"SHOW", NULL, 0, show_sub},
-    {"TELNET", &telnet, 0, NULL},
     {0, 0, 0, 0}
 };
-
-
-
-
 
 const char *shift(int *argc, char **argv) {
     if (*argc == 0) return NULL;
@@ -265,6 +306,9 @@ error_t command_run(const struct command *tree, struct port *port, void *opt, in
         // If there are no more arguments then just call the function
         if (argc == 0) {
             if (matched->func) {
+                if ((matched->flags & CMD_PRIV) && !port->priv) {
+                    return ERR_PRIV;
+                }
                 return matched->func(port, opt, 0, NULL);
             } else {
                 return ERR_INCOMPLETE;
@@ -288,6 +332,9 @@ error_t command_run(const struct command *tree, struct port *port, void *opt, in
         if (deeper) {       
             tree = matched->sub_commands;
         } else if (matched->func) {
+            if ((matched->flags & CMD_PRIV) && !port->priv) {
+                return ERR_PRIV;
+            }
             return matched->func(port, opt, argc, argv);
         }
     }
@@ -315,89 +362,31 @@ void command_execute(struct port *port) {
     }
 }
 
-int fancy_read(struct port *port, char c, uint16_t *buf) {
-    port->keybuf[port->keybuf_pos++] = c;
-    port->keybuf[port->keybuf_pos] = 0;
 
-    if (port->keybuf_pos == 8) {
-        memcpy(buf, port->keybuf, 8);
-        port->keybuf_pos = 0;
-        port->keybuf[0] = 0;
-        return 8;
-    }
-    
-    int num_found = 0;
-    int exact = -1;
-    for (int i = 0; i < NUM_KEYS; i++) {
-        if (port->tinfo->keys[i]) {
-            if (strncmp(port->tinfo->keys[i], port->keybuf, port->keybuf_pos) == 0) {
-                num_found++;
-                if (strcmp(port->tinfo->keys[i], port->keybuf) == 0) {
-                    exact = i;
-                    break;
-                }
-            }
-        }
-    }
-    
-    if (num_found == 0) {
-        for (int i = 0; i < port->keybuf_pos; i++) {
-            buf[i] = port->keybuf[i];
-        }
-        int r = port->keybuf_pos;
-        port->keybuf_pos = 0;
-        port->keybuf[0] = 0;
-        return r;
-    }
-    
-    if (num_found > 1) {
-        return 0;
-    }
-    
-    if (exact == -1) {
-        return 0;
-    }
-    
-    buf[0] = SPECIAL_KEY | exact;
-    buf[1] = 0;
-    port->keybuf_pos = 0;
-    port->keybuf[0] = 0;    
-//    port_printf(port, "Special key %04x\r\n", buf[0]);
-    return 1;
-}
 
 int command_process(struct port *port, char c, void (*func)(struct port *)) {
     
     uint16_t buf[9];
-    
-    int len = fancy_read(port, c, buf);
+    int ret = 0;
+    int len = fancy_read(port, c, buf, 8);
 
     for (int i = 0; i < len; i++) {
         switch (buf[i]) {
             case SPECIAL_KEY | KEY_RETURN:
-                port_write_byte(port, '\r');
-                port_write_byte(port, '\n');
+                port_printf(port, "\r\n");
                 
                 if (strlen(port->commands[port->cmdno]) > 0) {
-                    if (port->cmdno == 0) {
-                        for (int i = NUM_HISTORY-1; i > 0; i--) {
-                            strcpy(port->commands[i], port->commands[i-1]);
+                    if (port->mode == MODE_LOCAL) {
+                        if (port->cmdno == 0) {
+                            for (int i = NUM_HISTORY-1; i > 0; i--) {
+                                strcpy(port->commands[i], port->commands[i-1]);
 
+                            }
                         }
                     }
                     func(port);
                 }
-
-                switch (port->mode) {
-                    case MODE_LOCAL:
-                        port_printf(port, "Local>");
-                        break;
-                    case MODE_USERNAME:
-                        port_printf(port, "Username> ");
-                        break;
-                    default:
-                        break;
-                }
+                ret = 1;
                 port->cmdno = 0;
                 port->commands[0][0] = 0;
                 port->cpos = 0;
@@ -420,26 +409,43 @@ int command_process(struct port *port, char c, void (*func)(struct port *)) {
                 }
                 break;
             case SPECIAL_KEY | KEY_UP:
+                if (port->mode != MODE_LOCAL) break;
                 if (port->cmdno < NUM_HISTORY-1) {
                     port->cmdno ++;
                 }
                 
-                if (port->tinfo->clreol) {
-                    port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                if (port->priv) {
+                    if (port->tinfo->clreol) {
+                        port_printf(port, "\rLocal>>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                    } else {
+                        port_printf(port, "\r\nLocal>>%s", port->commands[port->cmdno]);
+                    }                    
                 } else {
-                    port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
+                    if (port->tinfo->clreol) {
+                        port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                    } else {
+                        port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
+                    }
                 }
                 port->cpos = strlen(port->commands[port->cmdno]);
                 break;
             case SPECIAL_KEY | KEY_DOWN:
+                if (port->mode != MODE_LOCAL) break;
                 if (port->cmdno > 0) {
                     port->cmdno --;
                 }
-                
-                if (port->tinfo->clreol) {
-                    port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                if (port->priv) {
+                    if (port->tinfo->clreol) {
+                        port_printf(port, "\rLocal>>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                    } else {
+                        port_printf(port, "\r\nLocal>>%s", port->commands[port->cmdno]);
+                    }
                 } else {
-                    port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
+                    if (port->tinfo->clreol) {
+                        port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
+                    } else {
+                        port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
+                    }
                 }
                 port->cpos = strlen(port->commands[port->cmdno]);
                 break;
@@ -463,15 +469,17 @@ int command_process(struct port *port, char c, void (*func)(struct port *)) {
                         }
                         port->commands[port->cmdno][port->cpos++] = buf[i];
 //                        port->commands[port->cmdno].command[port->cpos] = 0;
-                        if (port->tinfo->inschar) {
-                            port_printf(port, "%s%c", port->tinfo->inschar, buf[i]);
+                        if (port->mode != MODE_PASSWORD) {
+                            if (port->tinfo->inschar) {
+                                port_printf(port, "%s%c", port->tinfo->inschar, buf[i]);
+                            }
                         }
                     }
-                } else if (IS_SPECIAL(buf[i])) {
-                    port_printf(port, "Special key %04x\r\n", buf[i]);
+//                } else if (IS_SPECIAL(buf[i])) {
+//                    port_printf(port, "Special key %04x\r\n", buf[i]);
                 }
                 break;
         }
     }
-    return 0;
+    return ret;
 }

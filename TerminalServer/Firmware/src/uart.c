@@ -190,7 +190,6 @@ static void UART_Tasks(void *pvParameters) {
                 if (err == UART_ERROR_FRAMING) { // Break
                     if (scan->breakmode == BREAK_LOCAL) {
                         port_printf(scan, "+++ OUT OF CHEESE ERROR +++\r\n");
-                        port_printf(scan, "\r\nLocal>");
                         scan->mode = MODE_LOCAL;
                     } else if (scan->breakmode == BREAK_REMOTE) {
                         if (scan->active_session) {
@@ -220,6 +219,8 @@ static void UART_Tasks(void *pvParameters) {
                 if ((av > 0) && scan->fn_can_tx(scan)) {
                     int fr = data->fn_free();
                     if (fr > 0) {                        
+                        pin_set(data->txled, 1);
+                        data->txled_ts = ts;
                         if (av > fr) {
                             av = fr;
                         }

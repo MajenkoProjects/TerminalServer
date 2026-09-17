@@ -9,6 +9,7 @@
 enum session_type {
     SESSION_DELETED = 0,
     SESSION_DIRECT,
+    SESSION_CLOSING,
 };
 
 struct session {

@@ -1,9 +1,61 @@
+#include <string.h>
+
 #include "telnet_out.h"
 #include "cbuff.h"
 #include "session.h"
 #include "errno.h"
+#include "telopt.h"
+#include "uart.h"
+#include "util.h"
+#include "settings.h"
 
 TaskHandle_t telnet_out_thread_handle;
+
+
+const char *telopt_names[] = {
+    "BINARY",
+    "ECHO",
+    "RECONN",
+    "SUPPRESS_GA",
+    "AMSN",
+    "STATUS",
+    "TM",
+    "RCTE",
+    "OLW",
+    "OPS",
+    "OCRD",
+    "OHTS",
+    "OHTD",
+    "OFFD",
+    "OVTS",
+    "OVTD",
+    "OLFD",
+    "EXTEND_ASCII",
+    "LOGOUT",
+    "BYTE_MACRO",
+    "DET",
+    "SUPDUP",
+    "SUPDUP_OUT",
+    "SEND_LOC",
+    "TTYPE",
+    "EOR",
+    "TACACS",
+    "OUTPUT_MARK",
+    "LOCNO",
+    "3270_REGIME",
+    "X3_PAD",
+    "NAWS",
+    "SPEED",
+    "FLOW",
+    "LINEMODE",
+    "X_DISP_LOC",
+    "ENV_OPT",
+    "AUTH_OPT",
+    "ENC_OPT",
+    "NEW_ENV_OPT",
+    "TN3270E",
+    "XAUTH"
+};
 
 
 void prterror() {
@@ -21,25 +73,92 @@ void prterror() {
     }    
 }
 
+#define SEND_IAC(X, Y)  while (TCPIP_TCP_Put(data->socket, TELOPT_IAC) != 1){}; \
+                        while (TCPIP_TCP_Put(data->socket, (X)) != 1){}; \
+                        while (TCPIP_TCP_Put(data->socket, (Y)) != 1){}; 
+
+#define SEND_DO(X)      SEND_IAC(TELOPT_DO, X)
+#define SEND_DONT(X)    SEND_IAC(TELOPT_DONT, X)
+#define SEND_WILL(X)    SEND_IAC(TELOPT_WILL, X)
+#define SEND_WONT(X)    SEND_IAC(TELOPT_WONT, X)
+
+static char scratch[255];
+
 static void telnet_out_thread(void *args) {
 
-    int r;
     while (1) {
         for (struct port *scan = ports; scan; scan = scan->next) {
             if (scan->type != PORT_TELNET_OUT) continue;
             struct todata *data = (struct todata *)scan->port_data;
+            TCP_SOCKET_INFO info;
+            TCPIP_TCP_SocketInfoGet(data->socket, &info);
+         //   port_printf(CONSOLE, "_%d_ ", info.rxPending);
+          //  vTaskDelay(10);
             switch (data->state) {
-                case TO_START_DNS:
-                    data->dns_result = TCPIP_DNS_Resolve(data->hostname, TCPIP_DNS_TYPE_A);
-                    data->state = TO_RUN_DNS;          
+                case TO_DNS_PRECHECK: // Check to see if either the fqdn or subdomain are cached.
+                    data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
+                    if (data->dns_result == TCPIP_DNS_RES_OK) {
+                        data->state = TO_FOUND_HOST;
+                        break;
+                    }
+                    snprintf(scratch, 254, "%s.%s", data->hostname, system_settings.domain);
+                    data->dns_result = TCPIP_DNS_IsResolved(scratch, &data->addr, TCPIP_DNS_TYPE_A);
+                    if (data->dns_result == TCPIP_DNS_RES_OK) {
+                        data->state = TO_FOUND_HOST;
+                        break;
+                    }
+                    data->state = TO_START_DNS;
+                    break;
+                    
+                case TO_START_DNS: // Start looking up the name as an fqdn
+                    data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
+                    if (data->dns_result == TCPIP_DNS_RES_OK) {
+                        data->state = TO_FOUND_HOST;
+                    } else {
+                        data->dns_result = TCPIP_DNS_Resolve(data->hostname, TCPIP_DNS_TYPE_A);
+                        data->state = TO_RUN_DNS;          
+                    }
                     break;
 
-                case TO_RUN_DNS:
+                case TO_RUN_DNS: // Check to see if the name is resolved
+                    if (cb_read(&scan->write_buffer) == 3) {
+                        data->state = TO_BREAK;
+                        break;
+
+                    }                    
                     data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
                     if (data->dns_result == TCPIP_DNS_RES_OK) {
                         data->state = TO_FOUND_HOST;
                     } else if (data->dns_result == TCPIP_DNS_RES_PENDING) {
                         data->state = TO_RUN_DNS;
+                    } else {
+                        data->state = TO_START_DNS2;
+                    }   
+                    break;
+
+
+                case TO_START_DNS2: // Append the domain and search again
+                    snprintf(scratch, 254, "%s.%s", data->hostname, system_settings.domain);
+                    strcpy(data->hostname, scratch);
+                    data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
+                    if (data->dns_result == TCPIP_DNS_RES_OK) {
+                        data->state = TO_FOUND_HOST;
+                        break;
+                    }
+                    data->dns_result = TCPIP_DNS_Resolve(data->hostname, TCPIP_DNS_TYPE_A);
+                    data->state = TO_RUN_DNS;
+                    break;
+
+                case TO_RUN_DNS2:
+                    if (cb_read(&scan->write_buffer) == 3) {
+                        data->state = TO_BREAK;
+                        break;                        
+                    }                    
+                    data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
+                    if (data->dns_result == TCPIP_DNS_RES_OK) {
+                        data->state = TO_FOUND_HOST;
+                    } else if (data->dns_result == TCPIP_DNS_RES_PENDING) {
+                        data->state = TO_RUN_DNS2;
                     } else {
                         data->state = TO_BAD_HOST;
                     }   
@@ -47,92 +166,297 @@ static void telnet_out_thread(void *args) {
                     
                 case TO_BAD_HOST:
                     port_rprintf(scan, "Host not found\r\n");
-                    vTaskDelay(100);
-                    session_slave_close(scan);
-                    vTaskDelay(100);
-                    delete_port(scan);
-                    // Urk
+                    data->state = TO_CLOSE;
                     break;
-                   
+                    
+                case TO_CLOSE:
+                    data->session->type = SESSION_CLOSING;
+                    data->ts = xTaskGetTickCount();
+                    data->state = TO_BYE;
+                    break;
+                    
+                case TO_BYE: {
+                        uint8_t b;
+                        if ((TCPIP_TCP_ArrayGet(data->socket, &b, 1) == 1) ) {
+                            cb_write(&scan->read_buffer, b);
+                        }
+                    }
+                    if ((xTaskGetTickCount() - data->ts) > 100) {
+                        session_slave_close(scan);
+                        delete_port(scan);
+                        break;
+                    }
+                    break;
+
                 case TO_FOUND_HOST:
-                    // Yay
-                    port_rprintf(scan, "Connecting to %d.%d.%d.%d...",
+                    port_rprintf(scan, "Connecting to %d.%d.%d.%d:%d...",
                             data->addr.v4Add.v[0],
                             data->addr.v4Add.v[1],
                             data->addr.v4Add.v[2],
-                            data->addr.v4Add.v[3]
+                            data->addr.v4Add.v[3],
+                            data->port
                             );
                     data->state = TO_CONNECT;
-                    
-                    data->socket = TCPIP_TCP_ClientOpen(IP_ADDRESS_TYPE_IPV4, 23, &data->addr);
+                    data->socket = TCPIP_TCP_ClientOpen(IP_ADDRESS_TYPE_IPV4, data->port, &data->addr);
                     data->state = TO_CONNECTING;
-                    
-                    
+                    data->ts = xTaskGetTickCount();
                     break;
+                    
                 case TO_CONNECTING:
+                    if (TCPIP_TCP_ArrayGet(data->socket, (uint8_t *)scratch, 1) == 1) {
+                        if (scratch[0] == 3) {
+                            data->state = TO_BREAK;
+                            break;
+                        }
+                    }
+                    if (xTaskGetTickCount() - data->ts > 10000) {
+                        data->state = TO_NOCONN;
+                        break;
+                    }
                     if (TCPIP_TCP_IsConnected(data->socket)) {
                         data->state = TO_CONNECT;
                     }
                     break;
+                    
                 case TO_NOCONN:
                     port_rprintf(scan, "Unable to connect\r\n");
-                    prterror();
-                    vTaskDelay(100);
-                    session_slave_close(scan);
-                    vTaskDelay(100);
-                    delete_port(scan);
-                    // Urk
+                    data->state = TO_CLOSE;
+                    break;
+
+                case TO_BREAK:
+                    port_rprintf(scan, "Cancelled\r\n");
+                    data->state = TO_CLOSE;
                     break;
                     
                 case TO_CONNECT:
                     port_rprintf(scan, "Connected\r\n");
                     data->state = TO_RUN;
                     break;
+                    
                 case TO_RUN:
-                    
-                    if (TCPIP_TCP_GetIsReady(data->socket)) {
-                        char b;
-                        TCPIP_TCP_ArrayGet(data->socket, (uint8_t *)&b, 1);
-                        port_printf(CONSOLE, "[%d]\r\n", b);
+                    if (TCPIP_TCP_WasDisconnected(data->socket)) {
+                        data->state = TO_CLOSE;
+                        break;
                     }
-//                    port_printf(CONSOLE, ".");
-                    //if (cb_free(&(scan->read_buffer)) > 0) {
-                        
-//                        r = recv(data->fd, (char *)&b, 1, 0);
-                        
-//                        if (r == 1) {
-//                            port_printf(CONSOLE, "[%d]\r\n", b);
-                      //      cb_write(&(scan->read_buffer), b);
-//                        } else {
-//                            prterror();
-//                        }
-                    //}
-//                    int num = cb_available(&scan->write_buffer);
-//                    if (num > 0) {
-//                        if (num > CIRCULAR_BUFFER_SIZE) num = CIRCULAR_BUFFER_SIZE;
-//                        char tmp[CIRCULAR_BUFFER_SIZE];
-//                        for (int i = 0; i < num; i++) {
-//                            tmp[i] = cb_read(&scan->write_buffer);
-//                        }
-//                        int count = 0;
-//                        while (num > 0) {
-//                            int sent = send(data->fd, &tmp[count], num, 0);
-//                            if (sent != num) {
-//                                if (errno != EWOULDBLOCK) {
-////                                    closesocket(data->fd);
-////                                    delete_port(scan);
-////                                    close_port(scan);
-//                                    break;
-//                                }
-//                            }
-//                            if (sent > 0) {
-//                                count += sent;
-//                                num -= sent;
-//                            }
-//                        }
-//                        vTaskDelay(10);
-//                    }
                     
+                    int av = cb_available(&scan->write_buffer);
+                    
+                    if (av > 0) {
+                        int fr = TCPIP_TCP_PutIsReady(data->socket);
+                        if (av > fr) {
+                            av = fr;
+                        }
+                        
+                        uint8_t tmp[CIRCULAR_BUFFER_SIZE];
+                        int pos = 0;
+                        for (int i = 0; i < av; i++) {
+                            tmp[pos++] = cb_read(&scan->write_buffer);
+                        }
+                        TCPIP_TCP_ArrayPut(data->socket, tmp, pos);
+                    }
+                    
+                    if (TCPIP_TCP_GetIsReady(data->socket)&& (cb_free(&scan->read_buffer) > 0)) {
+                        uint8_t b;
+                        if ((TCPIP_TCP_ArrayGet(data->socket, &b, 1) == 1) ) {
+                           // port_printf(CONSOLE, "[%02x] ", b);
+                            if (data->iac_sb) {
+                                switch (b) {
+                                    case TELOPT_IAC:
+                                        if (data->iac_sb_iac) {
+                                            data->iac_sub[data->iac_sub_pos++] = b;
+                                            data->iac_sub[data->iac_sub_pos] = 0;
+                                            if (data->iac_sub_pos >= 40) {
+                                                data->iac_sb = false;
+                                                data->iac_pos = 0;    
+                                            }                                        
+                                        } else {
+                                            data->iac_sb_iac = true;
+                                        }
+                                        break;
+                                    case TELOPT_SE:
+                                        switch (data->iac_sub[0]) {
+                                            case TELOPT_NAWS:
+                                                scan->columns = (data->iac_sub[1] << 8) | data->iac_sub[2];
+                                                scan->lines = (data->iac_sub[3] << 8) | data->iac_sub[4];
+                                                break;
+                                            case TELOPT_TTYPE:
+                                                if (data->iac_sub[1] == SB_SEND) {                           
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_IAC) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_SB) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_TTYPE) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, SB_IS) == 0) {};
+                                                    for (int i = 0; i < strlen(data->parent->ttype); i++) {
+                                                        while (TCPIP_TCP_Put(data->socket, data->parent->ttype[i]) == 0) {};
+                                                    }
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_IAC) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_SE) == 0) {};
+                                                }
+                                                break;
+                                            case TELOPT_SPEED:
+                                                if (data->iac_sub[1] == SB_SEND) {          
+                                                    int baud = 9600;
+                                                    if (data->parent->type == PORT_SERIAL) {
+                                                        struct uart_data *d = data->parent->port_data;
+                                                        baud = d->baud;
+                                                    }
+                                                    sprintf(scratch, "%d,%d", baud, baud);
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_IAC) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_SB) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_SPEED) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, SB_IS) == 0) {};
+                                                    for (int i = 0; i < strlen(scratch); i++) {
+                                                        while (TCPIP_TCP_Put(data->socket, scratch[i]) == 0) {};
+                                                    }
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_IAC) == 0) {};
+                                                    while (TCPIP_TCP_Put(data->socket, TELOPT_SE) == 0) {};
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        data->iac_sb = false;
+                                        data->iac_pos = 0;
+                                        break;
+                                    default:
+                                        data->iac_sub[data->iac_sub_pos++] = b;
+                                        data->iac_sub[data->iac_sub_pos] = 0;
+                                        if (data->iac_sub_pos >= 40) {
+                                        data->iac_sb = false;
+                                            data->iac_pos = 0;    
+                                        }
+                                        break;
+                                }
+                            } else {
+                                switch (data->iac_pos) {
+                                    case 0: 
+                                        if (b == TELOPT_IAC) {
+                                            data->iac[data->iac_pos++] = TELOPT_IAC;
+                                        } else {
+                                            cb_write(&scan->read_buffer, b);
+                                        }
+                                        break;
+
+                                    case 1:
+                                        switch (b) {
+                                            case TELOPT_IAC:
+                                                cb_write(&(scan->read_buffer), b);
+                                                data->iac_pos = 0;                                       
+                                                break;
+                                            case TELOPT_GA:
+                                                data->iac_pos = 0;
+                                                //port_rprintf(scan, "GA\r\n");
+                                                break;
+                                            case TELOPT_SB:
+                                                data->iac_sb = true;
+                                                data->iac_sub_pos = 0;
+                                                break;
+                                            case TELOPT_DM:
+                                                data->iac_pos = 0;
+
+                                                break;
+                                            case TELOPT_BREAK:
+                                                data->iac_pos = 0;
+                                                switch (scan->breakmode) {
+                                                    case BREAK_LOCAL:
+                                                        port_rprintf(scan, "+++ OUT OF CHEESE +++\r\n\n");
+                                                        scan->mode = MODE_LOCAL;
+                                                        break;
+                                                    case BREAK_REMOTE:
+                                                        if (scan->active_session) {
+                                                            scan->active_session->target->send_break = true;
+                                                        }
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                                break;
+                                            case TELOPT_DO:
+                                            case TELOPT_DONT:
+                                            case TELOPT_WILL:
+                                            case TELOPT_WONT:
+                                                data->iac[data->iac_pos++] = b;
+                                                break;
+                                            default:
+                                                data->iac_pos = 0;
+                                                port_rprintf(scan, "Unexpected IAC %d\r\n", b);
+                                                break;
+                                        }
+                                        break;
+
+                                    case 2:
+
+                                        switch (b) {
+                                            default:
+                                                data->iac[data->iac_pos++] = b;
+                                                switch (data->iac[1]) {
+                                                    case TELOPT_WILL:
+                                                        switch (data->iac[2]) {
+                                                            case TELOPT_SUPPRESS_GA:
+                                                            case TELOPT_ECHO:
+                                                            case TELOPT_TTYPE:
+                                                            case TELOPT_NAWS:
+                                                                SEND_DO(data->iac[2])
+                                                                break;
+
+
+                                                            case TELOPT_STATUS:
+                                                            case TELOPT_LINEMODE:
+                                                                SEND_DONT(data->iac[2])
+                                                                break;
+
+                                                            default:
+                                                                SEND_DONT(data->iac[2])
+                                                                break;
+
+                                                        }
+                                                        break;
+                                                    case TELOPT_WONT:
+                                                        SEND_DONT(data->iac[2])
+                                                        break;
+                                                        
+                                                    case TELOPT_DO:
+                                                        switch (data->iac[2]) {
+                                                            case TELOPT_TTYPE:
+                                                            case TELOPT_BINARY:
+                                                            case TELOPT_NAWS:
+                                                            case TELOPT_SPEED:
+                                                                SEND_WILL(data->iac[2])
+                                                                break;
+
+
+                                                            case TELOPT_ECHO:
+                                                            case TELOPT_X_DISP_LOC:
+                                                            case TELOPT_NEW_ENV_OPT:
+                                                            case TELOPT_ENV_OPT:
+                                                            case TELOPT_LINEMODE:
+                                                            case TELOPT_FLOW:
+                                                                SEND_WONT(data->iac[2])
+                                                                break;
+
+                                                            default:
+                                                                SEND_WONT(data->iac[2])                                                                
+                                                                break;
+                                                        }
+                                                        break;
+                                                    case TELOPT_DONT:
+                                                        switch (data->iac[2]) {
+                                                            default:
+                                                                SEND_WONT(data->iac[2])
+                                                                break;
+                                                        }
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                                data->iac_pos = 0;
+                                        }
+                                }
+                            }
+                        }
+                  
+                        
+                    }
+
                     break;
                     
                     
@@ -152,19 +476,34 @@ void telnet_out_initialize() {
 }
 
 COMMAND(telnet) {
-    if (argc != 1) {
+    if (argc == 0) {
         return ERR_INCOMPLETE;
     }
-    port_printf(port, "Telnetting to %s\r\n", argv[0]);
+    
+
+    char tmp[10];
+    format_local_switch(port->local_switch, tmp, 10);
+    port_printf(port, "Telnet/TCP protocol emulation 2.2  - Local Switch: <%s>.\r\n", tmp);
 
     struct todata *data = malloc(sizeof(struct todata));
     memset(data, 0, sizeof(struct todata));
-    strncpy(data->hostname, argv[0], 63);
-    data->state = TO_START_DNS;
+    
+    char *colon = strchr(argv[0], ':');
+    if (colon > 0) {
+        strncpy(data->hostname, argv[0], colon - argv[0]);
+        data->port = strtoul(colon+1, NULL, 0);
+    } else {
+        strncpy(data->hostname, argv[0], 63);
+        data->port = 23;
+    }
+    
+    data->state = TO_DNS_PRECHECK;
+    data->parent = port;
     
     struct port *slave = add_port(PORT_TELNET_OUT, data);
     slave->access = ACCESS_REMOTE;
     struct session *session = add_session(port, slave, SESSION_DIRECT);
+    data->session = session;
     port->active_session = session;
     port->mode = MODE_SESSION;
     return ERR_OK;

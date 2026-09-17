@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #include "app.h"
 #include "port.h"
@@ -85,6 +86,8 @@ struct port *add_port(enum port_type type, void *data) {
             scan->mode = MODE_IDLE;
             scan->access = ACCESS_LOCAL;
             scan->local_switch = LOCAL_SWITCH_NONE;
+            scan->forward_switch = LOCAL_SWITCH_NONE;
+            scan->backward_switch = LOCAL_SWITCH_NONE;
             scan->port_data = data;
             scan->low_water = 16;
             scan->high_water = CIRCULAR_BUFFER_SIZE - 16;
@@ -98,9 +101,8 @@ struct port *add_port(enum port_type type, void *data) {
             scan->fn_show_detail = NULL;
             scan->lines = 24;
             scan->columns = 80;
-            strcpy(scan->ttype, "VT100");
             scan->keybuf_pos = 0;
-            scan->tinfo = &vt102;
+            set_terminal_type(scan, "ANSI");
             return scan;
         }
     }
@@ -116,6 +118,8 @@ struct port *add_port(enum port_type type, void *data) {
     newport->mode = MODE_IDLE;
     newport->access = ACCESS_LOCAL;
     newport->local_switch = LOCAL_SWITCH_NONE;
+    newport->forward_switch = LOCAL_SWITCH_NONE;
+    newport->backward_switch = LOCAL_SWITCH_NONE;
     newport->port_data = data;
     newport->read_buffer.mutex = xSemaphoreCreateMutex();
     newport->write_buffer.mutex = xSemaphoreCreateMutex();
@@ -130,8 +134,7 @@ struct port *add_port(enum port_type type, void *data) {
     newport->lines = 24;
     newport->columns = 80;
     newport->keybuf_pos = 0;
-    strcpy(newport->ttype, "VT100");
-    newport->tinfo = &vt102;
+    set_terminal_type(newport, "ANSI");
     
     int maxno = 0;    
     for (scan = ports; scan; scan = scan->next) {
@@ -200,7 +203,7 @@ struct port *get_port_by_number(int num) {
 
 struct port *get_port_by_name(const char *name) {
     for (struct port *scan = ports; scan; scan = scan->next) {
-        if (strcmp(name, scan->name) == 0) {
+        if (strcasecmp(name, scan->name) == 0) {
             if (scan->type != PORT_NONE) {
                 return scan;
             }
@@ -208,7 +211,6 @@ struct port *get_port_by_name(const char *name) {
     }
     return NULL;
 }
-
 
 int port_available(struct port *port) {
     return cb_available(&port->read_buffer);
@@ -243,7 +245,6 @@ int port_printf(struct port *port, const char *fmt, ...) {
     return count;
 }
 
-
 int port_rprintf(struct port *port, const char *fmt, ...) {
     va_list ap;
     int count = 0;
@@ -274,6 +275,12 @@ int port_rprintf(struct port *port, const char *fmt, ...) {
 }
 
 void port_flush(struct port *port) {
+    while (cb_available(&port->read_buffer)) {
+        vTaskDelay(1);
+    }
+    while (cb_available(&port->write_buffer)) {
+        vTaskDelay(1);
+    }
     if (port->type == PORT_SERIAL) {
         uart_flush(port->port_data);
     }
@@ -370,12 +377,12 @@ COMMAND(show_port_characteristics) {
     
     
     char tmp[20];
-    format_local_switch(target->local_switch, tmp);
-    port_printf(port, "   Access:                 %8s    Local Switch:              %6s\r\n",
-        access_names[target->access], tmp
+    format_local_switch(target->local_switch, tmp, 20);
+    port_printf(port, "   Access:                 %8s    Local Switch:          %10s\r\n",
+        access_names[target->access], format_local_switch(target->local_switch, tmp, 20)
     );
-    port_printf(port, "   Backward:                   None    Port Name:               %8s\r\n",
-        target->name
+    port_printf(port, "   Backward:             %10s    Port Name:               %8s\r\n",
+        format_local_switch(target->backward_switch, tmp, 20), target->name
     );
     port_printf(port, "   Low Watermark:               %3d    High Watermark:               %3d\r\n",
         target->low_water, target->high_water
@@ -386,8 +393,8 @@ COMMAND(show_port_characteristics) {
     port_printf(port, "   Lines:                     %5d    Columns:                    %5d\r\n", 
         target->lines, target->columns
     );
-    port_printf(port, "   Forward:                    None    Terminal Type: [%16s]\r\n", 
-        target->ttype
+    port_printf(port, "   Forward:              %10s    Terminal Type: [%16s]\r\n", 
+        format_local_switch(target->forward_switch, tmp, 20), target->ttype
     );
 
     port_printf(port, "\n");
@@ -424,7 +431,6 @@ void greet(struct port *port) {
     port_printf(port, "\r\n");
     port_printf(port, "Type HELP at the 'Local>' prompt for assistance.\r\n");
     port_printf(port, "\r\n");
-    port_printf(port, "Username> ");
     port->mode = MODE_USERNAME;
 }
 
@@ -572,7 +578,7 @@ COMMAND(port_define_break_remote) {
 
 void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {
     struct port *port = get_port_by_number(index);
-
+    char temp[17] = {0};
     if (port) {
         switch (parameter) {
             case SETTING_PORT_BREAKMODE:
@@ -580,6 +586,20 @@ void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t
                 break;
             case SETTING_PORT_ACCESS:
                 port->access = *(uint8_t *)data;
+                break;
+            case SETTING_PORT_TERMINAL_TYPE:
+                if (length > 16) length = 16;
+                memcpy(temp, data, length);
+                set_terminal_type(port, temp);
+                break;
+            case SETTING_PORT_LOCAL_SWITCH:
+                port->local_switch = *(int *)data;
+                break;
+            case SETTING_PORT_FORWARD_SWITCH:
+                port->forward_switch = *(int *)data;
+                break;
+            case SETTING_PORT_BACKWARD_SWITCH:
+                port->backward_switch = *(int *)data;
                 break;
         }
     }
@@ -633,6 +653,7 @@ COMMAND(port_define_access_dynamic) {
 void close_port(struct port *port) {
     destroy_sessions(port);
     port->mode = MODE_IDLE;
+    port->priv = false;
     port->username[0] = 0;
     if (port->fn_close) {
         port->fn_close(port);
@@ -641,4 +662,128 @@ void close_port(struct port *port) {
 
 const char *port_type(struct port *port) {
     return port_types[port->type];
+}
+
+void set_terminal_type(struct port *port, const char *ttype) {
+    char *ucname = alloca(strlen(ttype) + 1);
+    for (int i = 0; i < strlen(ttype); i++) {
+        ucname[i] = toupper(ttype[i]);
+        ucname[i+1] = 0;
+    }
+    
+    strncpy(port->ttype, ucname, 16);
+    
+    port->tinfo = &ttype_ansi; // Default
+
+    // First look for an exact match
+    for (int i = 0; ttype_map[i].name != 0; i++) {
+        if (strcmp(ttype_map[i].name, ucname) == 0) {
+            port->tinfo = ttype_map[i].ttype;
+            return;
+        }
+    }
+
+    // Now look for a prefix match for terminal types that allow it
+    for (int i = 0; ttype_map[i].name != 0; i++) {
+        if (ttype_map[i].prefix == true) {
+            if (strncmp(ttype_map[i].name, ucname, strlen(ttype_map[i].name)) == 0) {
+                port->tinfo = ttype_map[i].ttype;
+                return;
+            }
+        }
+    }
+}
+
+COMMAND(port_set_terminal_type) {
+    OPT_TARGET
+    if (argc != 1) {
+        return ERR_INCOMPLETE;
+    }
+    set_terminal_type(target, argv[0]);
+    return ERR_OK;
+}
+
+COMMAND(port_define_terminal_type) {
+    OPT_TARGET
+    if (argc != 1) {
+        return ERR_INCOMPLETE;
+    }
+    
+    char *ucname = alloca(strlen(argv[0]) + 1);
+    for (int i = 0; i < strlen(argv[0]); i++) {
+        ucname[i] = toupper(argv[0][i]);
+        ucname[i+1] = 0;
+    }
+
+    setting_set(MODULE_PORT, SETTING_PORT_TERMINAL_TYPE, target->no, strlen(ucname), (uint8_t *)ucname);
+    return ERR_OK;
+}
+
+COMMAND(port_set_local_switch) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    int key = parse_local_switch(argv[0]);
+    if (key == LOCAL_SWITCH_ERROR) {
+        return ERR_INVALID;
+    }
+    target->local_switch = key;
+    return ERR_OK;
+}
+
+COMMAND(port_set_forward_switch) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    int key = parse_local_switch(argv[0]);
+    if (key == LOCAL_SWITCH_ERROR) {
+        return ERR_INVALID;
+    }
+    target->forward_switch = key;
+    return ERR_OK;
+}
+
+COMMAND(port_set_backward_switch) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    int key = parse_local_switch(argv[0]);
+    if (key == LOCAL_SWITCH_ERROR) {
+        return ERR_INVALID;
+    }
+    target->backward_switch = key;
+    return ERR_OK;
+}
+
+
+
+COMMAND(port_define_local_switch) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    int key = parse_local_switch(argv[0]);
+    if (key == LOCAL_SWITCH_ERROR) {
+        return ERR_INVALID;
+    }
+    
+    setting_set(MODULE_PORT, SETTING_PORT_LOCAL_SWITCH, target->no, 4, (uint8_t *)&key);
+    return ERR_OK;
+}
+
+COMMAND(port_define_forward_switch) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    int key = parse_local_switch(argv[0]);
+    if (key == LOCAL_SWITCH_ERROR) {
+        return ERR_INVALID;
+    }
+    setting_set(MODULE_PORT, SETTING_PORT_FORWARD_SWITCH, target->no, 4, (uint8_t *)&key);
+    return ERR_OK;
+}
+
+COMMAND(port_define_backward_switch) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    int key = parse_local_switch(argv[0]);
+    if (key == LOCAL_SWITCH_ERROR) {
+        return ERR_INVALID;
+    }
+    setting_set(MODULE_PORT, SETTING_PORT_BACKWARD_SWITCH, target->no, 4, (uint8_t *)&key);
+    return ERR_OK;
 }
