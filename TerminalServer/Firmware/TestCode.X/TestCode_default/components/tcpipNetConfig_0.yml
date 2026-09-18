@@ -1,0 +1,162 @@
+configVersion: 1.0.0
+componentName: tcpipNetConfig_0
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: tcpipNetConfig_0
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments:
+    children:
+    - children:
+      - attributes:
+          id: NETCONFIG_MAC_Dependency
+        children:
+        - children:
+          - attributes:
+              id: targetComponentID
+            children:
+            - type: Value
+              value: drvExtMacEnc28j60_0
+            type: String
+          - attributes:
+              id: targetAttachmentID
+            children:
+            - type: Value
+              value: libdrvExtMacEnc28j60
+            type: String
+          type: Attributes
+        type: DirectDependency
+      type: Attachments
+    type: tcpipNetConfig_0
+  elementPosition: {}
+  symbols:
+    TCPIP_NETWORK_DEFAULT_DNS_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_DEFAULT_DNS_IDX0
+        label: IPv4 Primary DNS
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: 192.168.100.2
+          type: Dynamic
+        type: Values
+      type: String
+    TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0
+        label: IPv4 Default Gateway Address
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: 192.168.100.2
+          type: Dynamic
+        type: Values
+      type: String
+    TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0
+        label: Host Name
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: MCHPENC28_E
+          type: Dynamic
+        - attributes:
+            value: MCHPENC28_E
+          type: User
+        type: Values
+      type: String
+    TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0
+        label: Interface
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: ENC28J60
+          type: Dynamic
+        type: Values
+      type: String
+    TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0
+        label: IPv4 Static Address
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: 192.168.100.13
+          type: Dynamic
+        - attributes:
+            value: 192.168.150.114
+          type: User
+        type: Values
+      type: String
+    TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0
+        label: Mac Address
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: 00:04:a3:12:34:56
+          type: Dynamic
+        - attributes:
+            value: 00:04:a3:12:34:56
+          type: User
+        type: Values
+      type: String
+    TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0
+        label: Network MAC Driver
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: DRV_ENC28J60_MACObject
+          type: Dynamic
+        - attributes:
+            value: DRV_ENC28J60_MACObject
+          type: User
+        type: Values
+      type: String
+    TCPIP_STACK_NETWORK_CONFIG_IDX0:
+      attributes:
+        id: TCPIP_STACK_NETWORK_CONFIG_IDX0
+        label: Network interface Enable
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    TCPIP_STACK_NETWORK_CONFIG_NUMBER:
+      attributes:
+        id: TCPIP_STACK_NETWORK_CONFIG_NUMBER
+        label: Network Configurations Index
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig_0
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: Integer
+  userData: {}

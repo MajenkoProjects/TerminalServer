@@ -4,7 +4,7 @@
 
 
 project: TestCode
-creation_date: 2026-09-11T19:24:36.340+01:00[Europe/London]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2026-09-18T12:02:00.004+01:00[Europe/London]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Linux
 mcc_mode: IDE            # [IDE|Standalone|Headless]
 mcc_version: v5.7.0
@@ -19,7 +19,6 @@ modules:
     - {name: "usb", version: "v3.16.0"}
     - {name: "FreeRTOS-Kernel", version: "V11.3.1"}
     - {name: "net", version: "v3.14.6"}
-    - {name: "bsp", version: "v3.25.0"}
 
 packs:
     - {name: "PIC32MX_DFP", version: "1.6.369"}

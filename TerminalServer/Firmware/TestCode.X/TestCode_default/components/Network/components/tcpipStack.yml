@@ -1,0 +1,140 @@
+configVersion: 1.0.0
+componentName: tcpipStack
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: tcpipStack
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: Group0
+    children:
+    - children:
+      - attributes:
+          id: tcpipStack
+          x: '1614'
+          y: '109'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    TCPIP_RTOS_TASK_STACK_SIZE:
+      attributes:
+        id: TCPIP_RTOS_TASK_STACK_SIZE
+        label: Stack Size (in bytes)
+      children:
+      - children:
+        - attributes:
+            value: '4096'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_STACK_DRAM_SIZE:
+      attributes:
+        id: TCPIP_STACK_DRAM_SIZE
+        label: TCP/IP Stack Dynamic RAM Size
+      children:
+      - children:
+        - attributes:
+            value: '49152'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_STACK_ENABLE_INIT_CALLBACK:
+      attributes:
+        id: TCPIP_STACK_ENABLE_INIT_CALLBACK
+        label: Enable Stack Initialization Callback
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    TCPIP_STACK_EXTERN_PACKET_PROCESS:
+      attributes:
+        id: TCPIP_STACK_EXTERN_PACKET_PROCESS
+        label: Enable External Packet Processing
+      children:
+      - children:
+        - attributes:
+            value: 'false'
+          type: User
+        type: Values
+      type: Boolean
+    TCPIP_STACK_HEAP_SIZE_RECOMMEND:
+      attributes:
+        id: TCPIP_STACK_HEAP_SIZE_RECOMMEND
+        label: TCP/IP Heap Size Estimate(in kilobytes)
+      children:
+      - children:
+        - attributes:
+            id: tcpipStack
+            value: '29'
+          type: Dynamic
+        type: Values
+      type: Integer
+    TCPIP_STACK_HEAP_USAGE_CONFIG:
+      attributes:
+        id: TCPIP_STACK_HEAP_USAGE_CONFIG
+        label: Heap area usage
+      children:
+      - children:
+        - attributes:
+            value: TCPIP_STACK_HEAP_USE_DEFAULT
+          type: User
+        type: Values
+      type: Combo
+    TCPIP_STACK_INIT_CALLBACK:
+      attributes:
+        id: TCPIP_STACK_INIT_CALLBACK
+        label: Stack Initialization Callback Function
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: TCPIP_STACK_InitCallback
+          type: User
+        type: Values
+      type: String
+    TCPIP_STACK_SYS_RANDOM_H2_ADAPTER:
+      attributes:
+        id: TCPIP_STACK_SYS_RANDOM_H2_ADAPTER
+        label: TCPIP_STACK_SYS_RANDOM_H2_ADAPTER
+      children:
+      - children:
+        - attributes:
+            id: tcpipStack
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    TCPIP_STACK_USE_HEAP_CONFIG:
+      attributes:
+        id: TCPIP_STACK_USE_HEAP_CONFIG
+        label: Use Heap Config
+      children:
+      - children:
+        - attributes:
+            value: TCPIP_STACK_HEAP_TYPE_EXTERNAL_HEAP
+          type: User
+        type: Values
+      type: Combo
+  userData: {}

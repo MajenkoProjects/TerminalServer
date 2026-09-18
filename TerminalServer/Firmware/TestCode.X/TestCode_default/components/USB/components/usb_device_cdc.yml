@@ -1,0 +1,43 @@
+configVersion: 1.0.0
+componentName: usb_device_cdc
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: usb_device_cdc
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: usb
+  type: package
+  version: v3.16.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: Group2
+    children:
+    - children:
+      - attributes:
+          id: usb_device_cdc
+          x: '30'
+          y: '346'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    CONFIG_USB_DEVICE_CDC_INSTANCES:
+      attributes:
+        id: CONFIG_USB_DEVICE_CDC_INSTANCES
+        label: Number of Instances
+      children:
+      - children:
+        - attributes:
+            id: usb_device_cdc
+            value: '2'
+          type: Dynamic
+        type: Values
+      type: Integer
+  userData: {}

@@ -1,0 +1,81 @@
+configVersion: 1.0.0
+componentName: tcpipTcp
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: tcpipTcp
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments:
+    children:
+    - children:
+      - attributes:
+          id: Tcp_Crypto_Dependency
+        children:
+        - children:
+          - attributes:
+              id: enabled
+            children:
+            - type: Value
+              value: 'false'
+            type: Boolean
+          type: Attributes
+        type: GenericDependency
+      type: Attachments
+    type: tcpipTcp
+  elementPosition:
+    attributes:
+      id: Group0
+    children:
+    - children:
+      - attributes:
+          id: tcpipTcp
+          x: '613'
+          y: '20'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    TCPIP_TCP_DISABLE_CRYPTO_USAGE:
+      attributes:
+        id: TCPIP_TCP_DISABLE_CRYPTO_USAGE
+        label: Disable Crypto Dependency
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    TCPIP_TCP_EXTERN_PACKET_PROCESS:
+      attributes:
+        id: TCPIP_TCP_EXTERN_PACKET_PROCESS
+        label: Enable External Packet Processing
+      children:
+      - children:
+        - attributes:
+            value: 'false'
+          type: User
+        type: Values
+      type: Boolean
+    TCPIP_TCP_HEAP_SIZE:
+      attributes:
+        id: TCPIP_TCP_HEAP_SIZE
+        label: TCP Heap Size (bytes)
+      children:
+      - children:
+        - attributes:
+            id: tcpipTcp
+            value: '11560'
+          type: Dynamic
+        type: Values
+      type: Integer
+  userData: {}

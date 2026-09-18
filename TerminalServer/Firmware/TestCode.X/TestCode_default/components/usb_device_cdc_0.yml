@@ -1,0 +1,80 @@
+configVersion: 1.0.0
+componentName: usb_device_cdc_0
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: usb_device_cdc_0
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: usb
+  type: package
+  version: v3.16.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition: {}
+  symbols:
+    CONFIG_USB_DEVICE_FUNCTION_BULK_IN_ENDPOINT_NUMBER:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_BULK_IN_ENDPOINT_NUMBER
+        label: Bulk IN Endpoint Number
+      children:
+      - children:
+        - attributes:
+            id: usb_device_cdc_0
+            value: '2'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_BULK_OUT_ENDPOINT_NUMBER:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_BULK_OUT_ENDPOINT_NUMBER
+        label: Bulk OUT Endpoint Number
+      children:
+      - children:
+        - attributes:
+            id: usb_device_cdc_0
+            value: '2'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_INTERFACE_NUMBER:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_INTERFACE_NUMBER
+        label: Start Interface Number
+      children:
+      - children:
+        - attributes:
+            id: usb_device_cdc_0
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_INT_ENDPOINT_NUMBER:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_INT_ENDPOINT_NUMBER
+        label: Interrupt Endpoint Number
+      children:
+      - children:
+        - attributes:
+            id: usb_device_cdc_0
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_USE_IAD:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_USE_IAD
+        label: Use Interface Association Descriptor
+      children:
+      - children:
+        - attributes:
+            id: usb_device_cdc_0
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+  userData: {}

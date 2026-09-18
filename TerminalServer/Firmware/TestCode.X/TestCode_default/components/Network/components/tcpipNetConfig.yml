@@ -1,0 +1,43 @@
+configVersion: 1.0.0
+componentName: tcpipNetConfig
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: tcpipNetConfig
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: Group0
+    children:
+    - children:
+      - attributes:
+          id: tcpipNetConfig
+          x: '313'
+          y: '224'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    TCPIP_STACK_NETWORK_INTERAFCE_COUNT:
+      attributes:
+        id: TCPIP_STACK_NETWORK_INTERAFCE_COUNT
+        label: Number of Instances
+      children:
+      - children:
+        - attributes:
+            id: tcpipNetConfig
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: Integer
+  userData: {}

@@ -1,0 +1,206 @@
+configVersion: 1.0.0
+componentName: i2c2
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: i2c2
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: csp
+  type: package
+  version: v3.26.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: i2c2
+          x: '97'
+          y: '394'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    BRG_VALUE:
+      attributes:
+        id: BRG_VALUE
+        label: BRG_VALUE
+      children:
+      - children:
+        - attributes:
+            id: i2c2
+            value: '33'
+          type: Dynamic
+        type: Values
+      type: Integer
+    I2CS_A10M_SUPPORT:
+      attributes:
+        id: I2CS_A10M_SUPPORT
+        label: Enable 10-bit Addressing
+      type: Boolean
+    I2CS_CORE_TIMER_FREQUENCY:
+      attributes:
+        id: I2CS_CORE_TIMER_FREQUENCY
+        label: I2CS_CORE_TIMER_FREQUENCY
+      type: Integer
+    I2CS_RISE_TIME_CORE_TIMER_CNTS:
+      attributes:
+        id: I2CS_RISE_TIME_CORE_TIMER_CNTS
+        label: I2CS_RISE_TIME_CORE_TIMER_CNTS
+      children:
+      - children:
+        - attributes:
+            id: i2c2
+            value: '12'
+          type: Dynamic
+        type: Values
+      type: Integer
+    I2CS_SETUP_RISE_TIME:
+      attributes:
+        id: I2CS_SETUP_RISE_TIME
+        label: Setup and Rise Time
+      type: KeyValueSet
+    I2CS_SETUP_TIME_CORE_TIMER_CNTS:
+      attributes:
+        id: I2CS_SETUP_TIME_CORE_TIMER_CNTS
+        label: I2CS_SETUP_TIME_CORE_TIMER_CNTS
+      children:
+      - children:
+        - attributes:
+            id: i2c2
+            value: '4'
+          type: Dynamic
+        type: Values
+      type: Integer
+    I2C_BUS_IEC_REG:
+      attributes:
+        id: I2C_BUS_IEC_REG
+        label: I2C_BUS_IEC_REG
+      type: String
+    I2C_BUS_IFS_REG:
+      attributes:
+        id: I2C_BUS_IFS_REG
+        label: I2C_BUS_IFS_REG
+      type: String
+    I2C_CLOCK_FREQ:
+      attributes:
+        id: I2C_CLOCK_FREQ
+        label: I2C Clock Frequency
+      type: Integer
+    I2C_CLOCK_SPEED:
+      attributes:
+        id: I2C_CLOCK_SPEED
+        label: I2C Baud Rate (Hz)
+      children:
+      - children:
+        - attributes:
+            value: '1000000'
+          type: User
+        type: Values
+      type: Long
+    I2C_CLOCK_SPEED_HZ:
+      attributes:
+        id: I2C_CLOCK_SPEED_HZ
+        label: I2C Baud Rate (Hz)
+      children:
+      - children:
+        - attributes:
+            id: i2c2
+            value: '1000000'
+          type: Dynamic
+        type: Values
+      type: Long
+    I2C_DISSLW:
+      attributes:
+        id: I2C_DISSLW
+        label: Disable Slew Rate Control
+      type: Boolean
+    I2C_INCLUDE_FORCED_WRITE_API:
+      attributes:
+        id: I2C_INCLUDE_FORCED_WRITE_API
+        label: Include Force Write I2C Function (Master Mode Only - Ignore NACK from
+          Slave)
+      type: Boolean
+    I2C_INSTANCE_NAME:
+      attributes:
+        id: I2C_INSTANCE_NAME
+        label: I2C_INSTANCE_NAME
+      type: String
+    I2C_INSTANCE_NUM:
+      attributes:
+        id: I2C_INSTANCE_NUM
+        label: I2C_INSTANCE_NUM
+      type: String
+    I2C_MASTER_IEC_REG:
+      attributes:
+        id: I2C_MASTER_IEC_REG
+        label: I2C_MASTER_IEC_REG
+      type: String
+    I2C_MASTER_IFS_REG:
+      attributes:
+        id: I2C_MASTER_IFS_REG
+        label: I2C_MASTER_IFS_REG
+      type: String
+    I2C_MAX_BRG:
+      attributes:
+        id: I2C_MAX_BRG
+        label: I2C_MAX_BRG
+      type: Integer
+    I2C_OPERATING_MODE:
+      attributes:
+        id: I2C_OPERATING_MODE
+        label: Operating Mode
+      children:
+      - children:
+        - attributes:
+            id: readOnly
+          children:
+          - type: Value
+            value: 'false'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            id: i2c2
+            value: Master
+          type: Dynamic
+        type: Values
+      type: Combo
+    I2C_PLIB_API_PREFIX:
+      attributes:
+        id: I2C_PLIB_API_PREFIX
+        label: I2C_PLIB_API_PREFIX
+      type: String
+    I2C_SIDL:
+      attributes:
+        id: I2C_SIDL
+        label: Stop in Idle Mode bit
+      type: Boolean
+    I2C_SLAVE_ADDDRESS:
+      attributes:
+        id: I2C_SLAVE_ADDDRESS
+        label: I2C Slave Address (7-bit)
+      type: Hex
+    I2C_SLAVE_IEC_REG:
+      attributes:
+        id: I2C_SLAVE_IEC_REG
+        label: I2C_SLAVE_IEC_REG
+      type: String
+    I2C_SLAVE_IFS_REG:
+      attributes:
+        id: I2C_SLAVE_IFS_REG
+        label: I2C_SLAVE_IFS_REG
+      type: String
+    I2C_SMEN:
+      attributes:
+        id: I2C_SMEN
+        label: Enable SMBus
+      type: Boolean
+  userData: {}

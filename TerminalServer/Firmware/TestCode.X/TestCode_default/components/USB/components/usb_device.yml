@@ -1,0 +1,188 @@
+configVersion: 1.0.0
+componentName: usb_device
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: usb_device
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: usb
+  type: package
+  version: v3.16.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: Group2
+    children:
+    - children:
+      - attributes:
+          id: usb_device
+          x: '34'
+          y: '60'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    CONFIG_USB_DEVICE_CONFIG_DESCRPTR_SIZE:
+      attributes:
+        id: CONFIG_USB_DEVICE_CONFIG_DESCRPTR_SIZE
+        label: CONFIG_USB_DEVICE_CONFIG_DESCRPTR_SIZE
+      children:
+      - children:
+        - attributes:
+            id: usb_device
+            value: '173'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_DESCRIPTOR_IAD_ENABLE:
+      attributes:
+        id: CONFIG_USB_DEVICE_DESCRIPTOR_IAD_ENABLE
+        label: CONFIG_USB_DEVICE_DESCRIPTOR_IAD_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: usb_device
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CONFIG_USB_DEVICE_ENDPOINTS_NUMBER:
+      attributes:
+        id: CONFIG_USB_DEVICE_ENDPOINTS_NUMBER
+        label: Number of Endpoints
+      children:
+      - children:
+        - attributes:
+            id: usb_device
+            value: '4'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTIONS_NUMBER:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTIONS_NUMBER
+        label: Number of Functions
+      children:
+      - children:
+        - attributes:
+            id: usb_device
+            value: '2'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_INTERFACES_NUMBER:
+      attributes:
+        id: CONFIG_USB_DEVICE_INTERFACES_NUMBER
+        label: CONFIG_USB_DEVICE_INTERFACES_NUMBER
+      children:
+      - children:
+        - attributes:
+            id: usb_device
+            value: '4'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_MANUFACTURER_STRING:
+      attributes:
+        id: CONFIG_USB_DEVICE_MANUFACTURER_STRING
+        label: Manufacturer String
+      children:
+      - children:
+        - attributes:
+            value: Majenko Technologies
+          type: User
+        type: Values
+      type: String
+    CONFIG_USB_DEVICE_MAX_POWER:
+      attributes:
+        id: CONFIG_USB_DEVICE_MAX_POWER
+        label: Maximum Power (mA)
+      children:
+      - children:
+        - attributes:
+            value: '500'
+          type: User
+        type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_PRODUCT_ID_IDX0:
+      attributes:
+        id: CONFIG_USB_DEVICE_PRODUCT_ID_IDX0
+        label: Product ID
+      children:
+      - children:
+        - attributes:
+            value: '0x6969'
+          type: User
+        type: Values
+      type: String
+    CONFIG_USB_DEVICE_PRODUCT_STRING_DESCRIPTOR:
+      attributes:
+        id: CONFIG_USB_DEVICE_PRODUCT_STRING_DESCRIPTOR
+        label: Product String Selection
+      children:
+      - children:
+        - attributes:
+            value: Terminal Server
+          type: User
+        type: Values
+      type: String
+    CONFIG_USB_DEVICE_SERIAL_NUMBER_STRING_DESCRIPTOR:
+      attributes:
+        id: CONFIG_USB_DEVICE_SERIAL_NUMBER_STRING_DESCRIPTOR
+        label: Serial Number
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: SP00NZ
+          type: User
+        type: Values
+      type: String
+    CONFIG_USB_DEVICE_SERIAL_NUMBER_STRING_ENABLE:
+      attributes:
+        id: CONFIG_USB_DEVICE_SERIAL_NUMBER_STRING_ENABLE
+        label: Add Device Serial Number
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    CONFIG_USB_DEVICE_USE_MSD:
+      attributes:
+        id: CONFIG_USB_DEVICE_USE_MSD
+        label: CONFIG_USB_DEVICE_USE_MSD
+      children:
+      - children:
+        - attributes:
+            id: usb_device
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CONFIG_USB_DEVICE_VENDOR_ID_IDX0:
+      attributes:
+        id: CONFIG_USB_DEVICE_VENDOR_ID_IDX0
+        label: Vendor ID
+      children:
+      - children:
+        - attributes:
+            value: '0xf055'
+          type: User
+        type: Values
+      type: String
+  userData: {}

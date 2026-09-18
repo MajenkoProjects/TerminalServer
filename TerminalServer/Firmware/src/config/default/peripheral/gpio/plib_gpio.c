@@ -58,7 +58,7 @@
 */
 void GPIO_Initialize ( void )
 {
-    AD1PCFGSET = 0x2; /* Digital Mode Enable */
+    AD1PCFGSET = 0x22; /* Digital Mode Enable */
 
     /* PORTA Initialization */
     LATA = 0x30; /* Initial Latch Value */

@@ -43,7 +43,6 @@ int32_t DRV_ENC28J60_MainStateTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst)
 {
     int32_t res;
 
-
     switch (pDrvInst->mainStateInfo.state)
     {
         case DRV_ENC28J60_MS_UNINITIALIZED:

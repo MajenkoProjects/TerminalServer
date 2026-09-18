@@ -397,7 +397,8 @@ static DRV_ENC28J60_OP_DCPT* F_DRV_OpHandleFromUserHandle(uintptr_t  handle, boo
 {
 }*/
 
-DRV_ENC28J60_spiBusData balls;
+
+
 
 int32_t DRV_ENC28J60_SPI_InitializeInterface(DRV_ENC28J60_DriverInfo *  pDrvInstance )
 {
@@ -410,6 +411,7 @@ int32_t DRV_ENC28J60_SPI_InitializeInterface(DRV_ENC28J60_DriverInfo *  pDrvInst
     {   // failed
         return -1;
     }
+
     // success
     pDrvInstance->busData = pBusData;
     pDrvInstance->busVTable = &drv_ENC28J60_spi_vtable;
@@ -477,7 +479,6 @@ int32_t DRV_ENC28J60_SPI_DeinitializeInterface(DRV_ENC28J60_DriverInfo *  pDrvIn
 */
 int32_t DRV_ENC28J60_SPI_OpenInterface(DRV_ENC28J60_DriverInfo *  pDrvInstance )
 {
-
     DRV_ENC28J60_spiBusData * pBusInfo = (DRV_ENC28J60_spiBusData *)pDrvInstance->busData;
     pBusInfo->clientHandle = DRV_SPI_Open(pDrvInstance->drvCfg.spiDrvIndex, DRV_IO_INTENT_READWRITE);
     if (pBusInfo->clientHandle == DRV_HANDLE_INVALID)

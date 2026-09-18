@@ -48,7 +48,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include "bsp/bsp.h"
 #include "usb/usb_chapter_9.h"
 #include "usb/usb_device.h"
 #include "peripheral/uart/plib_uart5.h"

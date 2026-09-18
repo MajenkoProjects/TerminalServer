@@ -1,0 +1,46 @@
+configVersion: 1.0.0
+componentName: drvExtMacEnc28j60_0
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: drvExtMacEnc28j60_0
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition: {}
+  symbols:
+    DRV_ENC28J60_RX_BUFFER_SIZE_IDX0:
+      attributes:
+        id: DRV_ENC28J60_RX_BUFFER_SIZE_IDX0
+        label: RX Buffer Size (should be even)
+      children:
+      - children:
+        - attributes:
+            value: '16384'
+          type: User
+        type: Values
+      type: Integer
+    DRV_ENC28J60_SPI_CS_IDX0:
+      attributes:
+        id: DRV_ENC28J60_SPI_CS_IDX0
+        label: SPI Chip Select Pin
+      children:
+      - children:
+        - attributes:
+            id: drvExtMacEnc28j60_0
+            value: '46'
+          type: Dynamic
+        - attributes:
+            value: '5'
+          type: User
+        type: Values
+      type: KeyValueSet
+  userData: {}

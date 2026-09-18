@@ -1,0 +1,23 @@
+Ports
+
+    UART                Done
+    USB                 Done
+    Telnet In           Done
+    Telnet Out          Done
+    TCP In
+    TCP Out
+    UDP In
+    UDP Out
+
+Functions
+
+    Set terminal type (and map to tinfo)                    Done
+    Set terminal local/forward/backward keys
+    Service definitions (name->port(s), name->telnet)
+    Help
+
+Misc
+
+    Factory reset on hold button
+    Bootloaderifcation
+

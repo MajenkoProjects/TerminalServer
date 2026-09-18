@@ -1,0 +1,206 @@
+configVersion: 1.0.0
+componentName: core_timer
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: core_timer
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: csp
+  type: package
+  version: v3.26.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments:
+    children:
+    - children:
+      - attributes:
+          id: CORE_TIMER_TMR
+        children:
+        - children:
+          - attributes:
+              id: targetComponentID
+            children:
+            - type: Value
+              value: sys_time
+            type: String
+          - attributes:
+              id: targetAttachmentID
+            children:
+            - type: Value
+              value: sys_time_TMR_dependency
+            type: String
+          type: Attributes
+        type: DirectCapability
+      type: Attachments
+    type: core_timer
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: core_timer
+          x: '401'
+          y: '51'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    CORE_TIMER_INTERRUPT_MODE:
+      attributes:
+        id: CORE_TIMER_INTERRUPT_MODE
+        label: Enable Interrupt mode
+      children:
+      - children:
+        - attributes:
+            id: core_timer
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CORE_TIMER_PERIODIC_INTERRUPT:
+      attributes:
+        id: CORE_TIMER_PERIODIC_INTERRUPT
+        label: Generate Periodic interrupt
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            id: core_timer
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CORE_TIMER_FREQUENCY:
+      attributes:
+        id: CORE_TIMER_FREQUENCY
+        label: CORE_TIMER_FREQUENCY
+      children:
+      - children:
+        - attributes:
+            id: core_timer
+            value: '40000000'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CORE_TIMER_PERIOD_VALUE:
+      attributes:
+        id: CORE_TIMER_PERIOD_VALUE
+        label: Timer Interrupt Period
+      children:
+      - children:
+        - attributes:
+            id: core_timer
+            value: '0x9c40'
+          type: Dynamic
+        type: Values
+      type: String
+    CORE_TIMER_PERIOD_US:
+      attributes:
+        id: CORE_TIMER_PERIOD_US
+        label: CORE_TIMER_PERIOD_US
+      children:
+      - children:
+        - attributes:
+            id: core_timer
+            value: '1000'
+          type: Dynamic
+        type: Values
+      type: Integer
+    CORE_TIMER_STOP_IN_DEBUG:
+      attributes:
+        id: CORE_TIMER_STOP_IN_DEBUG
+        label: Stop Timer in Debug mode
+      type: Boolean
+    CORE_TIMER_COMPARE_MS:
+      attributes:
+        id: CORE_TIMER_COMPARE_MS
+        label: Compare period (milliseconds)
+      type: Float
+    CORE_TIMER_PERIOD_MS:
+      attributes:
+        id: CORE_TIMER_PERIOD_MS
+        label: Timer interrupt period (milliseconds)
+      type: Float
+    CORE_TIMER_AUTOSTART:
+      attributes:
+        id: CORE_TIMER_AUTOSTART
+        label: Auto start timer after initialization
+      type: Boolean
+    CORE_TIMER_IEC_REG:
+      attributes:
+        id: CORE_TIMER_IEC_REG
+        label: CORE_TIMER_IEC_REG
+      type: String
+    CORE_TIMER_IEC_REG_VALUE:
+      attributes:
+        id: CORE_TIMER_IEC_REG_VALUE
+        label: CORE_TIMER_IEC_REG_VALUE
+      type: String
+    CORE_TIMER_IFS_REG:
+      attributes:
+        id: CORE_TIMER_IFS_REG
+        label: CORE_TIMER_IFS_REG
+      type: String
+    CORE_TIMER_IFS_REG_VALUE:
+      attributes:
+        id: CORE_TIMER_IFS_REG_VALUE
+        label: CORE_TIMER_IFS_REG_VALUE
+      type: String
+    TIMER_WIDTH:
+      attributes:
+        id: TIMER_WIDTH
+        label: TIMER_WIDTH
+      type: Integer
+    TIMER_PERIOD_MAX:
+      attributes:
+        id: TIMER_PERIOD_MAX
+        label: TIMER_PERIOD_MAX
+      type: String
+    TIMER_START_API_NAME:
+      attributes:
+        id: TIMER_START_API_NAME
+        label: TIMER_START_API_NAME
+      type: String
+    TIMER_STOP_API_NAME:
+      attributes:
+        id: TIMER_STOP_API_NAME
+        label: TIMER_STOP_API_NAME
+      type: String
+    COMPARE_SET_API_NAME:
+      attributes:
+        id: COMPARE_SET_API_NAME
+        label: COMPARE_SET_API_NAME
+      type: String
+    COUNTER_GET_API_NAME:
+      attributes:
+        id: COUNTER_GET_API_NAME
+        label: COUNTER_GET_API_NAME
+      type: String
+    FREQUENCY_GET_API_NAME:
+      attributes:
+        id: FREQUENCY_GET_API_NAME
+        label: FREQUENCY_GET_API_NAME
+      type: String
+    CALLBACK_API_NAME:
+      attributes:
+        id: CALLBACK_API_NAME
+        label: CALLBACK_API_NAME
+      type: String
+    IRQ_ENUM_NAME:
+      attributes:
+        id: IRQ_ENUM_NAME
+        label: IRQ_ENUM_NAME
+      type: String
+  userData: {}

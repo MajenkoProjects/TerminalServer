@@ -260,6 +260,7 @@ static const DRV_USBFS_INIT drvUSBFSInit =
 
 
 
+
 // <editor-fold defaultstate="collapsed" desc="TCP/IP Stack Initialization Data">
 // *****************************************************************************
 // *****************************************************************************
@@ -652,7 +653,7 @@ void SYS_Initialize ( void* data )
     DDPCONbits.JTAGEN = 0;
 
     GPIO_Initialize();
-    BSP_Initialize();
+//    BSP_Initialize();
     CORETIMER_Initialize();
     UART1_Initialize();
     UART2_Initialize();

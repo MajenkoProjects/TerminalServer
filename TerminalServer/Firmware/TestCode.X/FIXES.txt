@@ -1,0 +1,16 @@
+This is a list of things that need to be fixed in the
+MCHP core software to make things work.
+
+1. URG packets in TCP getting dropped.
+
+Comment out the following in config/default/library/tcpip/src/tcp.c:
+
+    //
+    // Sixth: Check the URG bit
+    //
+    // Urgent packets are not supported in this stack, so we
+    // will throw them away instead
+    if((localHeaderFlags & URG) != 0U)
+    {
+        return;
+    }

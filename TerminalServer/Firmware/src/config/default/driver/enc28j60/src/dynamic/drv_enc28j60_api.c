@@ -162,7 +162,6 @@ SYS_MODULE_OBJ DRV_ENC28J60_Initialize(SYS_MODULE_INDEX index, const SYS_MODULE_
         return SYS_MODULE_OBJ_INVALID;
     }
 
-
     // Clear out any cruft that might be in there
     (void)memset(pDrvInst, 0, sizeof(*pDrvInst));
 

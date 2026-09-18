@@ -1,0 +1,53 @@
+configVersion: 1.0.0
+componentName: tcpipIcmp
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: tcpipIcmp
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: Group0
+    children:
+    - children:
+      - attributes:
+          id: tcpipIcmp
+          x: '435'
+          y: '17'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    TCPIP_ICMP_ECHO_BROADCASTS:
+      attributes:
+        id: TCPIP_ICMP_ECHO_BROADCASTS
+        label: Allow Replies to Echo Broadcast Requests
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    TCPIP_STACK_USE_ICMP_CLIENT:
+      attributes:
+        id: TCPIP_STACK_USE_ICMP_CLIENT
+        label: Use ICMPv4 Client
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+  userData: {}

@@ -1,0 +1,103 @@
+configVersion: 1.0.0
+componentName: sys_time
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: sys_time
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: core
+  type: package
+  version: v3.17.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments:
+    children:
+    - children:
+      - attributes:
+          id: sys_time_TMR_dependency
+        children:
+        - children:
+          - attributes:
+              id: targetComponentID
+            children:
+            - type: Value
+              value: core_timer
+            type: String
+          - attributes:
+              id: targetAttachmentID
+            children:
+            - type: Value
+              value: CORE_TIMER_TMR
+            type: String
+          type: Attributes
+        type: DirectDependency
+      type: Attachments
+    type: sys_time
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: sys_time
+          x: '623'
+          y: '11'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    SYS_TIME_OPERATING_MODE:
+      attributes:
+        id: SYS_TIME_OPERATING_MODE
+        label: Operating Mode
+      children:
+      - children:
+        - attributes:
+            id: readOnly
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'false'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            id: sys_time
+            value: TICKLESS
+          type: Dynamic
+        type: Values
+      type: Combo
+    SYS_TIME_PLIB:
+      attributes:
+        id: SYS_TIME_PLIB
+        label: PLIB Used
+      children:
+      - children:
+        - attributes:
+            id: sys_time
+            value: CORE_TIMER
+          type: Dynamic
+        type: Values
+      type: String
+    SYS_TIME_REMOTE_COMPONENT_ID:
+      attributes:
+        id: SYS_TIME_REMOTE_COMPONENT_ID
+        label: Remote component id
+      children:
+      - children:
+        - attributes:
+            id: sys_time
+            value: core_timer
+          type: Dynamic
+        type: Values
+      type: String
+  userData: {}
