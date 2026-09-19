@@ -9,7 +9,6 @@
 #include "usb.h"
 #include "port.h"
 #include "task.h"
-#include "leds.h"
 #include "pin.h"
 #include "uart.h"
 #include "command.h"
@@ -20,10 +19,48 @@
 #include "telnet_out.h"
 #include "util.h"
 
+
+struct module {
+    void (*fn_boot)();
+    void (*fn_init)();
+};
+
+void system_greeter();
+void final_boot_message();
+
+// These function pointers define the boot sequence. First all the
+// functions on the left are executed in order, then the stored settings
+// are loaded from the EEPROM chip, then the functions on the right are
+// executed in order.
+static const struct module modules[] = {
+    { &pin_init,                NULL },
+    { &system_init_defaults,    NULL }, 
+    { &uart_create_ports,       &uart_boot },
+    { NULL,                     &system_greeter },
+    { &usb_create_ports,        &USB_Initialize },
+    { &ethernet_init_defaults,  &ethernet_boot },
+    { NULL,                     &telnet_in_initialize },
+    { NULL,                     &telnet_out_initialize },
+    { NULL,                     &final_boot_message },
+};
+
+#define NUM_MODULES (sizeof(modules) / sizeof(struct module))
+
 extern      ssize_t write(int fildes, const void *buf, size_t nbyte);
 extern      int close(int fildes);
 
-APP_DATA appData;
+static enum app_state state = APP_STATE_BOOT;
+
+void system_greeter() {
+    port_printf(CONSOLE, "\x0c\n\nMajenko Technologies Terminal Server V" VERSION "\r\n");
+    port_printf(CONSOLE, "(c) 2026 Majenko Technologies, All Rights Reserved\r\n");
+    port_printf(CONSOLE, "\r\n\n\n");
+}
+
+void final_boot_message() {
+    port_printf(CONSOLE, "\nSystem initialized. Press <RETURN> to activate console.\r\n\n");
+
+}
 
 void input_username(struct port *port) {
     
@@ -52,53 +89,48 @@ void input_password(struct port *port) {
 }
 
 void APP_Initialize ( void ) {
-    appData.state = APP_STATE_INIT;
-    pin_mode(&pins[U1TXLED], PIN_OUTPUT);
 }
 
-//uint32_t ts = 0;
-//int v = 0;
 void APP_Tasks ( void ) {    
-/*
-    if ((xTaskGetTickCount() - ts) > 500) {
-        v = 1 - v;
-        pin_set(&pins[U1TXLED], v);
-        ts = xTaskGetTickCount();
+    static uint32_t reset_ts = 0;
+    static bool reset_state = true;
+    pin_get(&pins[FACTORY_RESET]);
+    if (pin_get(&pins[FACTORY_RESET]) != reset_state) {
+        reset_state = pin_get(&pins[FACTORY_RESET]);
+        
+        if (reset_state == false) {
+            reset_ts = xTaskGetTickCount();
+            port_printf(CONSOLE, "Keep holding RESET for 30 seconds to factory reset.\r\n");
+        }
+        vTaskDelay(50);
+    } 
+    
+    if ((reset_state == false) && ((xTaskGetTickCount() - reset_ts) > 30000)) {
+        port_printf(CONSOLE, "Erasing NVRAM and rebooting. Please wait.\r\n");
+        settings_erase();
+        SYS_RESET_SoftwareReset();
     }
-*/
-
-
-
-    switch ( appData.state ) {
-        case APP_STATE_INIT:        
-            system_init_defaults();
-            uart_create_ports();
-            usb_create_ports();
-            ethernet_init_defaults();
-            appData.state = APP_STATE_LOAD_SETTINGS;
+    
+    switch ( state ) {
+        case APP_STATE_BOOT:   
+            for (int i = 0; i < NUM_MODULES; i++) {
+                if (modules[i].fn_boot) modules[i].fn_boot();
+            }
+            state = APP_STATE_LOAD_SETTINGS;
             break;
+            
         case APP_STATE_LOAD_SETTINGS:
             load_settings(); 
-            appData.state = APP_STATE_INIT_UARTS;
+            state = APP_STATE_INIT;
             break;
-        case APP_STATE_INIT_UARTS:
-            uart_boot();
-            port_printf(CONSOLE, "\x0c\n\nMajenko Technologies Terminal Server V" VERSION "\r\n");
-            port_printf(CONSOLE, "(c) 2026 Majenko Technologies, All Rights Reserved\r\n");
-            port_printf(CONSOLE, "\r\n\n\n");
-            appData.state = APP_STATE_INIT_USB;
+            
+        case APP_STATE_INIT:
+            for (int i = 0; i < NUM_MODULES; i++) {
+                if (modules[i].fn_init) modules[i].fn_init();
+            }
+            state = APP_STATE_SERVICE_TASKS;
             break;
-        case APP_STATE_INIT_USB:
-            USB_Initialize();
-            appData.state = APP_STATE_INIT_ETHERNET;
-            break;
-        case APP_STATE_INIT_ETHERNET:
-            ethernet_boot();
-            telnet_in_initialize();
-            telnet_out_initialize();
-            port_printf(CONSOLE, "\nSystem initialized. Press <RETURN> to activate console.\r\n\n");
-            appData.state = APP_STATE_SERVICE_TASKS;
-            break;
+            
         case APP_STATE_SERVICE_TASKS: 
             for (struct port *scan = ports; scan; scan = scan->next) {
                 if (scan->type != PORT_NONE) {
@@ -124,31 +156,42 @@ void APP_Tasks ( void ) {
                     }
                     
                     switch (scan->mode) {
+                        
+                        // A port is sitting doing nothing. If it's a serial port
+                        // and in local access mode then respond to a RETURN
+                        // keypress to initiate a login prompt.
                         case MODE_IDLE:
                             if (scan->access == ACCESS_LOCAL) {
                                 if (scan->type == PORT_SERIAL) {
                                     if (port_available(scan)) {
                                         int c = port_read_byte(scan);
                                         if (c == 13) {
-                                            scan->mode = MODE_GREET;
+                                            port_set_mode(scan, MODE_GREET);
                                         }
                                     }
                                 }
                             }
                             break;
+
+                        // A short delay before presenting the greeting and
+                        // login prompt. Really only for telnet-in.
                         case MODE_PREGREET: 
                             if (scan->ticks == 0) {
                                 scan->ticks = xTaskGetTickCount();
-                            } else if (xTaskGetTickCount() - scan->ticks > 1000) {
+                            } else if (xTaskGetTickCount() - scan->ticks > 500) {
                                 scan->ticks = 0;
-                                scan->mode = MODE_GREET;
+                                port_set_mode(scan, MODE_GREET);
                             }
                             break;
+
+                        // The main greeting and login prompt display.
                         case MODE_GREET:
                             if (scan->access == ACCESS_LOCAL) {
                                 greet(scan);
                             }
                             break;
+
+                        // Reading in the username and recording it in the port
                         case MODE_USERNAME:
                             if (scan->access == ACCESS_LOCAL) {
                                 if (port_available(scan)) {
@@ -162,6 +205,9 @@ void APP_Tasks ( void ) {
                                 }
                             }
                             break;
+
+                        // Reading in the password and verifying it against the
+                        // stored password for PRIV operation
                         case MODE_PASSWORD:
                             if (scan->access == ACCESS_LOCAL) {
                                 if (port_available(scan)) {
@@ -170,6 +216,9 @@ void APP_Tasks ( void ) {
                                 }
                             }
                             break;
+
+                        // Main Local> prompt processing mode. Deal with all commands
+                        // entered.
                         case MODE_LOCAL:
                             if (scan->access == ACCESS_LOCAL) {
                                 if (port_available(scan)) {
@@ -187,6 +236,10 @@ void APP_Tasks ( void ) {
                                 }
                             }
                             break;
+                            
+                        // Session mode - pass data from the parent to the target
+                        // and back from the target to the parent. Deal with
+                        // local switch keypresses.
                         case MODE_SESSION:
                             if (scan->active_session && (scan->active_session->type == SESSION_DIRECT)) {
                                 if (port_available(scan) && (cb_free(&scan->active_session->target->write_buffer))) {
@@ -196,26 +249,20 @@ void APP_Tasks ( void ) {
                                     for (int i = 0; i < r; i++) {
                                         if (tmp[i] == scan->local_switch) {
                                             port_printf(scan, "+++ OUT OF CHEESE ERROR +++\r\n");
-                                            scan->mode = MODE_LOCAL;
+                                            port_set_mode(scan, MODE_LOCAL);
                                         } else if (tmp[i] == scan->forward_switch) {
                                             struct session *first = NULL;
-                                            struct session *prev = NULL;
                                             struct session *curr = NULL;
                                             struct session *next = NULL;
-                                            struct session *last = NULL;
                                             for (struct session *sess = sessions; sess; sess = sess->next) {
                                                 if (sess->type == SESSION_DELETED) continue;
                                                 if (sess->parent == scan) {
                                                     if (first == NULL) first = sess;
-                                                    last = sess;
                                                     if (sess == scan->active_session) {
                                                         curr = sess;
                                                         continue;
                                                     }
-                                                    if ((curr == NULL)) {
-                                                        prev = sess;
-                                                        continue;
-                                                    }
+        
                                                     if ((next == NULL) && (curr != NULL)) {
                                                         next = sess;
                                                         continue;
@@ -223,17 +270,14 @@ void APP_Tasks ( void ) {
                                                 }
                                             }
                                             if (next == NULL) next = first;
-                                            scan->active_session = next;
+                                            port_set_active_session(scan, next);
                                         } else if (tmp[i] == scan->backward_switch) {
-                                            struct session *first = NULL;
                                             struct session *prev = NULL;
                                             struct session *curr = NULL;
-                                            struct session *next = NULL;
                                             struct session *last = NULL;
                                             for (struct session *sess = sessions; sess; sess = sess->next) {
                                                 if (sess->type == SESSION_DELETED) continue;
                                                 if (sess->parent == scan) {
-                                                    if (first == NULL) first = sess;
                                                     last = sess;
                                                     if (sess == scan->active_session) {
                                                         curr = sess;
@@ -243,14 +287,10 @@ void APP_Tasks ( void ) {
                                                         prev = sess;
                                                         continue;
                                                     }
-                                                    if ((next == NULL) && (curr != NULL)) {
-                                                        next = sess;
-                                                        continue;
-                                                    }
                                                 }
                                             }
                                             if (prev == NULL) prev = last;
-                                            scan->active_session = prev;
+                                            port_set_active_session(scan, prev);
                                             
                                         } else {
                                             if (IS_SPECIAL(tmp[i])) {

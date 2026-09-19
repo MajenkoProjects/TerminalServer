@@ -80,6 +80,7 @@ struct pin pins[] = {
     PINDEF(G, 13),  // U6SHTDN
     
     PINDEF(A, 5),   // ENC_RESET
+    PINDEF(G, 15),  // FACTORY_RESET
 };
 
 void pin_mode(struct pin *pin, uint8_t mode) {
@@ -103,4 +104,9 @@ uint8_t pin_get(struct pin *pin) {
         return 1;
     }
     return 0;
+}
+
+// Initialize the pins to the correct starting states
+void pin_init() {
+    pin_mode(&pins[FACTORY_RESET], PIN_INPUT);
 }

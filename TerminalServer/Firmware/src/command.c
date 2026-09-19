@@ -13,6 +13,7 @@
 #include "network.h"
 #include "ttype.h"
 #include "telnet_out.h"
+#include "port_commands.h"
 
 COMMAND(help) {
     port_printf(port, "%s", "Sorry, I haven't written the help tree parser yet.\r\n");

@@ -51,7 +51,6 @@ void uart_stop(struct port *port) {
 }
 
 void uart_start(struct port *port) {
-    port_printf(CONSOLE, "START\r\n");
     struct uart_data *data = (struct uart_data *)port->port_data;
     uint8_t c;
     switch (data->flow) {
@@ -267,6 +266,12 @@ static void UART_Tasks(void *pvParameters) {
     }
 }
 
+static void uart_flush(struct port *port) {
+    struct uart_data *data = (struct uart_data *)port->port_data;
+    while (data->fn_write_get() > 0) {
+        vTaskDelay(1);
+    }
+}
 
 void uart_create_ports() {
     for (int i = 0; i < 6; i++) {
@@ -276,6 +281,7 @@ void uart_create_ports() {
         port->fn_start = &uart_start;
         port->fn_can_tx = &uart_can_tx;
         port->fn_show_detail = &uart_show_port_characteristics;
+        port->fn_flush = &uart_flush;
     }    
 }
 
@@ -312,11 +318,6 @@ void uart_show_port_characteristics(struct port *port, struct port *target) {
 
 }
 
-void uart_flush(struct uart_data *data) {
-    while (data->fn_write_get() > 0) {
-        vTaskDelay(1);
-    }
-}
 
 
 void uart_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {

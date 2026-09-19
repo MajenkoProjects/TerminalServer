@@ -69,8 +69,6 @@ extern void uart_boot();
 
 extern void print_uart_info(struct port *port, struct port *target);
 
-extern void uart_flush(struct uart_data *data);
-
 
 extern void uart_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data);
 extern bool uart_get_setting_name(uint8_t module, uint8_t parameter, uint8_t index, char *buf, uint8_t *len);

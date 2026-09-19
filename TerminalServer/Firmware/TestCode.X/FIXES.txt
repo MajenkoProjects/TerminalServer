@@ -3,6 +3,10 @@ MCHP core software to make things work.
 
 1. URG packets in TCP getting dropped.
 
+Urgent TCP packets are silently dropped. This breaks the packet sequence numbers.
+CTRL-C on a telnet session typically sends an IAC DM in an URG packet, so CTRL-C
+will cripple any telnet connection.
+
 Comment out the following in config/default/library/tcpip/src/tcp.c:
 
     //
@@ -14,3 +18,41 @@ Comment out the following in config/default/library/tcpip/src/tcp.c:
     {
         return;
     }
+
+2. mDNS packets are being sent to the wrong destination port (0)
+
+This is beacuse the address type in the RemoteBind and Bind calls are using
+IP_ADDRESS_TYPE_ANY, but the RemoteBind and Bind functions will only accept
+that as an option if the original address type of the port is IP_ADDRESS_TYPE_ANY.
+It isn't. It's IP_ADDRESS_TYPE_IPV4. So it karks. Not only that, those calls are
+only performed when a packet arrives from elsewhere, so the original broadcasts
+of data will always go to the wrong place.
+
+In config/default/library/tcpip/src/zero_conf_multicast_dns.c look for the
+function static void F_mDNSResponder(DNSDesc_t *pDNSdesc).
+
+Within the MDNS_RESPONDER_INIT case, in the else of the if, change it to:
+
+            else
+            {
+                (void)TCPIP_UDP_SocketNetSet(pDNSdesc->mDNS_socket, pDNSdesc->mTcpIpNetIf);
+                (void)TCPIP_UDP_OptionsSet(pDNSdesc->mDNS_socket, UDP_OPTION_STRICT_NET, FC_Uint2VPtr(1UL));
+                (void)TCPIP_UDP_SignalHandlerRegister(pDNSdesc->mDNS_socket, TCPIP_UDP_SIGNAL_RX_DATA, &F_mDNSSocketRxSignalHandler, NULL);
+                pDNSdesc->mDNS_responder_state = (uint16_t)MDNS_RESPONDER_LISTEN ;
+                (void)TCPIP_UDP_RemoteBind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL); // << ADD
+                (void)TCPIP_UDP_Bind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL);       // << ADD
+            }
+
+In the MDNS_RESPONDER_LISTEN case, change
+
+            /* Reset the Remote-node information in UDP-socket */
+            (void)TCPIP_UDP_RemoteBind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_ANY, MDNS_PORT, NULL); 
+            (void)TCPIP_UDP_Bind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_ANY, MDNS_PORT, NULL); 
+
+to read
+
+            /* Reset the Remote-node information in UDP-socket */
+            (void)TCPIP_UDP_RemoteBind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL); 
+            (void)TCPIP_UDP_Bind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL); 
+
+(that is, change both IP_ADDRESS_TYPE_ANY to IP_ADDRESS_TYPE_IPV4).

@@ -132,8 +132,8 @@ extern "C" {
 
 /*** DNS Client Configuration ***/
 #define TCPIP_STACK_USE_DNS
-#define TCPIP_DNS_CLIENT_SERVER_TMO					60
-#define TCPIP_DNS_CLIENT_TASK_PROCESS_RATE			200
+#define TCPIP_DNS_CLIENT_SERVER_TMO					10
+#define TCPIP_DNS_CLIENT_TASK_PROCESS_RATE			20
 #define TCPIP_DNS_CLIENT_CACHE_ENTRIES				5
 #define TCPIP_DNS_CLIENT_CACHE_ENTRY_TMO			0
 #define TCPIP_DNS_CLIENT_CACHE_PER_IPV4_ADDRESS		5
@@ -161,7 +161,7 @@ extern "C" {
 #define TCPIP_ICMP_COMMAND_ENABLE              false
 
 /* Number of Endpoints used */
-#define DRV_USBFS_ENDPOINTS_NUMBER                        6U
+#define DRV_USBFS_ENDPOINTS_NUMBER                        16U
 
 /* The USB Device Layer will not initialize the USB Driver */
 #define USB_DEVICE_DRIVER_INITIALIZE_EXPLICIT
@@ -176,8 +176,8 @@ extern "C" {
 
 /*** TCP Configuration ***/
 #define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
-#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			512
-#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			512
+#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			64
+#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			128
 #define TCPIP_TCP_DYNAMIC_OPTIONS             			true
 #define TCPIP_TCP_START_TIMEOUT_VAL		        	1000
 #define TCPIP_TCP_DELAYED_ACK_TIMEOUT		    		100
@@ -189,13 +189,49 @@ extern "C" {
 #define TCPIP_TCP_MAX_SYN_RETRIES		        	3
 #define TCPIP_TCP_AUTO_TRANSMIT_TIMEOUT_VAL			40
 #define TCPIP_TCP_WINDOW_UPDATE_TIMEOUT_VAL			200
-#define TCPIP_TCP_MAX_SOCKETS		                10
-#define TCPIP_TCP_TASK_TICK_RATE		        	5
+#define TCPIP_TCP_MAX_SOCKETS		                50
+#define TCPIP_TCP_TASK_TICK_RATE		        	1
 #define TCPIP_TCP_MSL_TIMEOUT		        	    0
 #define TCPIP_TCP_QUIET_TIME		        	    0
 #define TCPIP_TCP_COMMANDS   false
 #define TCPIP_TCP_EXTERN_PACKET_PROCESS   false
 #define TCPIP_TCP_DISABLE_CRYPTO_USAGE		        	    true
+
+
+
+#define TCPIP_STACK_USE_ZEROCONF_LINK_LOCAL
+#define TCPIP_ZC_LL_PROBE_WAIT 1
+#define TCPIP_ZC_LL_PROBE_MIN 1
+#define TCPIP_ZC_LL_PROBE_MAX 2
+#define TCPIP_ZC_LL_PROBE_NUM 3
+#define TCPIP_ZC_LL_ANNOUNCE_WAIT 2
+#define TCPIP_ZC_LL_ANNOUNCE_NUM 2
+#define TCPIP_ZC_LL_ANNOUNCE_INTERVAL 2
+#define TCPIP_ZC_LL_MAX_CONFLICTS 10
+#define TCPIP_ZC_LL_RATE_LIMIT_INTERVAL 60
+#define TCPIP_ZC_LL_DEFEND_INTERVAL 10
+#define TCPIP_ZC_LL_IPV4_LLBASE 0xa9fe0100
+#define TCPIP_ZC_LL_IPV4_LLBASE_MASK 0xffff
+#define TCPIP_ZC_LL_TASK_TICK_RATE 113
+#define TCPIP_STACK_USE_ZEROCONF_MDNS_SD
+#define TCPIP_ZC_MDNS_TASK_TICK_RATE 63
+#define TCPIP_ZC_MDNS_PORT 5353
+#define TCPIP_ZC_MDNS_MAX_HOST_NAME_SIZE 32
+#define TCPIP_ZC_MDNS_MAX_LABEL_SIZE 64
+#define TCPIP_ZC_MDNS_MAX_RR_NAME_SIZE 256
+#define TCPIP_ZC_MDNS_MAX_SRV_TYPE_SIZE 32
+#define TCPIP_ZC_MDNS_MAX_SRV_NAME_SIZE 64
+#define TCPIP_ZC_MDNS_MAX_TXT_DATA_SIZE 128
+#define TCPIP_ZC_MDNS_RESOURCE_RECORD_TTL_VAL 3600
+#define TCPIP_ZC_MDNS_MAX_RR_NUM 4
+#define TCPIP_ZC_MDNS_PROBE_WAIT 750
+#define TCPIP_ZC_MDNS_PROBE_INTERVAL 250
+#define TCPIP_ZC_MDNS_PROBE_NUM 3
+#define TCPIP_ZC_MDNS_MAX_PROBE_CONFLICT_NUM 30
+#define TCPIP_ZC_MDNS_ANNOUNCE_NUM 3
+#define TCPIP_ZC_MDNS_ANNOUNCE_INTERVAL 250
+#define TCPIP_ZC_MDNS_ANNOUNCE_WAIT 250
+#define	MDNS_DEFAULT_HOST_NAME "Balls"
 
 
 
@@ -249,6 +285,7 @@ extern "C" {
 #define TCPIP_NETWORK_DEFAULT_INTERFACE_FLAGS_IDX0            \
                                                     TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON |\
                                                     TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON |\
+                                                    TCPIP_NETWORK_CONFIG_MULTICAST_ON |\
                                                     TCPIP_NETWORK_CONFIG_IP_STATIC
                                                     
 #define TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0         DRV_ENC28J60_MACObject
@@ -260,13 +297,13 @@ extern "C" {
 
 
 /* Maximum instances of CDC function driver */
-#define USB_DEVICE_CDC_INSTANCES_NUMBER                     1U
+#define USB_DEVICE_CDC_INSTANCES_NUMBER                     6U
 
 
 /* CDC Transfer Queue Size for both read and
    write. Applicable to all instances of the
    function driver */
-#define USB_DEVICE_CDC_QUEUE_DEPTH_COMBINED                 3U
+#define USB_DEVICE_CDC_QUEUE_DEPTH_COMBINED                 18U
 
 /*** USB Driver Configuration ***/
 
@@ -288,12 +325,6 @@ extern "C" {
 
 /* Alignment for buffers that are submitted to USB Driver*/ 
 #define USB_ALIGN  CACHE_ALIGN
-
-
-/*** Berkeley API Configuration ***/
-#define TCPIP_STACK_USE_BERKELEY_API
-#define MAX_BSD_SOCKETS 					12
-#define TCPIP_STACK_USE_BERKELEY_API
 
 
 /*** IPv4 Configuration ***/
@@ -338,7 +369,7 @@ extern "C" {
 #define TCPIP_STACK_USE_TCP
 #define TCPIP_STACK_USE_UDP
 
-#define TCPIP_STACK_TICK_RATE		        		5
+#define TCPIP_STACK_TICK_RATE		        		1
 #define TCPIP_STACK_SECURE_PORT_ENTRIES             10
 #define TCPIP_STACK_LINK_RATE		        		333
 
@@ -371,7 +402,7 @@ extern "C" {
 
 /*** UDP Configuration ***/
 #define TCPIP_UDP_MAX_SOCKETS		                	10
-#define TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE		    	512
+#define TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE		    	64
 #define TCPIP_UDP_SOCKET_DEFAULT_TX_QUEUE_LIMIT    	 	3
 #define TCPIP_UDP_SOCKET_DEFAULT_RX_QUEUE_LIMIT			3
 #define TCPIP_UDP_USE_POOL_BUFFERS   false

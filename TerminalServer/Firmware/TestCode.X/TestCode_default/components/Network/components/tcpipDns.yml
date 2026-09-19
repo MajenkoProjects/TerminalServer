@@ -27,5 +27,27 @@ data:
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
-  symbols: {}
+  symbols:
+    TCPIP_DNS_CLIENT_TASK_PROCESS_RATE:
+      attributes:
+        id: TCPIP_DNS_CLIENT_TASK_PROCESS_RATE
+        label: DNS Client Task Rate (in msec)
+      children:
+      - children:
+        - attributes:
+            value: '20'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_DNS_CLIENT_SERVER_TMO:
+      attributes:
+        id: TCPIP_DNS_CLIENT_SERVER_TMO
+        label: No Server Reply Timeout(in sec)
+      children:
+      - children:
+        - attributes:
+            value: '10'
+          type: User
+        type: Values
+      type: Integer
   userData: {}

@@ -74,8 +74,52 @@ data:
       - children:
         - attributes:
             id: tcpipTcp
-            value: '11560'
+            value: '16200'
           type: Dynamic
+        type: Values
+      type: Integer
+    TCPIP_TCP_MAX_SOCKETS:
+      attributes:
+        id: TCPIP_TCP_MAX_SOCKETS
+        label: Maximum Number of Sockets
+      children:
+      - children:
+        - attributes:
+            value: '50'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE:
+      attributes:
+        id: TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE
+        label: Default TX Buffer Size
+      children:
+      - children:
+        - attributes:
+            value: '64'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE:
+      attributes:
+        id: TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE
+        label: Default RX Buffer Size
+      children:
+      - children:
+        - attributes:
+            value: '128'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_TCP_TASK_TICK_RATE:
+      attributes:
+        id: TCPIP_TCP_TASK_TICK_RATE
+        label: TCP Task Rate
+      children:
+      - children:
+        - attributes:
+            value: '1'
+          type: User
         type: Values
       type: Integer
   userData: {}

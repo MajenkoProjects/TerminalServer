@@ -1,11 +1,11 @@
 configVersion: 1.0.0
-componentName: usb_device_cdc_0
+componentName: usb_device_cdc_2
 coreVersion: 5.9.0
 device: PIC32MX795F512L
 library: []
 dependency:
 - dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
-  name: usb_device_cdc_0
+  name: usb_device_cdc_2
   type: module
   version: ''
 - dependencyPackage: ''
@@ -17,6 +17,11 @@ data:
   attachments: {}
   elementPosition: {}
   symbols:
+    CONFIG_USB_DEVICE_CDC_BUFFER_POOL:
+      attributes:
+        id: CONFIG_USB_DEVICE_CDC_BUFFER_POOL
+        label: '**** Buffer Pool Update ****'
+      type: Boolean
     CONFIG_USB_DEVICE_FUNCTION_BULK_IN_ENDPOINT_NUMBER:
       attributes:
         id: CONFIG_USB_DEVICE_FUNCTION_BULK_IN_ENDPOINT_NUMBER
@@ -24,8 +29,8 @@ data:
       children:
       - children:
         - attributes:
-            id: usb_device_cdc_0
-            value: '2'
+            id: usb_device_cdc_2
+            value: '8'
           type: Dynamic
         type: Values
       type: Integer
@@ -36,10 +41,20 @@ data:
       children:
       - children:
         - attributes:
-            id: usb_device_cdc_0
-            value: '2'
+            id: usb_device_cdc_2
+            value: '8'
           type: Dynamic
         type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_CONFIG_VALUE:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_CONFIG_VALUE
+        label: Configuration Value
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_INDEX:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_INDEX
+        label: CONFIG_USB_DEVICE_FUNCTION_INDEX
       type: Integer
     CONFIG_USB_DEVICE_FUNCTION_INTERFACE_NUMBER:
       attributes:
@@ -48,8 +63,8 @@ data:
       children:
       - children:
         - attributes:
-            id: usb_device_cdc_0
-            value: '0'
+            id: usb_device_cdc_2
+            value: '6'
           type: Dynamic
         type: Values
       type: Integer
@@ -60,10 +75,25 @@ data:
       children:
       - children:
         - attributes:
-            id: usb_device_cdc_0
-            value: '1'
+            id: usb_device_cdc_2
+            value: '7'
           type: Dynamic
         type: Values
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_NUMBER_OF_INTERFACES:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_NUMBER_OF_INTERFACES
+        label: Number of Interfaces
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_READ_Q_SIZE:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_READ_Q_SIZE
+        label: CDC Read Queue Size
+      type: Integer
+    CONFIG_USB_DEVICE_FUNCTION_SERIAL_NOTIFIACATION_Q_SIZE:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_SERIAL_NOTIFIACATION_Q_SIZE
+        label: CDC Serial Notification Queue Size
       type: Integer
     CONFIG_USB_DEVICE_FUNCTION_USE_IAD:
       attributes:
@@ -72,9 +102,14 @@ data:
       children:
       - children:
         - attributes:
-            id: usb_device_cdc_0
+            id: usb_device_cdc_2
             value: 'true'
           type: Dynamic
         type: Values
       type: Boolean
+    CONFIG_USB_DEVICE_FUNCTION_WRITE_Q_SIZE:
+      attributes:
+        id: CONFIG_USB_DEVICE_FUNCTION_WRITE_Q_SIZE
+        label: CDC Write Queue Size
+      type: Integer
   userData: {}

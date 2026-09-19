@@ -81,6 +81,7 @@ enum pinname {
     U6SHTDN,
     
     ENC_RESET,
+    FACTORY_RESET,
     
 };
 
@@ -90,4 +91,5 @@ extern struct pin pins[];
 extern void pin_mode(struct pin *pin, uint8_t mode);
 extern void pin_set(struct pin *pin, uint8_t val);
 extern uint8_t pin_get(struct pin *pin);
+extern void pin_init();
 #endif

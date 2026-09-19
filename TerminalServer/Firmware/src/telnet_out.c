@@ -182,8 +182,7 @@ static void telnet_out_thread(void *args) {
                         }
                     }
                     if ((xTaskGetTickCount() - data->ts) > 100) {
-                        session_slave_close(scan);
-                        delete_port(scan);
+                        destroy_sessions(scan);
                         break;
                     }
                     break;
@@ -475,6 +474,16 @@ void telnet_out_initialize() {
            &telnet_out_thread_handle);    
 }
 
+void telnet_out_close_port(struct port *port) {
+    struct todata *data = (struct todata *)port->port_data;
+    TCPIP_TCP_Close(data->socket);
+    delete_port(port);
+}
+
+void telnet_out_show_detail(struct port *port, struct port *target) {
+    
+}
+
 COMMAND(telnet) {
     if (argc == 0) {
         return ERR_INCOMPLETE;
@@ -506,5 +515,8 @@ COMMAND(telnet) {
     data->session = session;
     port->active_session = session;
     port->mode = MODE_SESSION;
+    port->fn_close = &telnet_out_close_port;
+    port->fn_show_detail = &telnet_out_show_detail;
     return ERR_OK;
 }
+

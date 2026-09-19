@@ -9,7 +9,6 @@ groupModules:
   - drvExtMacEnc28j60
   - net_Pres
   - tcpipArp
-  - tcpipBerkeleyApi
   - tcpipDhcp
   - tcpipDns
   - tcpipIPv4
@@ -18,6 +17,7 @@ groupModules:
   - tcpipStack
   - tcpipTcp
   - tcpipUdp
+  - tcpipZeroConf
 - group: Group1
   modules:
   - uart1
@@ -45,13 +45,18 @@ modules:
 - sys_time
 - tcpipNetConfig_0
 - usb_device_cdc_0
+- usb_device_cdc_1
+- usb_device_cdc_2
+- usb_device_cdc_3
+- usb_device_cdc_4
+- usb_device_cdc_5
 generatedFileHashHistoryMap:
 - file: ../src/app.c
 - file: ../src/app.h
 - file: ../src/config/default/FreeRTOSConfig.h
   hash: fd10b1e3df3ddf31272bc3ba5a60eece7e6de3813988c6fdeab7024bddc73e14
 - file: ../src/config/default/configuration.h
-  hash: a5433c5b4b6cab012447e77e0b01ce0bc3092c039a7091cf3587120fd9b3c2aa
+  hash: 6b91fb8ee5ce336910c58ef5488aef04a52f6cb12cf72f2170291c7256be9e11
 - file: ../src/config/default/definitions.h
   hash: 4ad5f153af68bac5e920633a9de78997d90e7c6ac19d256893b37b4b44d103f2
 - file: ../src/config/default/device.h
@@ -387,7 +392,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/freertos_hooks.c
   hash: c97b8f92ad60ff513a27ac7a27b3c6824b75005eb8f7b85fe5ae18deaf568c4e
 - file: ../src/config/default/initialization.c
-  hash: a29172fd9b55f719fcd695edec412e02a350575cfa2ad0129ff1330a350b194a
+  hash: bb2efb311399a52de77b0e4aac048c40077e75499cb2a36ad1bd3fa179cb58b4
 - file: ../src/config/default/interrupts.c
   hash: 0e013fc2a55d1b289eb671523d7f19722c85e3cfd62222edcb5e34b5a2e8881b
 - file: ../src/config/default/interrupts.h
@@ -448,8 +453,6 @@ generatedFileHashHistoryMap:
   hash: 6fadf7ffe9e1e1caa16c2ebb9000c00dd53afb7911df91ea53b4e38d5020b65a
 - file: ../src/config/default/library/tcpip/src/arp_private.h
   hash: ab526b98d199da1899334874098ac9e43cbb2a1f724480d520d2ef25c8c9ad78
-- file: ../src/config/default/library/tcpip/src/berkeley_api.c
-  hash: 46ed3ef0e38ebd7866fd3d28a3e33da1b84e7774f943887aca4cda7f85545700
 - file: ../src/config/default/library/tcpip/src/berkeley_manager.h
   hash: d161c0148da51d72ea7f918822a880107211facbacb5173be28fa4cd0410f206
 - file: ../src/config/default/library/tcpip/src/common/helpers.h
@@ -591,7 +594,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/library/tcpip/src/tcpip_packet.h
   hash: 2e5fb1156038bcc08245c1fd0270d7f40678fa005f0855653c94cb030053f3c0
 - file: ../src/config/default/library/tcpip/src/tcpip_private.h
-  hash: bcc72620f8f5a2e3ce9653e938734e5c2c5fa0bab32028ea96d294b664dac528
+  hash: 80ce6ae20730be12005dfeb4882e85c957929bcca655fc77909c6c968f1f80d3
 - file: ../src/config/default/library/tcpip/src/tcpip_reboot_manager.h
   hash: ae0c90024a3a67c01b1e3b624f620ccc2f216577879f5f4977bf400f6c0e33a7
 - file: ../src/config/default/library/tcpip/src/tcpip_types.h
@@ -616,16 +619,22 @@ generatedFileHashHistoryMap:
   hash: a3c7138f31d56ac604b52a1ccae780b1d17d9db76f7d44c980ede9b947787257
 - file: ../src/config/default/library/tcpip/src/wsc_private.h
   hash: 09704fba5dbbbe4ebdf5f926f28d7d8dc8272f5e9111895cc920954c2d35b8e0
+- file: ../src/config/default/library/tcpip/src/zero_conf_helper.c
+  hash: 9500220ab22b3b8c9860321ba5fd1599429c000755e265dbedd69819123bdcfb
 - file: ../src/config/default/library/tcpip/src/zero_conf_helper.h
   hash: fc6bd610d1e2cc529aab3f5d44d8a5b5fa554eeb7c62ae4922c6dbba6050c09d
+- file: ../src/config/default/library/tcpip/src/zero_conf_link_local.c
+  hash: 5c428f4885430bc9401fbae1e2a1e8e646331200225790d2b6630b55e3d6341a
 - file: ../src/config/default/library/tcpip/src/zero_conf_link_local_private.h
   hash: a186e628ce3de4a151758bb5c959df31bb2c54692098e7f957b811cd175add4a
 - file: ../src/config/default/library/tcpip/src/zero_conf_manager.h
   hash: 8fca0a795bc4967de3dfebb6fcb4c2f85e25de71e337eee0d849160d027d5112
+- file: ../src/config/default/library/tcpip/src/zero_conf_multicast_dns.c
+  hash: 988d5c14949f50d15e2d178bf1bece7e914b76b46e8104e0ec68d3b092b16b41
 - file: ../src/config/default/library/tcpip/tcp.h
   hash: e33c13ce23cdc23473bef55b68ac033f1abc6fcbff919ca82b4af97801137e59
 - file: ../src/config/default/library/tcpip/tcpip.h
-  hash: ba41ea0dd09fe2b1366fca488410e4e073276f54153cdb648e3aada4cf40b1cf
+  hash: 8937d695ff9d6e7cfb98c979f062fc34c8b8b2a7cfac481da6f7bcc5734cfbcb
 - file: ../src/config/default/library/tcpip/tcpip_announce.h
   hash: fdb314e051ce514dffcb6f4205c1a826f61e4de8d513b48cae614e9c3a479ae6
 - file: ../src/config/default/library/tcpip/tcpip_commands.h
@@ -847,7 +856,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/usb/usb_hub.h
   hash: 66a9362619640002d6c8fe6335e044dd7c9cd4fe834d1b2487aa172a08af644b
 - file: ../src/config/default/usb_device_init_data.c
-  hash: b065844f1bd571cc76ab06c3872b0a36adf477e0c14048cc861dc6323e2017e8
+  hash: bdfa0b9f5a1ea19af4e876f693bcc2a4510405ca4c86c00365ad806667d764b7
 - file: ../src/config/default/user.h
 - file: ../src/main.c
 - file: ../src/third_party/rtos/FreeRTOS/Source/FreeRTOS_tasks.c

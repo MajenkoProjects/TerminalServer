@@ -3,7 +3,6 @@
 #include "app.h"
 #include "usb.h"
 #include "port.h"
-#include "leds.h"
 
 struct port *usb_ports[USB_DEVICE_CDC_INSTANCES_NUMBER];
 struct usb_port_data usb_data[USB_DEVICE_CDC_INSTANCES_NUMBER];

@@ -12,5 +12,6 @@ const char *error_strings[ERR_LAST_ERROR] = {
     "Spaces not allowed",
     "Option too long",
     "Invalid argument",
-    "Command is privileged"
+    "Command is privileged",
+    "Timeout"
 };

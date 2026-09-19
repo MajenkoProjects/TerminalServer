@@ -62,6 +62,7 @@ enum break_mode {
 
 struct port {
     struct port *next;
+    SemaphoreHandle_t mutex;
     enum port_type type;
     enum port_mode mode;
     enum port_mode previous_mode;
@@ -98,9 +99,13 @@ struct port {
     bool (*fn_can_tx)(struct port *);
     void (*fn_close)(struct port *);
     void (*fn_show_detail)(struct port *, struct port *);
+    void (*fn_flush)(struct port *);
 };
 
 extern struct port *ports;
+extern const char *port_types[];
+extern const char *access_names[];
+extern const char *breakmode_names[];
 
 extern void close_port(struct port *port);
 extern struct port *add_port(enum port_type type, void *data);
@@ -121,50 +126,7 @@ extern void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, 
 extern const char *port_type(struct port *port);
 extern void set_terminal_type(struct port *port, const char *ttype);
 
-
-//extern error_t port_set_cmd(struct port *port, int argc, const char **argv);
-extern COMMAND(show_port_characteristics);
-extern COMMAND(show_port_status);
-extern COMMAND(list_ports);
-extern COMMAND(port_set_name);
-extern COMMAND(port_set_speed);
-extern COMMAND(port_define_name);
-extern COMMAND(port_define_speed);
-
-extern COMMAND(port_set_flow_none);
-extern COMMAND(port_set_flow_rts);
-extern COMMAND(port_set_flow_dtr);
-extern COMMAND(port_set_flow_xon);
-
-extern COMMAND(port_define_flow_none);
-extern COMMAND(port_define_flow_rts);
-extern COMMAND(port_define_flow_dtr);
-extern COMMAND(port_define_flow_xon);
-
-extern COMMAND(port_send_break);
-
-extern COMMAND(port_set_access_dynamic);
-extern COMMAND(port_set_access_local);
-extern COMMAND(port_set_access_remote);
-extern COMMAND(port_define_access_dynamic);
-extern COMMAND(port_define_access_local);
-extern COMMAND(port_define_access_remote);
-
-
-extern COMMAND(port_set_break_disabled);
-extern COMMAND(port_set_break_local);
-extern COMMAND(port_set_break_remote);
-extern COMMAND(port_define_break_disabled);
-extern COMMAND(port_define_break_local);
-extern COMMAND(port_define_break_remote);
-extern COMMAND(port_set_terminal_type);
-extern COMMAND(port_define_terminal_type);
-
-extern COMMAND(port_set_local_switch);
-extern COMMAND(port_set_forward_switch);
-extern COMMAND(port_set_backward_switch);
-extern COMMAND(port_define_local_switch);
-extern COMMAND(port_define_forward_switch);
-extern COMMAND(port_define_backward_switch);
+extern void port_set_active_session(struct port *port, struct session *session);
+extern void port_set_mode(struct port *port, enum port_mode mode);
 #endif 
 

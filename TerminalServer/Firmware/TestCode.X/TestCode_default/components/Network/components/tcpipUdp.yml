@@ -27,5 +27,28 @@ data:
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
-  symbols: {}
+  symbols:
+    TCPIP_UDP_HEAP_SIZE:
+      attributes:
+        id: TCPIP_UDP_HEAP_SIZE
+        label: UDP Heap Size (bytes)
+      children:
+      - children:
+        - attributes:
+            id: tcpipUdp
+            value: '2920'
+          type: Dynamic
+        type: Values
+      type: Integer
+    TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE:
+      attributes:
+        id: TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE
+        label: Default TX Buffer Size
+      children:
+      - children:
+        - attributes:
+            value: '64'
+          type: User
+        type: Values
+      type: Integer
   userData: {}

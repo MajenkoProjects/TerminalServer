@@ -12,12 +12,12 @@ Ports
 Functions
 
     Set terminal type (and map to tinfo)                    Done
-    Set terminal local/forward/backward keys
+    Set terminal local/forward/backward keys                Done
     Service definitions (name->port(s), name->telnet)
     Help
 
 Misc
 
-    Factory reset on hold button
+    Factory reset on hold button                            Done (30 second hold time)
     Bootloaderifcation
-
+    mDNS                                                    Done (at least hostname is)

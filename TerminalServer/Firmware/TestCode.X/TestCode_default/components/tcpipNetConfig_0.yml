@@ -159,4 +159,15 @@ data:
           type: Dynamic
         type: Values
       type: Integer
+    TCPIP_NETWORK_CONFIG_MULTICAST_IDX0:
+      attributes:
+        id: TCPIP_NETWORK_CONFIG_MULTICAST_IDX0
+        label: Multicast Enabled on this Interface
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
   userData: {}

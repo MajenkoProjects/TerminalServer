@@ -9,29 +9,14 @@
 
 struct ethernet_settings ethernet_settings;
 
-/*
-TCPIP_STACK_INIT tcpipAltInit;
-TCPIP_NETWORK_CONFIG ALT_TCPIP_HOSTS_CONFIGURATION[] =
+
+
+
+/*** Zeroconfig initialization data ***/
+const ZCLL_MODULE_CONFIG tcpipZCLLInitData =
 {
-    {
-        .interface = TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0,
-        .hostName = TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0,
-        .macAddr = TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0,
-        .ipAddr = TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0,
-        .ipMask = TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0,
-        .gateway = TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0,
-        .priDNS = TCPIP_NETWORK_DEFAULT_DNS_IDX0,
-        .secondDNS = TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0,
-        .powerMode = TCPIP_NETWORK_DEFAULT_POWER_MODE_IDX0,
-        .startFlags = TCPIP_NETWORK_DEFAULT_INTERFACE_FLAGS_IDX0,
-        .pMacObject = &TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0,
-
-    },
+    0
 };
-*/
-
-
-
 
 /* ENC 600 Driver Configuration */
 const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
@@ -97,9 +82,7 @@ const TCPIP_DHCP_MODULE_CONFIG tcpipDHCPInitData = {
     .dhcpSrvPort    = TCPIP_DHCP_SERVER_LISTEN_PORT,
 
 };
-const BERKELEY_MODULE_CONFIG tcpipBerkeleyInitData = {
-    .maxSockets     = MAX_BSD_SOCKETS,
-};
+
 const TCPIP_ICMP_MODULE_CONFIG tcpipICMPInitData = {
     0
 };
@@ -134,7 +117,8 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] = {
     {TCPIP_MODULE_TCP,              &tcpipTCPInitData},             // TCPIP_MODULE_TCP
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
-    {TCPIP_MODULE_BERKELEY,         &tcpipBerkeleyInitData},        // TCPIP_MODULE_BERKELEY
+    {TCPIP_MODULE_ZCLL,             0},                             // TCPIP_MODULE_ZCLL,
+    {TCPIP_MODULE_MDNS,             0},                             // TCPIP_MODULE_MDNS,
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER
     {TCPIP_MODULE_MAC_ENCJ60,       &drvEnc28j60InitData},          // TCPIP_MODULE_MAC_ENCJ60
 };
@@ -282,37 +266,6 @@ static const NET_PRES_INIT_DATA netPresInitData = {
     .pInitData = netPresCfgs
 };
 
-/*
-int TCPIP_STACK_InitCallback( const struct TCPIP_STACK_INIT** p_stackInit ) {
-  //  TCPIP_Helper_StringToIPAddress("192.168.1.77", &ip_address);
-  //  TCPIP_Helper_StringToIPAddress("255.255.255.0", &ip_netmask);
-  //  TCPIP_Helper_StringToIPAddress("192.168.1.1", &ip_gateway);
-  //  TCPIP_Helper_StringToMACAddress("20:00:DE:AD:BE:EF", macAddr);
-
-    ALT_TCPIP_HOSTS_CONFIGURATION[0].hostName = "muppet"; //ip_address;
-
-    ALT_TCPIP_HOSTS_CONFIGURATION[0].ipAddr = "192.168.10.77"; //ip_address;
-    ALT_TCPIP_HOSTS_CONFIGURATION[0].ipMask = "255.255.255.0"; //&ip_netmask;
-    ALT_TCPIP_HOSTS_CONFIGURATION[0].gateway = "192.168.10.1"; //&ip_gateway;
-    ALT_TCPIP_HOSTS_CONFIGURATION[0].priDNS = "8.8.8.8";
-    ALT_TCPIP_HOSTS_CONFIGURATION[0].secondDNS = "8.8.4.4";
-    
-    snprintf(mac_address, 19, "DE:AD:BE:EF:%02X:%02X", (DEVCFG3bits.USERID >> 8) & 0xFF, DEVCFG3bits.USERID & 0xFF);
-    
-    (ALT_TCPIP_HOSTS_CONFIGURATION[0].macAddr) = mac_address;
-    ALT_TCPIP_HOSTS_CONFIGURATION[0].startFlags = (TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON | TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC);
-    //ALT_TCPIP_HOSTS_CONFIGURATION[0].startFlags = (TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC);
-    tcpipAltInit.pNetConf = ALT_TCPIP_HOSTS_CONFIGURATION;
-    tcpipAltInit.nNets = sizeof (ALT_TCPIP_HOSTS_CONFIGURATION) / sizeof (*ALT_TCPIP_HOSTS_CONFIGURATION);
-    tcpipAltInit.pModConfig = TCPIP_STACK_MODULE_CONFIG_TBL; // Use MHC generated module config
-    tcpipAltInit.nModules = TCPIP_STACK_MODULE_CONFIG_TBL_SIZE;
-    tcpipAltInit.initCback = 0;
-
-    *p_stackInit = &tcpipAltInit;
-    return 0;
-}
-*/
-
 void ethernet_boot() {
     port_printf(CONSOLE, "MAC Address: %s\r\n", ethernet_settings.macaddr);
     port_printf(CONSOLE, "Initializing network...");
@@ -350,7 +303,33 @@ void ethernet_boot() {
     char gw[16];
     ip2str(TCPIP_STACK_NetAddressGateway(handle), gw);
     port_printf(CONSOLE, "IP Address: %-15s Gateway: %s\r\n", ip, gw);
+
     
+//    MDNSD_ERR_CODE
+    switch (TCPIP_MDNS_ServiceRegister(
+            handle, 
+            "terminal", 
+             "_telnet._tcp",
+            23,
+            NULL,
+            1,
+            NULL,
+            NULL
+            )) {
+        case MDNSD_SUCCESS:
+            port_printf(CONSOLE, "MDNS: Bound and running\r\n");
+            break;
+        case MDNSD_ERR_BUSY:
+            port_printf(CONSOLE, "MDNS: Already in use by another service\r\n");
+            break;
+        case MDNSD_ERR_CONFLICT:
+            port_printf(CONSOLE, "MDNS: Name conflict detected\r\n");
+            break;
+        case MDNSD_ERR_INVAL:
+            port_printf(CONSOLE, "MDNS: Invalid parameter specified\r\n");
+            break;
+    
+    }
 }
 
 void ethernet_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {
@@ -374,7 +353,7 @@ void ethernet_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uin
             strncpy(ethernet_settings.secdns, (char *)data, length);
             break;
         case SETTINGS_ETHERNET_FLAGS:
-            ethernet_settings.flags = *(uint16_t *)data;
+            ethernet_settings.flags = (*(uint16_t *)data) | TCPIP_NETWORK_CONFIG_MULTICAST_ON;
             break;
     }
 }
@@ -388,7 +367,7 @@ void ethernet_init_defaults() {
     strcpy(ethernet_settings.gateway, "192.168.1.1");
     strcpy(ethernet_settings.pridns, "8.8.8.8");
     strcpy(ethernet_settings.secdns, "8.8.4.4");
-    ethernet_settings.flags = (TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON | TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC);
+    ethernet_settings.flags = (TCPIP_NETWORK_CONFIG_MULTICAST_ON | TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON | TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC);
     ethernet_settings.timeout = 10;
 }
 
@@ -421,6 +400,9 @@ void print_network_settings(struct port *port) {
     } else {
         port_printf(port, "   DHCP:        Disabled\r\n");
     }
+    port_printf(port, "   Multicast:   %-8s\r\n", 
+                (ethernet_settings.flags & TCPIP_NETWORK_CONFIG_MULTICAST_ON) ? "Enabled" : "Disabled"
+                );
 }
 
 COMMAND(ethernet_define_mac_address) {

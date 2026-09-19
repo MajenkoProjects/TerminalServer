@@ -5,8 +5,7 @@
 #include "port.h"
 
 struct telnet_in_data {
-    int fd;
-    struct sockaddr_in sin;
+    struct tcp_socket *socket;
     int iac_pos;
     uint8_t iac[5];
     bool iac_sb;
@@ -16,7 +15,24 @@ struct telnet_in_data {
     bool queue_close;
 };
 
+enum socket_state {
+    SOCK_LISTEN,
+    SOCK_CONNECTED,
+    SOCK_DISCONNECTED,
+    SOCK_CLOSED
+};
+
+struct tcp_socket {
+    TCP_SOCKET socket;
+    enum socket_state state;
+    struct port *port;
+};
+
+#define NUM_TELNET_SOCKETS 6
+#define PORT_TELNET 23
+
 extern void telnet_in_initialize();
 extern void print_telnet_in_info(struct port *port, struct port *target);
+
 
 #endif

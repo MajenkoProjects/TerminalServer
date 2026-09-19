@@ -65,17 +65,29 @@ COMMAND(connect_local) {
     if (t->access == ACCESS_LOCAL) return ERR_BUSY;
     
     struct session *s = add_session(port, t, SESSION_DIRECT);
-    port->active_session = s;
-    port->mode = MODE_SESSION;
+    port_set_active_session(port, s);
+    port_set_mode(port, MODE_SESSION);
     char tmp[20];
     format_local_switch(port->local_switch, tmp, 20);
+
     port_printf(port, "Local protocol emulation 1.0  - Local Switch: <%s>.\r\n", tmp);
     return ERR_OK;
 }
 
-void destroy_sessions(struct port *parent) {
+void destroy_sessions(struct port *port) {
+
+    // Iterate all the sessions
     for (struct session *scan = sessions; scan; scan = scan->next) {
-        if (scan->parent == parent) {
+        
+        // If this session is linked to the port as either parent or target
+        if ((scan->parent == port) || (scan->target == port)) {
+            
+            // If the target can be closed, close it
+            if (scan->target->fn_close) {
+                scan->target->fn_close(scan->target);
+            }
+            
+            // Delete the session.
             delete_session(scan);
         }
     }
@@ -111,8 +123,8 @@ COMMAND(resume_session) {
     OPT_SESSION
     if (!session) return ERR_NOSESSION;
     if (session->parent != port) return ERR_NOSESSION;
-    port->active_session = session;
-    port->mode = MODE_SESSION;
+    port_set_active_session(port, session);
+    port_set_mode(port, MODE_SESSION);
     port_printf(port, "Resuming session %d\r\n", session->id);
     return ERR_OK;
 }
@@ -128,9 +140,12 @@ COMMAND(disconnect_session) {
     OPT_SESSION
     if (!session) return ERR_NOSESSION;
     if (session->parent != port) return ERR_NOSESSION;
-    port->active_session = NULL;
-    delete_session(session);
     port_printf(port, "Disconnecting session %d\r\n", session->id);
+    if (session->target->fn_close) {
+        session->target->fn_close(session->target);
+    }
+    port_set_active_session(port, NULL);
+    delete_session(session);
     return ERR_OK;
 }
 
@@ -139,11 +154,26 @@ void session_slave_close(struct port *port) {
     for (struct session *scan = sessions; scan; scan = scan->next) {
         if (scan->target == port) {
             //port_printf(CONSOLE, "Found session to kill\r\n");
-            scan->parent->mode = MODE_LOCAL;
+            port_set_mode(scan->parent, MODE_LOCAL);
 //            port_printf(scan->parent, "Connection closed\r\n");
             //port_flush(scan->target);
             //port_flush(scan->parent);
-            scan->parent->active_session = NULL;
+            port_set_active_session(scan->parent, NULL);
+            delete_session(scan);
+            return;
+        }
+    }
+}
+
+void session_parent_close(struct port *port) {
+    for (struct session *scan = sessions; scan; scan = scan->next) {
+        if (scan->parent == port) {
+            //port_printf(CONSOLE, "Found session to kill\r\n");
+            port_set_mode(scan->parent, MODE_LOCAL);
+//            port_printf(scan->parent, "Connection closed\r\n");
+            //port_flush(scan->target);
+            //port_flush(scan->parent);
+            port_set_active_session(scan->parent, NULL);
             delete_session(scan);
             return;
         }

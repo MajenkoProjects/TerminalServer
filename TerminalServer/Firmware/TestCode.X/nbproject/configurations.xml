@@ -54,13 +54,6 @@
               </logicalFolder>
               <itemPath>../src/config/default/driver/enc28j60/drv_enc28j60.h</itemPath>
             </logicalFolder>
-            <logicalFolder name="sdspi" displayName="sdspi" projectFiles="true">
-              <itemPath>../src/config/default/driver/sdspi/drv_sdspi.h</itemPath>
-              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_file_system.h</itemPath>
-              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_local.h</itemPath>
-              <itemPath>../src/config/default/driver/sdspi/drv_sdspi_definitions.h</itemPath>
-              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_driver_interface.h</itemPath>
-            </logicalFolder>
             <logicalFolder name="spi" displayName="spi" projectFiles="true">
               <itemPath>../src/config/default/driver/spi/drv_spi_definitions.h</itemPath>
               <itemPath>../src/config/default/driver/spi/src/drv_spi_local.h</itemPath>
@@ -385,24 +378,6 @@
               <itemPath>../src/config/default/system/dma/sys_dma.h</itemPath>
               <itemPath>../src/config/default/system/dma/sys_dma_mapping.h</itemPath>
             </logicalFolder>
-            <logicalFolder name="fs" displayName="fs" projectFiles="true">
-              <logicalFolder name="fat_fs" displayName="fat_fs" projectFiles="true">
-                <logicalFolder name="file_system" displayName="file_system" projectFiles="true">
-                  <itemPath>../src/config/default/system/fs/fat_fs/file_system/ff.h</itemPath>
-                  <itemPath>../src/config/default/system/fs/fat_fs/file_system/ffconf.h</itemPath>
-                </logicalFolder>
-                <logicalFolder name="hardware_access"
-                               displayName="hardware_access"
-                               projectFiles="true">
-                  <itemPath>../src/config/default/system/fs/fat_fs/hardware_access/diskio.h</itemPath>
-                </logicalFolder>
-              </logicalFolder>
-              <itemPath>../src/config/default/system/fs/sys_fs_media_manager.h</itemPath>
-              <itemPath>../src/config/default/system/fs/sys_fs_fat_interface.h</itemPath>
-              <itemPath>../src/config/default/system/fs/sys_fs.h</itemPath>
-              <itemPath>../src/config/default/system/fs/src/sys_fs_media_manager_local.h</itemPath>
-              <itemPath>../src/config/default/system/fs/src/sys_fs_local.h</itemPath>
-            </logicalFolder>
             <logicalFolder name="int" displayName="int" projectFiles="true">
               <itemPath>../src/config/default/system/int/sys_int_mapping.h</itemPath>
               <itemPath>../src/config/default/system/int/sys_int.h</itemPath>
@@ -490,7 +465,6 @@
       <itemPath>../src/port.h</itemPath>
       <itemPath>../src/usb.h</itemPath>
       <itemPath>../src/app.h</itemPath>
-      <itemPath>../src/leds.h</itemPath>
       <itemPath>../src/command.h</itemPath>
       <itemPath>../src/uart.h</itemPath>
       <itemPath>../src/pin.h</itemPath>
@@ -505,6 +479,7 @@
       <itemPath>../src/telopt.h</itemPath>
       <itemPath>../src/ttype.h</itemPath>
       <itemPath>../src/util.h</itemPath>
+      <itemPath>../src/port_commands.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -515,11 +490,11 @@
         <logicalFolder name="components" displayName="components" projectFiles="true">
           <logicalFolder name="Network" displayName="Network" projectFiles="true">
             <logicalFolder name="components" displayName="components" projectFiles="true">
-              <itemPath>TestCode_default/components/Network/components/tcpipBerkeleyApi.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipIPv4.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipDns.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipDhcp.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipStack.yml</itemPath>
+              <itemPath>TestCode_default/components/Network/components/tcpipZeroConf.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipIcmp.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipNetConfig.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipTcp.yml</itemPath>
@@ -550,22 +525,29 @@
             <itemPath>TestCode_default/components/USB/USB.yml</itemPath>
           </logicalFolder>
           <itemPath>TestCode_default/components/i2c2.yml</itemPath>
+          <itemPath>TestCode_default/components/usb_device_cdc_2.yml</itemPath>
           <itemPath>TestCode_default/components/core.yml</itemPath>
           <itemPath>TestCode_default/components/sys_time.yml</itemPath>
           <itemPath>TestCode_default/components/drvExtMacEnc28j60_0.yml</itemPath>
           <itemPath>TestCode_default/components/tcpipNetConfig_0.yml</itemPath>
           <itemPath>TestCode_default/components/spi1.yml</itemPath>
+          <itemPath>TestCode_default/components/usb_device_cdc_3.yml</itemPath>
+          <itemPath>TestCode_default/components/usb_device_cdc_4.yml</itemPath>
           <itemPath>TestCode_default/components/core_timer.yml</itemPath>
           <itemPath>TestCode_default/components/dfp.yml</itemPath>
           <itemPath>TestCode_default/components/FreeRTOS.yml</itemPath>
           <itemPath>TestCode_default/components/usb_device_cdc_0.yml</itemPath>
+          <itemPath>TestCode_default/components/usb_device_cdc_5.yml</itemPath>
           <itemPath>TestCode_default/components/HarmonyCore.yml</itemPath>
           <itemPath>TestCode_default/components/drv_spi.yml</itemPath>
+          <itemPath>TestCode_default/components/usb_device_cdc_1.yml</itemPath>
           <itemPath>TestCode_default/components/drv_spi_0.yml</itemPath>
         </logicalFolder>
         <itemPath>TestCode_default/mcc-config.mc4</itemPath>
       </logicalFolder>
       <itemPath>Makefile</itemPath>
+      <itemPath>FIXES.txt</itemPath>
+      <itemPath>TODO.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="LibraryFiles"
@@ -651,7 +633,6 @@
                 <itemPath>../src/config/default/library/tcpip/src/icmp.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcp.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/arp.c</itemPath>
-                <itemPath>../src/config/default/library/tcpip/src/berkeley_api.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/ipv4.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_heap_alloc.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_heap_external.c</itemPath>
@@ -665,6 +646,9 @@
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_notify.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_packet.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/udp.c</itemPath>
+                <itemPath>../src/config/default/library/tcpip/src/zero_conf_helper.c</itemPath>
+                <itemPath>../src/config/default/library/tcpip/src/zero_conf_link_local.c</itemPath>
+                <itemPath>../src/config/default/library/tcpip/src/zero_conf_multicast_dns.c</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
@@ -776,7 +760,6 @@
       <itemPath>../src/port.c</itemPath>
       <itemPath>../src/usb.c</itemPath>
       <itemPath>../src/app.c</itemPath>
-      <itemPath>../src/leds.c</itemPath>
       <itemPath>../src/command.c</itemPath>
       <itemPath>../src/uart.c</itemPath>
       <itemPath>../src/pin.c</itemPath>
@@ -790,6 +773,7 @@
       <itemPath>../src/telnet_out.c</itemPath>
       <itemPath>../src/ttype.c</itemPath>
       <itemPath>../src/util.c</itemPath>
+      <itemPath>../src/port_commands.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -841,6 +825,8 @@
       <C32>
         <property key="additional-warnings" value="true"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe"
+                  value="-Wno-format-truncation -Werror=incompatible-pointer-types -Werror=implicit-function-declaration"/>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
@@ -891,6 +877,7 @@
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
       <C32-AS>
+        <property key="appendMe" value=""/>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
@@ -923,6 +910,7 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -968,6 +956,7 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>

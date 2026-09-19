@@ -80,7 +80,7 @@ data:
       - children:
         - attributes:
             id: tcpipStack
-            value: '29'
+            value: '20'
           type: Dynamic
         type: Values
       type: Integer
@@ -137,4 +137,15 @@ data:
           type: User
         type: Values
       type: Combo
+    TCPIP_STACK_TICK_RATE:
+      attributes:
+        id: TCPIP_STACK_TICK_RATE
+        label: TCP/IP Stack State Machine Tick Rate, ms.
+      children:
+      - children:
+        - attributes:
+            value: '1'
+          type: User
+        type: Values
+      type: Integer
   userData: {}
