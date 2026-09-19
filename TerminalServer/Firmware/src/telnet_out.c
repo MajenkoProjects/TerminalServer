@@ -96,6 +96,13 @@ static void telnet_out_thread(void *args) {
           //  vTaskDelay(10);
             switch (data->state) {
                 case TO_DNS_PRECHECK: // Check to see if either the fqdn or subdomain are cached.
+                    
+                    // First check to see if it's an IP address
+                    if (validate_ip(data->hostname)) {
+                        TCPIP_Helper_StringToIPAddress(data->hostname, &data->addr.v4Add);
+                        data->state = TO_FOUND_HOST;
+                    }
+                    
                     data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
                     if (data->dns_result == TCPIP_DNS_RES_OK) {
                         data->state = TO_FOUND_HOST;

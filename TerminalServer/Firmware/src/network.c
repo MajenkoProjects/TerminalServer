@@ -359,7 +359,6 @@ void ethernet_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uin
 }
 
 void ethernet_init_defaults() {
-    
     snprintf(ethernet_settings.macaddr, 19, "DE:AD:BE:EF:%02X:%02X", (DEVCFG3bits.USERID >> 8) & 0xFF, DEVCFG3bits.USERID & 0xFF);
 
     strcpy(ethernet_settings.ip, "192.168.1.100");
@@ -400,9 +399,6 @@ void print_network_settings(struct port *port) {
     } else {
         port_printf(port, "   DHCP:        Disabled\r\n");
     }
-    port_printf(port, "   Multicast:   %-8s\r\n", 
-                (ethernet_settings.flags & TCPIP_NETWORK_CONFIG_MULTICAST_ON) ? "Enabled" : "Disabled"
-                );
 }
 
 COMMAND(ethernet_define_mac_address) {
