@@ -79,4 +79,6 @@ extern void usb_load_setting(uint8_t module, uint8_t parameter, uint8_t index, u
 extern void usb_set_name(struct port *port, const char *name);
 
 extern void usb_create_ports();
+
+extern void usb_task();
 #endif

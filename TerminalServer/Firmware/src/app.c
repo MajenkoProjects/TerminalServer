@@ -18,11 +18,14 @@
 #include "network.h"
 #include "telnet_out.h"
 #include "util.h"
+#include "tcp_in.h"
+//#include "arp_private.h"
 
 
 struct module {
     void (*fn_boot)();
     void (*fn_init)();
+    void (*fn_task)();
 };
 
 void system_greeter();
@@ -30,18 +33,21 @@ void final_boot_message();
 
 // These function pointers define the boot sequence. First all the
 // functions on the left are executed in order, then the stored settings
-// are loaded from the EEPROM chip, then the functions on the right are
-// executed in order.
+// are loaded from the EEPROM chip, then the functions in the middle are
+// executed in order. Finally the function on the right is repeatedly called
+// each iteration of the main thread passing a uint32_t tick counter.
 static const struct module modules[] = {
-    { &pin_init,                NULL },
-    { &system_init_defaults,    NULL }, 
-    { &uart_create_ports,       &uart_boot },
-    { NULL,                     &system_greeter },
-    { &usb_create_ports,        &USB_Initialize },
-    { &ethernet_init_defaults,  &ethernet_boot },
-    { NULL,                     &telnet_in_initialize },
-    { NULL,                     &telnet_out_initialize },
-    { NULL,                     &final_boot_message },
+    //                        Stage 1 boot              Stage 2 boot            Tasks
+    /* IO Pins */           { &pin_init,                NULL,                   NULL },
+    /* System */            { &system_init_defaults,    NULL,                   NULL }, 
+    /* UARTs */             { &uart_create_ports,       &uart_boot,             &uart_task },
+    /* Boot banner */       { NULL,                     &system_greeter,        NULL },
+    /* USB */               { &usb_create_ports,        &USB_Initialize,        &usb_task },
+    /* Ethernet */          { &ethernet_init_defaults,  &ethernet_boot,         NULL },
+    /* Telnet In */         { NULL,                     &telnet_in_initialize,  &telnet_in_task },
+    /* Telnet Out */        { NULL,                     &telnet_out_initialize, &telnet_out_task },
+    /* TCP In */            { NULL,                     &tcp_in_init,           &tcp_in_task },
+    /* Final boot */        { NULL,                     &final_boot_message,    NULL },
 };
 
 #define NUM_MODULES (sizeof(modules) / sizeof(struct module))
@@ -51,14 +57,20 @@ extern      int close(int fildes);
 
 static enum app_state state = APP_STATE_BOOT;
 
+uint32_t tick = 0;
+
 void system_greeter() {
     port_printf(CONSOLE, "\x0c\n\nMajenko Technologies Terminal Server V" VERSION "\r\n");
+    CONSOLE->fn_flush(CONSOLE);
     port_printf(CONSOLE, "(c) 2026 Majenko Technologies, All Rights Reserved\r\n");
+    CONSOLE->fn_flush(CONSOLE);
     port_printf(CONSOLE, "\r\n\n\n");
+    CONSOLE->fn_flush(CONSOLE);
 }
 
 void final_boot_message() {
     port_printf(CONSOLE, "\nSystem initialized. Press <RETURN> to activate console.\r\n\n");
+    CONSOLE->fn_flush(CONSOLE);
 
 }
 
@@ -82,7 +94,7 @@ void input_password(struct port *port) {
     if (strcmp(port->commands[port->cmdno], system_settings.password) == 0) {
         port->priv = true;
     } else {
-        port_printf(port, "%Error: Incorrect password.\r\n");
+        port_printf(port, "%%Error: Incorrect password.\r\n");
         port->priv = false;
     }
     port->mode = MODE_LOCAL;
@@ -91,9 +103,21 @@ void input_password(struct port *port) {
 void APP_Initialize ( void ) {
 }
 
+void yield() {
+    for (struct port *port = ports; port; port = port->next) {
+        if (port->type != PORT_NONE) {
+            if (port->fn_yield) {
+                port->fn_yield(port);
+            }
+        }
+    }
+}
+
 void APP_Tasks ( void ) {    
     static uint32_t reset_ts = 0;
     static bool reset_state = true;
+    static int modno = 0;
+    
     pin_get(&pins[FACTORY_RESET]);
     if (pin_get(&pins[FACTORY_RESET]) != reset_state) {
         reset_state = pin_get(&pins[FACTORY_RESET]);
@@ -113,10 +137,12 @@ void APP_Tasks ( void ) {
     
     switch ( state ) {
         case APP_STATE_BOOT:   
-            for (int i = 0; i < NUM_MODULES; i++) {
-                if (modules[i].fn_boot) modules[i].fn_boot();
+            if (modules[modno].fn_boot) modules[modno].fn_boot();
+            modno++;
+            if (modno >= NUM_MODULES) {
+                modno = 0;
+                state = APP_STATE_LOAD_SETTINGS;
             }
-            state = APP_STATE_LOAD_SETTINGS;
             break;
             
         case APP_STATE_LOAD_SETTINGS:
@@ -125,13 +151,16 @@ void APP_Tasks ( void ) {
             break;
             
         case APP_STATE_INIT:
-            for (int i = 0; i < NUM_MODULES; i++) {
-                if (modules[i].fn_init) modules[i].fn_init();
+            if (modules[modno].fn_init) modules[modno].fn_init();
+            modno++;
+            if (modno >= NUM_MODULES) {
+                modno = 0;
+                state = APP_STATE_SERVICE_TASKS;
             }
-            state = APP_STATE_SERVICE_TASKS;
             break;
             
         case APP_STATE_SERVICE_TASKS: 
+
             for (struct port *scan = ports; scan; scan = scan->next) {
                 if (scan->type != PORT_NONE) {
                     bool have_prompted = false;
@@ -316,11 +345,15 @@ void APP_Tasks ( void ) {
                     }
                 }
             }
+            
             break;
        
         default:
             break;
     }
 
+    for (int i = 0; i < NUM_MODULES; i++) {
+        if (modules[i].fn_task) modules[i].fn_task();
+    }
 }
 

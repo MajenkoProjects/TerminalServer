@@ -4,13 +4,18 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/network.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/TestCode.X/TODO.txt</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/tcp_in.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/app.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/session.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_out.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/uart.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/tcp_in.h</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/ttype.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_in.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/session.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_out.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/util.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.h</file>
         </group>
     </open-files>

@@ -1191,4 +1191,15 @@ data:
           type: Boolean
         type: Attributes
       type: File
+    GEN_APP_RTOS_TASK_0_SIZE:
+      attributes:
+        id: GEN_APP_RTOS_TASK_0_SIZE
+        label: Stack Size (in bytes)
+      children:
+      - children:
+        - attributes:
+            value: '8192'
+          type: User
+        type: Values
+      type: Integer
   userData: {}

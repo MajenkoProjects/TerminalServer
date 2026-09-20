@@ -16,6 +16,8 @@ const char *port_types[] = {
     "Network Out",
     "Telnet Login",
     "Telnet Outbound",
+    "TCP Inbound",
+   
 };
 
 const char *access_names[] = {
@@ -114,9 +116,6 @@ struct port *add_port(enum port_type type, void *data) {
     newport->forward_switch = LOCAL_SWITCH_NONE;
     newport->backward_switch = LOCAL_SWITCH_NONE;
     newport->port_data = data;
-    newport->read_buffer.mutex = xSemaphoreCreateMutex();
-    newport->write_buffer.mutex = xSemaphoreCreateMutex();
-    newport->mutex = xSemaphoreCreateMutex();
     newport->low_water = 16;
     newport->high_water = CIRCULAR_BUFFER_SIZE - 16;
     newport->waterlevel = 0;
@@ -157,34 +156,33 @@ struct port *add_port(enum port_type type, void *data) {
 }
 
 void delete_port(struct port *port) {
-    if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
-        port->type = PORT_NONE;
-        port->mode = MODE_IDLE;
-        port->read_buffer.head = 0;
-        port->read_buffer.tail = 0;
-        port->write_buffer.head = 0;
-        port->write_buffer.tail = 0;
-        if (port->port_data) free(port->port_data);
-        port->port_data = NULL;
-        port->cmdno = 0;
-        port->name[0] = 0;
-        port->username[0] = 0;
-        port->waterlevel = 0;
-        port->stopped = false;
-        port->local_switch = LOCAL_SWITCH_NONE;
-        port->breakmode = BREAK_DISABLED;
-        port->access = ACCESS_LOCAL;
-        port->columns = 80;
-        port->lines = 24;
-        port->ticks = 0;
-        port->active_session = NULL;
-        port->fn_stop = NULL;
-        port->fn_start = NULL;
-        port->fn_can_tx = NULL;
-        port->fn_close = NULL;
-        port->fn_show_detail = NULL;    
-        xSemaphoreGive(port->mutex);
-    }
+    port->type = PORT_NONE;
+    port->mode = MODE_IDLE;
+    port->read_buffer.head = 0;
+    port->read_buffer.tail = 0;
+    port->write_buffer.head = 0;
+    port->write_buffer.tail = 0;
+    if (port->port_data) free(port->port_data);
+    port->port_data = NULL;
+    port->cmdno = 0;
+    port->name[0] = 0;
+    port->username[0] = 0;
+    port->waterlevel = 0;
+    port->stopped = false;
+    port->local_switch = LOCAL_SWITCH_NONE;
+    port->breakmode = BREAK_DISABLED;
+    port->access = ACCESS_LOCAL;
+    port->columns = 80;
+    port->lines = 24;
+    port->ticks = 0;
+    port->active_session = NULL;
+    port->fn_stop = NULL;
+    port->fn_start = NULL;
+    port->fn_can_tx = NULL;
+    port->fn_close = NULL;
+    port->fn_show_detail = NULL;    
+    port->fn_flush = NULL;
+    port->fn_yield = NULL;
 }
 
 struct port *get_port_by_number(int num) {
@@ -233,7 +231,9 @@ int port_printf(struct port *port, const char *fmt, ...) {
     // Send it to the output buffer
     for (int i = 0; i < n; i++) {
         while (cb_free(&port->write_buffer) < 3) {
-            vTaskDelay(1);
+            if (port->fn_yield) {
+                port->fn_yield(port);
+            }
         }
         cb_write(&port->write_buffer, str[i]);
         count++;
@@ -262,7 +262,7 @@ int port_rprintf(struct port *port, const char *fmt, ...) {
     // Send it to the output buffer
     for (int i = 0; i < n; i++) {
         while (cb_free(&port->read_buffer) < 3) {
-            vTaskDelay(1);
+            yield();
         }
         cb_write(&port->read_buffer, str[i]);
         count++;
@@ -272,12 +272,6 @@ int port_rprintf(struct port *port, const char *fmt, ...) {
 }
 
 void port_flush(struct port *port) {
-    while (cb_available(&port->read_buffer)) {
-        vTaskDelay(1);
-    }
-    while (cb_available(&port->write_buffer)) {
-        vTaskDelay(1);
-    }
     if (port->fn_flush) {
         port->fn_flush(port);
     }
@@ -323,7 +317,7 @@ void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t
 }
 
 void close_port(struct port *port) {
-    if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
+  //  if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
         if (port->type != PORT_NONE) {
             port->mode = MODE_IDLE;
             port->priv = false;
@@ -333,8 +327,8 @@ void close_port(struct port *port) {
                 port->fn_close(port);
             }
         }
-        xSemaphoreGive(port->mutex);
-    }
+   //     xSemaphoreGive(port->mutex);
+   // }
 }
 
 const char *port_type(struct port *port) {
@@ -342,7 +336,7 @@ const char *port_type(struct port *port) {
 }
 
 void set_terminal_type(struct port *port, const char *ttype) {
-    if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
+  //  if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
         char *ucname = alloca(strlen(ttype) + 1);
         for (int i = 0; i < strlen(ttype); i++) {
             ucname[i] = toupper(ttype[i]);
@@ -356,7 +350,6 @@ void set_terminal_type(struct port *port, const char *ttype) {
         for (int i = 0; ttype_map[i].name != 0; i++) {
             if (strcmp(ttype_map[i].name, ucname) == 0) {
                 port->tinfo = ttype_map[i].ttype;
-                xSemaphoreGive(port->mutex);
                 return;
             }
         }
@@ -366,25 +359,24 @@ void set_terminal_type(struct port *port, const char *ttype) {
             if (ttype_map[i].prefix == true) {
                 if (strncmp(ttype_map[i].name, ucname, strlen(ttype_map[i].name)) == 0) {
                     port->tinfo = ttype_map[i].ttype;
-                    xSemaphoreGive(port->mutex);
                     return;
                 }
             }
         }
-        xSemaphoreGive(port->mutex);
-    }
+  //      xSemaphoreGive(port->mutex);
+  //  }
 }
 
 void port_set_active_session(struct port *port, struct session *session) {
-    if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
+  //  if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
         port->active_session = session;
-        xSemaphoreGive(port->mutex);
-    }
+   //     xSemaphoreGive(port->mutex);
+  //  }
 }
 
 void port_set_mode(struct port *port, enum port_mode mode) {
-    if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
+  //  if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
         port->mode = mode;
-        xSemaphoreGive(port->mutex);
-    }    
+ //       xSemaphoreGive(port->mutex);
+ //   }    
 }

@@ -50,7 +50,7 @@ static void telnet_in_listen_socket(struct tcp_socket *socket) {
 
 static void telnet_in_close_socket(struct tcp_socket *socket) {
     if (socket->port) {
-        close_port(socket->port);
+        //close_port(socket->port);
         socket->port = NULL;
         TCPIP_TCP_Close(socket->socket);
         socket->state = SOCK_CLOSED;
@@ -64,24 +64,203 @@ void telnet_in_close_port(struct port *port) {
 }
 
 
-static void telnet_in_thread(void *args) {
 
-    for (int i = 0; i < NUM_TELNET_SOCKETS; i++) {
-        telnet_in_listen_socket(&sockets[i]);
+
+void telnet_in_transfer_data(struct port *port) {
+    struct telnet_in_data *data = (struct telnet_in_data *)port->port_data;
+    struct tcp_socket *socket = data->socket;
+    int free_bytes;
+    int available_bytes;
+    uint8_t incoming_buffer[CIRCULAR_BUFFER_SIZE];
+
+    // First, incoming data from the server. Read it and process
+    // it byte by byte.
+
+    // Get amount of space in the circular buffer
+    free_bytes = cb_free(&port->read_buffer);
+    // Get the number of pending bytes
+    available_bytes = TCPIP_TCP_GetIsReady(socket->socket);
+
+    // Limit the number of bytes available to the size of the
+    // circular buffer space
+    if (available_bytes > free_bytes) available_bytes = free_bytes;
+
+    // Grab the data from the socket and put it in our processing buffer
+    TCPIP_TCP_ArrayGet(socket->socket, incoming_buffer, available_bytes);
+
+    // Process each byte in turn
+    for (int byteno = 0; byteno < available_bytes; byteno++) {
+        uint8_t this_byte = incoming_buffer[byteno];
+
+        if (data->iac_sb) {
+            switch (this_byte) {
+                case TELOPT_IAC:
+                    if (data->iac_sb_iac) {
+                        data->iac_sub[data->iac_sub_pos++] = this_byte;
+                        data->iac_sub[data->iac_sub_pos] = 0;
+                        if (data->iac_sub_pos >= 40) {
+                            data->iac_sb = false;
+                            data->iac_pos = 0;    
+                        }                                        
+                    } else {
+                        data->iac_sb_iac = true;
+                    }
+                    break;
+
+                case TELOPT_SE:
+                    switch (data->iac_sub[0]) {
+                        case TELOPT_NAWS:
+                            port->columns = (data->iac_sub[1] << 8) | data->iac_sub[2];
+                            port->lines = (data->iac_sub[3] << 8) | data->iac_sub[4];
+                            break;
+                        case TELOPT_TTYPE:
+                            for (int i = 2; i < data->iac_sub_pos; i++) {
+                                int x = i - 2;
+                                if (x < 16) {
+                                    port->ttype[x] = data->iac_sub[i];
+                                    port->ttype[x+1] = 0;
+                                }
+                                set_terminal_type(port, port->ttype);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    data->iac_sb = false;
+                    data->iac_pos = 0;
+                    break;
+                default:
+                    data->iac_sub[data->iac_sub_pos++] = this_byte;
+                    data->iac_sub[data->iac_sub_pos] = 0;
+                    if (data->iac_sub_pos >= 40) {
+                        data->iac_sb = false;
+                        data->iac_pos = 0;    
+                    }
+                    break;
+            }
+        } else {
+            switch (data->iac_pos) {
+                case 0: 
+                    if (this_byte == TELOPT_IAC) {
+                        data->iac[data->iac_pos++] = TELOPT_IAC;
+                    } else {
+                        cb_write(&port->read_buffer, this_byte);
+                    }
+                    break;
+
+                case 1:
+                    switch (this_byte) {
+                        case TELOPT_IAC:
+                            cb_write(&port->read_buffer, this_byte);
+                            data->iac_pos = 0;                                       
+                            break;
+                        case TELOPT_SB:
+                            data->iac_sb = true;
+                            data->iac_sub_pos = 0;
+                            break;
+                        case TELOPT_BREAK:
+                            data->iac_pos = 0;
+                            switch (port->breakmode) {
+                                case BREAK_LOCAL:
+                                    port_printf(port, "+++ OUT OF CHEESE +++\r\n\n");
+                                    port->mode = MODE_LOCAL;
+                                    break;
+                                case BREAK_REMOTE:
+                                    if (port->active_session) {
+                                        port->active_session->target->send_break = true;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        default:
+                            data->iac[data->iac_pos++] = this_byte;
+                            break;
+                    }
+                    break;
+
+                case 2:
+                    switch (this_byte) {
+                        default:
+                            data->iac[data->iac_pos++] = this_byte;
+                            switch (data->iac[1]) {
+                                case TELOPT_WILL:
+                                    switch (data->iac[2]) {
+                                        case TELOPT_LINEMODE:
+                                            SEND_DONT(TELOPT_LINEMODE);
+                                            SEND_DONT(TELOPT_ECHO);
+                                            SEND_WILL(TELOPT_ECHO);
+                                            break;
+                                        case TELOPT_TTYPE:
+                                            SEND_DO(TELOPT_TTYPE);
+                                            SEND_SB_SEND(TELOPT_TTYPE);
+                                            break;
+                                        case TELOPT_NAWS:
+                                            SEND_DO(TELOPT_NAWS);
+                                            break;
+                                        default:
+                                            break;
+
+                                    }
+                                    break;
+                                case TELOPT_WONT:
+                                    break;
+                                case TELOPT_DO:
+                                    switch (data->iac[2]) {
+                                        case TELOPT_SUPPRESS_GA:
+                                            SEND_WILL(TELOPT_SUPPRESS_GA);
+                                            SEND_DO(TELOPT_SUPPRESS_GA);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                                case TELOPT_DONT:
+                                    break;
+                                default:
+                                    break;
+                            }
+                            data->iac_pos = 0;
+                    }
+            }
+        }
     }
-    while (1) {
+
+    // Now we do similar with outgoing data from the circular
+    // buffer to the server. Easier this time, nothing to
+    // process - just read and pipe through to the other end.
+
+
+    // Number of bytes we have to send
+    available_bytes = cb_available(&port->write_buffer);
+    // Amount of space to send into
+    free_bytes = TCPIP_TCP_PutIsReady(socket->socket);
+
+    // Truncate byte count to what space there is
+    if (available_bytes > free_bytes) available_bytes = free_bytes;
+
+    for (int byteno = 0; byteno < available_bytes; byteno++) {
+        incoming_buffer[byteno] = cb_read(&port->write_buffer);
+    }
+    TCPIP_TCP_ArrayPut(socket->socket, incoming_buffer, available_bytes);
+
+
+}
+
+//static void telnet_in_thread(void *args) {
+
+void telnet_in_task() {
         for (int sockno = 0; sockno < NUM_TELNET_SOCKETS; sockno++) {
             struct tcp_socket *socket = &sockets[sockno];
             struct port *port = socket->port;
-            struct telnet_in_data *data = NULL;
+         //   struct telnet_in_data *data = NULL;
             
-            int free_bytes;
-            int available_bytes;
-            uint8_t incoming_buffer[CIRCULAR_BUFFER_SIZE];
+
             
-            if (port) {
-                data = (struct telnet_in_data *)socket->port->port_data;
-            }
+         //   if (port) {
+         //       data = (struct telnet_in_data *)socket->port->port_data;
+         //   }
             
             switch (socket->state) {
                 case SOCK_LISTEN:
@@ -96,6 +275,8 @@ static void telnet_in_thread(void *args) {
                         snprintf(socket->port->name, 9, "Telnt%d", socket->port->no);
                         socket->port->name[8] = 0;
                         socket->port->breakmode = BREAK_LOCAL;
+                        socket->port->fn_yield = &telnet_in_transfer_data;
+                        socket->port->fn_flush = &telnet_in_transfer_data;
                         port_set_mode(socket->port, MODE_PREGREET);
                     }
                     break;
@@ -104,178 +285,7 @@ static void telnet_in_thread(void *args) {
                         socket->state = SOCK_DISCONNECTED;
                     }
                     
-                    
-                    // First, incoming data from the server. Read it and process
-                    // it byte by byte.
-                    
-                    // Get amount of space in the circular buffer
-                    free_bytes = cb_free(&port->read_buffer);
-                    // Get the number of pending bytes
-                    available_bytes = TCPIP_TCP_GetIsReady(socket->socket);
-                    
-                    // Limit the number of bytes available to the size of the
-                    // circular buffer space
-                    if (available_bytes > free_bytes) available_bytes = free_bytes;
-
-                    // Grab the data from the socket and put it in our processing buffer
-                    TCPIP_TCP_ArrayGet(socket->socket, incoming_buffer, available_bytes);
-
-                    // Process each byte in turn
-                    for (int byteno = 0; byteno < available_bytes; byteno++) {
-                        uint8_t this_byte = incoming_buffer[byteno];
-                        
-                        if (data->iac_sb) {
-                            switch (this_byte) {
-                                case TELOPT_IAC:
-                                    if (data->iac_sb_iac) {
-                                        data->iac_sub[data->iac_sub_pos++] = this_byte;
-                                        data->iac_sub[data->iac_sub_pos] = 0;
-                                        if (data->iac_sub_pos >= 40) {
-                                            data->iac_sb = false;
-                                            data->iac_pos = 0;    
-                                        }                                        
-                                    } else {
-                                        data->iac_sb_iac = true;
-                                    }
-                                    break;
-
-                                case TELOPT_SE:
-                                    switch (data->iac_sub[0]) {
-                                        case TELOPT_NAWS:
-                                            port->columns = (data->iac_sub[1] << 8) | data->iac_sub[2];
-                                            port->lines = (data->iac_sub[3] << 8) | data->iac_sub[4];
-                                            break;
-                                        case TELOPT_TTYPE:
-                                            for (int i = 2; i < data->iac_sub_pos; i++) {
-                                                int x = i - 2;
-                                                if (x < 16) {
-                                                    port->ttype[x] = data->iac_sub[i];
-                                                    port->ttype[x+1] = 0;
-                                                }
-                                                set_terminal_type(port, port->ttype);
-                                            }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    data->iac_sb = false;
-                                    data->iac_pos = 0;
-                                    break;
-                                default:
-                                    data->iac_sub[data->iac_sub_pos++] = this_byte;
-                                    data->iac_sub[data->iac_sub_pos] = 0;
-                                    if (data->iac_sub_pos >= 40) {
-                                        data->iac_sb = false;
-                                        data->iac_pos = 0;    
-                                    }
-                                    break;
-                            }
-                        } else {
-                            switch (data->iac_pos) {
-                                case 0: 
-                                    if (this_byte == TELOPT_IAC) {
-                                        data->iac[data->iac_pos++] = TELOPT_IAC;
-                                    } else {
-                                        cb_write(&port->read_buffer, this_byte);
-                                    }
-                                    break;
-
-                                case 1:
-                                    switch (this_byte) {
-                                        case TELOPT_IAC:
-                                            cb_write(&port->read_buffer, this_byte);
-                                            data->iac_pos = 0;                                       
-                                            break;
-                                        case TELOPT_SB:
-                                            data->iac_sb = true;
-                                            data->iac_sub_pos = 0;
-                                            break;
-                                        case TELOPT_BREAK:
-                                            data->iac_pos = 0;
-                                            switch (port->breakmode) {
-                                                case BREAK_LOCAL:
-                                                    port_printf(port, "+++ OUT OF CHEESE +++\r\n\n");
-                                                    port->mode = MODE_LOCAL;
-                                                    break;
-                                                case BREAK_REMOTE:
-                                                    if (port->active_session) {
-                                                        port->active_session->target->send_break = true;
-                                                    }
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                            break;
-                                        default:
-                                            data->iac[data->iac_pos++] = this_byte;
-                                            break;
-                                    }
-                                    break;
-
-                                case 2:
-                                    switch (this_byte) {
-                                        default:
-                                            data->iac[data->iac_pos++] = this_byte;
-                                            switch (data->iac[1]) {
-                                                case TELOPT_WILL:
-                                                    switch (data->iac[2]) {
-                                                        case TELOPT_LINEMODE:
-                                                            SEND_DONT(TELOPT_LINEMODE);
-                                                            SEND_DONT(TELOPT_ECHO);
-                                                            SEND_WILL(TELOPT_ECHO);
-                                                            break;
-                                                        case TELOPT_TTYPE:
-                                                            SEND_DO(TELOPT_TTYPE);
-                                                            SEND_SB_SEND(TELOPT_TTYPE);
-                                                            break;
-                                                        case TELOPT_NAWS:
-                                                            SEND_DO(TELOPT_NAWS);
-                                                            break;
-                                                        default:
-                                                            break;
-
-                                                    }
-                                                    break;
-                                                case TELOPT_WONT:
-                                                    break;
-                                                case TELOPT_DO:
-                                                    switch (data->iac[2]) {
-                                                        case TELOPT_SUPPRESS_GA:
-                                                            SEND_WILL(TELOPT_SUPPRESS_GA);
-                                                            SEND_DO(TELOPT_SUPPRESS_GA);
-                                                            break;
-                                                        default:
-                                                            break;
-                                                    }
-                                                    break;
-                                                case TELOPT_DONT:
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                            data->iac_pos = 0;
-                                    }
-                            }
-                        }
-                    }
-
-                    // Now we do similar with outgoing data from the circular
-                    // buffer to the server. Easier this time, nothing to
-                    // process - just read and pipe through to the other end.
-
-                    
-                    // Number of bytes we have to send
-                    available_bytes = cb_available(&port->write_buffer);
-                    // Amount of space to send into
-                    free_bytes = TCPIP_TCP_PutIsReady(socket->socket);
-                    
-                    // Truncate byte count to what space there is
-                    if (available_bytes > free_bytes) available_bytes = free_bytes;
-                    
-                    for (int byteno = 0; byteno < available_bytes; byteno++) {
-                        incoming_buffer[byteno] = cb_read(&port->write_buffer);
-                    }
-                    TCPIP_TCP_ArrayPut(socket->socket, incoming_buffer, available_bytes);
+                    telnet_in_transfer_data(port);
                     
                     break;
                 case SOCK_DISCONNECTED:
@@ -291,17 +301,14 @@ static void telnet_in_thread(void *args) {
             }
             
         }
-    }
+
 }
 
 void telnet_in_initialize() {
-    (void) xTaskCreate(
-           (TaskFunction_t) telnet_in_thread,
-           "Telnet_In",
-           1024,   
-           NULL,
-           1U ,
-           &telnet_in_thread_handle);
+
+    for (int i = 0; i < NUM_TELNET_SOCKETS; i++) {
+        telnet_in_listen_socket(&sockets[i]);
+    }
 }
 
 void print_telnet_in_info(struct port *port, struct port *target) {

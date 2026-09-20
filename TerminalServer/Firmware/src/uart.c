@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "uart.h"
 #include "port.h"
 #include "settings.h"
@@ -27,11 +28,15 @@ const char *parity_names[] = {
     "Even"
 };
 
+static bool running = false;
 
-TaskHandle_t uart_tasks_handle;
+static struct port *uart_ports[6];
+
+
+//TaskHandle_t uart_tasks_handle;
 
 void uart_stop(struct port *port) {
-    port_printf(CONSOLE, "STOP\r\n");
+    //port_printf(CONSOLE, "STOP\r\n");
     struct uart_data *data = (struct uart_data *)port->port_data;
     uint8_t c;
     switch (data->flow) {
@@ -84,7 +89,8 @@ bool uart_can_tx(struct port *port) {
     return true;
 }
 
-void uart_init(struct uart_data *data) {
+static void uart_init(struct port *port) {
+    struct uart_data *data = port->port_data;
     pin_set(data->txled, 1);
     pin_set(data->rxled, 1);
 
@@ -105,6 +111,7 @@ void uart_init(struct uart_data *data) {
     
     pin_set(data->txled, 0);
     pin_set(data->rxled, 0);
+    
 }
 
 void uart_config(struct uart_data *data) {
@@ -158,107 +165,53 @@ int uart_write_byte(struct uart_data *data, uint8_t b) {
     return 1;
 }
 
-static void UART_Tasks(void *pvParameters) {
-    while (1) {
-        for (struct port *scan = ports; scan; scan = scan->next) {
-            
-            int water = cb_available(&scan->read_buffer);
-            if (scan->stopped && (scan->waterlevel > scan->low_water) && (water <= scan->low_water)) {
-                scan->fn_start(scan);
-                scan->stopped = false;
+//static void UART_Tasks(void *pvParameters) {
+
+void uart_transfer_data(struct port *port) {
+    
+    int available_bytes;
+    int free_bytes;
+    uint8_t temp[CIRCULAR_BUFFER_SIZE];
+    struct uart_data *data = (struct uart_data *)(port->port_data);
+    uint32_t ts = xTaskGetTickCount();
+
+    if (port->fn_can_tx(port)) {
+        int available_bytes = cb_available(&port->write_buffer);
+        int free_bytes = data->fn_free();
+        if (available_bytes > free_bytes) available_bytes = free_bytes;
+
+        if (available_bytes > 0) {                        
+            pin_set(data->txled, 1);
+            data->txled_ts = ts;
+            for (int i = 0; i < available_bytes; i++) {
+                temp[i] = cb_read(&port->write_buffer);
             }
-            scan->waterlevel = water;
-            
-            if (scan->type == PORT_SERIAL) {   
-                struct uart_data *data = (struct uart_data *)(scan->port_data);
-
-                uint32_t ts = xTaskGetTickCount();
-                if ((data->txled_ts > 0) && ((ts - data->txled_ts) > 25)) {
-                    data->txled_ts = 0;
-                    pin_set(data->txled, 0);
-                }
-
-                if ((data->rxled_ts > 0) && ((ts - data->rxled_ts) > 25)) {
-                    data->rxled_ts = 0;
-                    pin_set(data->rxled, 0);
-                }
+            data->fn_write(temp, available_bytes);
+        }
+    }
                 
-                UART_ERROR err = data->fn_get_error();
-                
+    available_bytes = data->fn_avail();
+    free_bytes = cb_free(&port->read_buffer);
+    if (available_bytes > free_bytes) available_bytes = free_bytes;
+    if (available_bytes > 0) {
+        pin_set(data->rxled, 1);
+        data->rxled_ts = ts;
+        data->fn_read(temp, available_bytes);
 
-                if (err == UART_ERROR_FRAMING) { // Break
-                    if (scan->breakmode == BREAK_LOCAL) {
-                        port_printf(scan, "+++ OUT OF CHEESE ERROR +++\r\n");
-                        scan->mode = MODE_LOCAL;
-                    } else if (scan->breakmode == BREAK_REMOTE) {
-                        if (scan->active_session) {
-                            scan->active_session->target->send_break = true;
-                        }
-                    }
-                }
-                
-                
-                if (scan->send_break) {
-                    scan->send_break = false;
-                    while (data->fn_write_get() > 0);
-                    while (!data->fn_tx_complete());
-                    uint32_t b = data->baud;
-                    data->baud = data->baud / 2;
-                    uart_config(data);
-                    uint8_t zero = 0xff;
-                    data->fn_write(&zero, 1);
-                    while (data->fn_write_get() > 0);
-                    while (!data->fn_tx_complete());
-                    data->baud = b;
-                    uart_config(data);
-                }
-                
-
-                int av = cb_available(&scan->write_buffer);
-                if ((av > 0) && scan->fn_can_tx(scan)) {
-                    int fr = data->fn_free();
-                    if (fr > 0) {                        
-                        pin_set(data->txled, 1);
-                        data->txled_ts = ts;
-                        if (av > fr) {
-                            av = fr;
-                        }
-                        uint8_t tmp[8];
-                        for (int i = 0; i < av; i++) {
-                            tmp[i] = cb_read(&scan->write_buffer);
-                        }
-                        data->fn_write(tmp, av);
-                    }
-                }
-                
-                av = data->fn_avail();
-                if (av > 0) {
-                    
-                    int fr = cb_free(&scan->read_buffer);
-                    if (fr > 0) {
-                        if (av > fr) av = fr;
-                        pin_set(data->rxled, 1);
-                        data->rxled_ts = ts;
-
-                        uint8_t tmp[CIRCULAR_BUFFER_SIZE];
-                        data->fn_read(tmp, av);
-
-                        for (int i = 0; i < av; i++) {
-                            uint8_t b = tmp[i];
-                            if ((data->flow == UART_FLOW_XONXOFF) && (b == 17)) {
-                                data->paused = false;
-                            } else if ((data->flow == UART_FLOW_XONXOFF) && (b == 19)) {
-                                data->paused = true;
-                            } else {
-                                int lev1 = cb_available(&scan->read_buffer);
-                                cb_write(&(scan->read_buffer), b);
-                                int lev2 = cb_available(&scan->read_buffer);
-                                if ((!scan->stopped) && (lev1 < scan->high_water) && (lev2 >= scan->high_water)) {
-                                    scan->fn_stop(scan);
-                                    scan->stopped = true;
-                                }
-                            }
-                        }
+        if (((port->access == ACCESS_REMOTE) && in_session(port)) || (port->access == ACCESS_LOCAL)) {
+            for (int i = 0; i < available_bytes; i++) {
+                uint8_t b = temp[i];
+                if ((data->flow == UART_FLOW_XONXOFF) && (b == 17)) {
+                    data->paused = false;
+                } else if ((data->flow == UART_FLOW_XONXOFF) && (b == 19)) {
+                    data->paused = true;
+                } else {
+                    int lev1 = cb_available(&port->read_buffer);
+                    cb_write(&(port->read_buffer), b);
+                    int lev2 = cb_available(&port->read_buffer);
+                    if ((!port->stopped) && (lev1 < port->high_water) && (lev2 >= port->high_water)) {
+                        port->fn_stop(port);
+                        port->stopped = true;
                     }
                 }
             }
@@ -266,7 +219,71 @@ static void UART_Tasks(void *pvParameters) {
     }
 }
 
+void uart_task() {
+
+    
+    if (!running) return;
+
+    for (int portno = 0; portno < 6; portno++) {
+        struct port *port = uart_ports[portno];
+        struct uart_data *data = (struct uart_data *)(port->port_data);
+      
+        int water = cb_available(&port->read_buffer);
+        if (port->stopped && (port->waterlevel > port->low_water) && (water <= port->low_water)) {
+            port->fn_start(port);
+            port->stopped = false;
+        }
+        port->waterlevel = water;
+
+        uint32_t ts = xTaskGetTickCount();
+        if ((data->txled_ts > 0) && ((ts - data->txled_ts) > 25)) {
+            data->txled_ts = 0;
+            pin_set(data->txled, 0);
+        }
+
+        if ((data->rxled_ts > 0) && ((ts - data->rxled_ts) > 25)) {
+            data->rxled_ts = 0;
+            pin_set(data->rxled, 0);
+        }
+                
+        UART_ERROR err = data->fn_get_error();
+                
+
+        if (err == UART_ERROR_FRAMING) { // Break
+            if (port->breakmode == BREAK_LOCAL) {
+                port_printf(port, "+++ OUT OF CHEESE ERROR +++\r\n");
+                port->mode = MODE_LOCAL;
+            } else if (port->breakmode == BREAK_REMOTE) {
+                if (port->active_session) {
+                    port->active_session->target->send_break = true;
+                }
+            }
+        }
+                
+                
+        if (port->send_break) {
+            port->send_break = false;
+            while (data->fn_write_get() > 0);
+            while (!data->fn_tx_complete());
+            uint32_t b = data->baud;
+            data->baud = data->baud / 2;
+            uart_config(data);
+            uint8_t zero = 0xff;
+            data->fn_write(&zero, 1);
+            while (data->fn_write_get() > 0);
+            while (!data->fn_tx_complete());
+            data->baud = b;
+            uart_config(data);
+        }
+                
+        uart_transfer_data(port);
+    }
+}
+
 static void uart_flush(struct port *port) {
+    while (cb_available(&port->write_buffer)) {
+        uart_transfer_data(port);
+    }
     struct uart_data *data = (struct uart_data *)port->port_data;
     while (data->fn_write_get() > 0) {
         vTaskDelay(1);
@@ -282,26 +299,27 @@ void uart_create_ports() {
         port->fn_can_tx = &uart_can_tx;
         port->fn_show_detail = &uart_show_port_characteristics;
         port->fn_flush = &uart_flush;
+        port->fn_yield = &uart_transfer_data;
+        uart_ports[i] = port;
     }    
 }
 
 void uart_boot() {
 
-    for (struct port *scan = ports; scan; scan = scan->next) {
-        if (scan->type == PORT_SERIAL) {
-            uart_init(scan->port_data);            
-            scan->fn_start(scan);
-            scan->stopped = false;
-        }
+    for (int i = 0; i < 6; i++) {
+        uart_init(uart_ports[i]);            
+        uart_ports[i]->fn_start(uart_ports[i]);
+        uart_ports[i]->stopped = false;
     }
+    running = true;
 
-    (void) xTaskCreate(
-           (TaskFunction_t) UART_Tasks,
-           "UART_Tasks",
-           1024,   
-           NULL,
-           1U ,
-           &uart_tasks_handle);
+//    (void) xTaskCreate(
+//           (TaskFunction_t) UART_Tasks,
+//           "UART_Tasks",
+//           1024,   
+//           NULL,
+//           1U ,
+//           &uart_tasks_handle);
 }
 
 

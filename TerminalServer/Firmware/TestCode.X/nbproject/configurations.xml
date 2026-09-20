@@ -480,6 +480,7 @@
       <itemPath>../src/ttype.h</itemPath>
       <itemPath>../src/util.h</itemPath>
       <itemPath>../src/port_commands.h</itemPath>
+      <itemPath>../src/tcp_in.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -774,6 +775,7 @@
       <itemPath>../src/ttype.c</itemPath>
       <itemPath>../src/util.c</itemPath>
       <itemPath>../src/port_commands.c</itemPath>
+      <itemPath>../src/tcp_in.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

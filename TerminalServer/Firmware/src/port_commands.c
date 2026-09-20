@@ -56,6 +56,7 @@ COMMAND(show_port_characteristics) {
     OPT_TARGET
     if (!target) return ERR_BADPORT;
     port_printf(port, "\n");
+    
     port_printf(port, "Port %-2d: Username: %-8s            Physical Port %d (%s)\r\n", target->no, target->username, target->no, port_types[target->type]);
     port_printf(port, "\n");
     
@@ -88,7 +89,6 @@ COMMAND(show_port_characteristics) {
     );
 
     port_printf(port, "\n");
-
     return ERR_OK;
 }
 COMMAND(show_port_status) {

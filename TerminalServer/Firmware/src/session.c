@@ -179,3 +179,11 @@ void session_parent_close(struct port *port) {
         }
     }
 }
+
+bool in_session(struct port *port) {
+    for (struct session *scan = sessions; scan; scan = scan->next) {
+        if (scan->parent == port) return true;
+        if (scan->target == port) return true;
+    }
+    return false;
+}

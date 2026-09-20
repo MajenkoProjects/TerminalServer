@@ -33,6 +33,6 @@ struct tcp_socket {
 
 extern void telnet_in_initialize();
 extern void print_telnet_in_info(struct port *port, struct port *target);
-
+extern void telnet_in_task();
 
 #endif

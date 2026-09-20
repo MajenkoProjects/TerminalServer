@@ -143,120 +143,93 @@ void APP_USBDeviceEventHandler(USB_DEVICE_EVENT event, void * pData, uintptr_t c
 
 
 
-static void USB_Tasks(void *pvParameters) {
-
-    while (true) {
-
-        switch ( usb_sm_state ) {
-            /* Application's initial state. */
-            case USB_STATE_INIT:
-                /* Open the device layer */
-                USBDeviceHandle = USB_DEVICE_Open( USB_DEVICE_INDEX_0, DRV_IO_INTENT_READWRITE );
-
-                if(USBDeviceHandle != USB_DEVICE_HANDLE_INVALID) {
-                    USB_DEVICE_EventHandlerSet(USBDeviceHandle, APP_USBDeviceEventHandler, 0);
-                    usb_sm_state = USB_STATE_WAIT_FOR_CONFIGURATION;
-                }
-                break;
-
-            case USB_STATE_WAIT_FOR_CONFIGURATION:
-                /* Check if the device was configured */
-                if(usb_is_configured) {
-
-                    /* If the device is configured then lets start
-                     * the application */
-
-                    usb_sm_state = USB_STATE_CHECK_IF_CONFIGURED;
-
-                    taskENTER_CRITICAL();
-                    for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
-                        USB_DEVICE_CDC_Read(i,
-                                &usb_data[i].readTransferHandle,
-                                usb_data[i].read_buffer, USB_BUFFER_SIZE);  
-                        usb_data[i].read_complete = false;
-                    }
-                    taskEXIT_CRITICAL();
-                }
-                break;
+//static void USB_Tasks(void *pvParameters) {
 
 
-            case USB_STATE_CHECK_IF_CONFIGURED:
-
-                if(usb_is_configured) {
-                    usb_sm_state = USB_STATE_CHECK_FOR_READ_COMPLETE;
-                } else {
-                    //APP_StateReset();
-                    usb_sm_state = USB_STATE_WAIT_FOR_CONFIGURATION;
-                }
-                break;
-
-            default:
-                break;
-        }
-        
-
-        if (usb_is_configured) {
-
-            for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
-                if (uxSemaphoreGetCount(usb_data[i].write_running) == 0) {
-                    int a = cb_available(&usb_ports[i]->write_buffer);
-                    if (a > USB_BUFFER_SIZE) a = USB_BUFFER_SIZE;
-                    if (a > 0) {
-                        for (int j = 0; j < a; j++) {
-                            usb_data[i].write_buffer[j] = cb_read(&usb_ports[i]->write_buffer);
-                        }
-                        xSemaphoreGive(usb_data[i].write_running);
-                        USB_DEVICE_CDC_Write(i, 
-                            &usb_data[i].writeTransferHandle, 
-                            usb_data[i].write_buffer, 
-                            a, 
-                            USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
-                    }
-                }
-                if (usb_data[i].read_complete == true) {
-                    if (usb_data[i].read_data_pos >= usb_data[i].read_data_length) {
-                        usb_data[i].read_complete = false;
-                        usb_data[i].read_data_pos = 0;
-                        USB_DEVICE_CDC_Read(i,
-                            &usb_data[i].readTransferHandle,
-                            usb_data[i].read_buffer, USB_BUFFER_SIZE);                
-                    } else {
-                        //debugf("%d / %d\r\n", usb_data[i].read_data_pos, usb_data[i].read_data_length);
-                        while (cb_free(&usb_ports[i]->read_buffer) && (usb_data[i].read_data_pos < usb_data[i].read_data_length)) {
-                            cb_write(&usb_ports[i]->read_buffer, usb_data[i].read_buffer[usb_data[i].read_data_pos++]);
-                        }
-                    }
-                }
-            }        
-        }
+void usb_transfer_data(struct port *port) {
+    struct usb_port_data *data = (struct usb_port_data *)port->port_data;
     
+    if (uxSemaphoreGetCount(data->write_running) == 0) {
+        int a = cb_available(&port->write_buffer);
+        if (a > USB_BUFFER_SIZE) a = USB_BUFFER_SIZE;
+        if (a > 0) {
+            for (int j = 0; j < a; j++) {
+                data->write_buffer[j] = cb_read(&port->write_buffer);
+            }
+            xSemaphoreGive(data->write_running);
+            USB_DEVICE_CDC_Write(data->cdcInstance,
+                &data->writeTransferHandle, 
+                data->write_buffer, 
+                a, 
+                USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+        }
+    }
+    if (data->read_complete == true) {
+        if (data->read_data_pos >= data->read_data_length) {
+            data->read_complete = false;
+            data->read_data_pos = 0;
+            USB_DEVICE_CDC_Read(data->cdcInstance,
+                &data->readTransferHandle,
+                data->read_buffer, USB_BUFFER_SIZE);                
+        } else {
+            while (cb_free(&port->read_buffer) && (data->read_data_pos < data->read_data_length)) {
+                cb_write(&port->read_buffer, data->read_buffer[data->read_data_pos++]);
+            }
+        }
+    }
+}
+
+void usb_flush(struct port *port) {
+    while (cb_available(&port->write_buffer)) {
+        usb_transfer_data(port);
+    }
+}
+
+void usb_task() {
+
+    if (!usb_is_configured) return;
+
+    for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
+        usb_transfer_data(usb_ports[i]);
     }
 }
 
 void usb_create_ports() {
     for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
         usb_ports[i] = add_port(PORT_CDC, &usb_data[i]);
+        usb_ports[i]->fn_flush = &usb_flush;
+        usb_ports[i]->fn_yield = &usb_transfer_data;
         usb_data[i].write_running = xSemaphoreCreateBinary();
         usb_data[i].read_complete = false;
+        usb_data[i].cdcInstance = i;
     }    
 }
 
 
 void USB_Initialize() {
-    usb_sm_state = USB_STATE_INIT;
-    if (USB_DEVICE_CDC_INSTANCES_NUMBER != 1) {
-        port_printf(CONSOLE, "%d USB CDC/ACM ports initialized\r\n", USB_DEVICE_CDC_INSTANCES_NUMBER);
+    USBDeviceHandle = USB_DEVICE_Open( USB_DEVICE_INDEX_0, DRV_IO_INTENT_READWRITE );
+
+    if(USBDeviceHandle != USB_DEVICE_HANDLE_INVALID) {
+        USB_DEVICE_EventHandlerSet(USBDeviceHandle, APP_USBDeviceEventHandler, 0);
+    
+        while (!usb_is_configured);
+
+        for (int i = 0; i < USB_DEVICE_CDC_INSTANCES_NUMBER; i++) {
+            USB_DEVICE_CDC_Read(i,
+                    &usb_data[i].readTransferHandle,
+                    usb_data[i].read_buffer, USB_BUFFER_SIZE);  
+            usb_data[i].read_complete = false;
+        }
+
+        if (USB_DEVICE_CDC_INSTANCES_NUMBER != 1) {
+            port_printf(CONSOLE, "%d USB CDC/ACM ports initialized\r\n", USB_DEVICE_CDC_INSTANCES_NUMBER);
+        } else {
+            port_printf(CONSOLE, "%d USB CDC/ACM port initialized\r\n", USB_DEVICE_CDC_INSTANCES_NUMBER);        
+        }
     } else {
-        port_printf(CONSOLE, "%d USB CDC/ACM port initialized\r\n", USB_DEVICE_CDC_INSTANCES_NUMBER);        
+        port_printf(CONSOLE, "Error configuring USB\r\n");
     }
-    /* Create OS Thread for APP_Tasks. */
-    (void) xTaskCreate(
-           (TaskFunction_t) USB_Tasks,
-           "USB_Tasks",
-           1024,   
-           NULL,
-           1U ,
-           &usb_tasks_handle);
+    CONSOLE->fn_flush(CONSOLE);
 }
 
 int count = 0;

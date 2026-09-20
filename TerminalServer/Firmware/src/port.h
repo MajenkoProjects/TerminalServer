@@ -43,6 +43,7 @@ enum port_type {
     PORT_NET_OUT,
     PORT_TELNET_IN,
     PORT_TELNET_OUT,
+    PORT_TCP_IN,
 };
 
 enum access_mode {
@@ -62,7 +63,6 @@ enum break_mode {
 
 struct port {
     struct port *next;
-    SemaphoreHandle_t mutex;
     enum port_type type;
     enum port_mode mode;
     enum port_mode previous_mode;
@@ -100,6 +100,7 @@ struct port {
     void (*fn_close)(struct port *);
     void (*fn_show_detail)(struct port *, struct port *);
     void (*fn_flush)(struct port *);
+    void (*fn_yield)(struct port *);
 };
 
 extern struct port *ports;

@@ -17,6 +17,7 @@ enum app_state {
     APP_STATE_SERVICE_TASKS,
 };
 
+extern void yield();
 extern void APP_Initialize ( void );
 extern void APP_Tasks( void );
 

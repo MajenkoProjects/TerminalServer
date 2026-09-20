@@ -66,6 +66,7 @@ struct uart_data {
 extern void uart_config(struct uart_data *data);
 extern void uart_create_ports();
 extern void uart_boot();
+extern void uart_task();
 
 extern void print_uart_info(struct port *port, struct port *target);
 

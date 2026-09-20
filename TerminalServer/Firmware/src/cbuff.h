@@ -14,7 +14,6 @@ struct circular_buffer {
     uint8_t data[CIRCULAR_BUFFER_SIZE];
     int head;
     int tail;
-    SemaphoreHandle_t mutex;
 };
 
 extern int cb_write(struct circular_buffer *buf, uint8_t b);

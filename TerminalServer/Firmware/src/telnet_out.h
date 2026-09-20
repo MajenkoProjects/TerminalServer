@@ -47,6 +47,7 @@ struct todata {
 };
 
 extern void telnet_out_initialize();
+extern void telnet_out_task();
 
 extern COMMAND(telnet);
 

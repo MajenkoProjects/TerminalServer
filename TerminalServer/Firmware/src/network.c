@@ -268,7 +268,9 @@ static const NET_PRES_INIT_DATA netPresInitData = {
 
 void ethernet_boot() {
     port_printf(CONSOLE, "MAC Address: %s\r\n", ethernet_settings.macaddr);
+    CONSOLE->fn_flush(CONSOLE);
     port_printf(CONSOLE, "Initializing network...");
+    CONSOLE->fn_flush(CONSOLE);
     sysObj.netPres = NET_PRES_Initialize(0, (SYS_MODULE_INIT*)&netPresInitData);
     sysObj.tcpip = TCPIP_STACK_Init();
 
@@ -278,23 +280,32 @@ void ethernet_boot() {
     while ((!TCPIP_STACK_NetIsLinked(handle)) && (tries > 0)) {
             vTaskDelay(500);
             port_printf(CONSOLE, ".");
+            CONSOLE->fn_flush(CONSOLE);
             tries--;
     } 
     port_printf(CONSOLE, "\r\n");
+    CONSOLE->fn_flush(CONSOLE);
 
     if (!TCPIP_STACK_NetIsLinked(handle)) {
         port_printf(CONSOLE, "No network link detected. Giving up.\r\n");
+        CONSOLE->fn_flush(CONSOLE);
         return;
     }
 
     // Wait for DHCP address
+    uint32_t ts = xTaskGetTickCount();
     if (ethernet_settings.flags & TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON) {
         port_printf(CONSOLE, "Waiting for DHCP address...");
         while (!TCPIP_STACK_NetIsReady(handle)) {
             vTaskDelay(500);
-            port_printf(CONSOLE, ".");
+            if (xTaskGetTickCount() - ts >= 500) {
+                ts = xTaskGetTickCount();
+                port_printf(CONSOLE, ".");            
+                CONSOLE->fn_flush(CONSOLE);
+            }
         }
         port_printf(CONSOLE, "\r\n");
+        CONSOLE->fn_flush(CONSOLE);
     }
     
     char ip[16];
@@ -303,6 +314,7 @@ void ethernet_boot() {
     char gw[16];
     ip2str(TCPIP_STACK_NetAddressGateway(handle), gw);
     port_printf(CONSOLE, "IP Address: %-15s Gateway: %s\r\n", ip, gw);
+    CONSOLE->fn_flush(CONSOLE);
 
     
 //    MDNSD_ERR_CODE
@@ -311,7 +323,7 @@ void ethernet_boot() {
             "terminal", 
              "_telnet._tcp",
             23,
-            NULL,
+            "Scrotums",
             1,
             NULL,
             NULL
@@ -330,6 +342,7 @@ void ethernet_boot() {
             break;
     
     }
+    CONSOLE->fn_flush(CONSOLE);
 }
 
 void ethernet_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {
