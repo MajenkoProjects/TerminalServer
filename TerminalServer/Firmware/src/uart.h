@@ -26,16 +26,16 @@ struct uart_data {
     uint8_t bits;
     uint8_t stop;
     uint8_t parity;
-    struct pin *tx;
-    struct pin *rx;
-    struct pin *cts;
-    struct pin *rts;
-    struct pin *dtr;
-    struct pin *dsr;
-    struct pin *txled;
-    struct pin *rxled;
-    struct pin *status;
-    struct pin *shutdown;
+    uint8_t tx;
+    uint8_t rx;
+    uint8_t cts;
+    uint8_t rts;
+    uint8_t dtr;
+    uint8_t dsr;
+    uint8_t txled;
+    uint8_t rxled;
+    uint8_t status;
+    uint8_t shutdown;
     uint32_t txled_ts;
     uint32_t rxled_ts;
     void (*fn_init)();
@@ -53,9 +53,9 @@ struct uart_data {
 
 #define UARTDEF(X) \
     { 9600, UART_FLOW_NONE, 8, UART_STOP_1, UART_PAR_NONE, \
-        &pins[U##X##TX], &pins[U##X##RX], \
-        &pins[U##X##CTS], &pins[U##X##RTS], &pins[U##X##DTR], &pins[U##X##DSR], \
-        &pins[U##X##TXLED], &pins[U##X##RXLED], &pins[U##X##STATUS], &pins[U##X##SHTDN], \
+        U##X##TX_PIN, U##X##RX_PIN, \
+        U##X##CTS_PIN, U##X##RTS_PIN, U##X##DTR_PIN, U##X##DSR_PIN, \
+        U##X##TXLED_PIN, U##X##RXLED_PIN, U##X##STATUS_PIN, U##X##SHTDN_PIN, \
         0, 0, \
         &UART##X##_Initialize, &UART##X##_SerialSetup, \
         &UART##X##_Read, &UART##X##_Write, \

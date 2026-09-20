@@ -38,7 +38,6 @@ void final_boot_message();
 // each iteration of the main thread passing a uint32_t tick counter.
 static const struct module modules[] = {
     //                        Stage 1 boot              Stage 2 boot            Tasks
-    /* IO Pins */           { &pin_init,                NULL,                   NULL },
     /* System */            { &system_init_defaults,    NULL,                   NULL }, 
     /* UARTs */             { &uart_create_ports,       &uart_boot,             &uart_task },
     /* Boot banner */       { NULL,                     &system_greeter,        NULL },
@@ -118,9 +117,8 @@ void APP_Tasks ( void ) {
     static bool reset_state = true;
     static int modno = 0;
     
-    pin_get(&pins[FACTORY_RESET]);
-    if (pin_get(&pins[FACTORY_RESET]) != reset_state) {
-        reset_state = pin_get(&pins[FACTORY_RESET]);
+    if (GPIO_PinRead(FRES_PIN) != reset_state) {
+        reset_state = GPIO_PinRead(FRES_PIN);
         
         if (reset_state == false) {
             reset_ts = xTaskGetTickCount();

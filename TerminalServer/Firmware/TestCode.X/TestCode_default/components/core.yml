@@ -1252,7 +1252,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '34'
+            value: '65535'
           type: Dynamic
         type: Values
       type: Hex
@@ -1264,7 +1264,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '2278'
           type: Dynamic
         type: Values
       type: Hex
@@ -1276,7 +1276,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '28672'
           type: Dynamic
         type: Values
       type: Hex
@@ -2339,7 +2339,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '48'
+            value: '753'
           type: Dynamic
         type: Values
       type: Hex
@@ -2560,7 +2560,7 @@ data:
       children:
       - children:
         - attributes:
-            value: VBUSON
+            value: GPIO
           type: User
         type: Values
       type: String
@@ -2605,6 +2605,2388 @@ data:
       - children:
         - attributes:
             value: U3TX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_52_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_52_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: U1RX
+          type: User
+        type: Values
+      type: String
+    CONFIG_FVBUSONIO:
+      attributes:
+        id: CONFIG_FVBUSONIO
+        label: USB VBUS_ON Selection bit (FVBUSONIO)
+      children:
+      - children:
+        - attributes:
+            value: 'OFF'
+          type: User
+        type: Values
+      type: Combo
+    CONFIG_FUSBIDIO:
+      attributes:
+        id: CONFIG_FUSBIDIO
+        label: USB USBID Selection bit (FUSBIDIO)
+      children:
+      - children:
+        - attributes:
+            value: 'OFF'
+          type: User
+        type: Values
+      type: Combo
+    BSP_PIN_17_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_17_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: ESP_EN
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_38_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_38_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: GPIO3
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_58_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_58_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: SCL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_59_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_59_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: SDA
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_60_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_60_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: ENC_SEL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_61_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_61_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: ENC_RESET
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_91_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_91_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5TXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_92_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_92_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5RXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_28_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_28_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4SHTDN
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_29_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_29_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4STATUS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_66_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_66_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: ESP_INT
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_67_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_67_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: ENC_INT
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_66_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_66_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: INT3
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_67_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_67_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: INT4
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_0_MODE:
+      attributes:
+        id: BSP_PIN_0_MODE
+        label: Pin AN0 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_25_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_25_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_25_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_25_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: PGM_DATA
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_29_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_29_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_28_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_28_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_92_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_92_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_91_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_91_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_61_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_61_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_60_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_60_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_38_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_38_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_17_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_17_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_1_MODE:
+      attributes:
+        id: BSP_PIN_1_MODE
+        label: Pin AN1 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_24_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_24_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_24_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_24_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: PGM_CLOCK
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_2_MODE:
+      attributes:
+        id: BSP_PIN_2_MODE
+        label: Pin AN2 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_23_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_23_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    CHANGE_NOTICE_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: CHANGE_NOTICE_INTERRUPT_ENABLE_UPDATE
+        label: CHANGE_NOTICE_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_26_ENABLE:
+      attributes:
+        id: EVIC_26_ENABLE
+        label: Enable Change Notice Interrupt
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CHANGE_NOTICE_INTERRUPT_ENABLE:
+      attributes:
+        id: CHANGE_NOTICE_INTERRUPT_ENABLE
+        label: Vector Peripheral Enable
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_26_HANDLER_LOCK:
+      attributes:
+        id: EVIC_26_HANDLER_LOCK
+        label: EVIC_26_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CHANGE_NOTICE_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: CHANGE_NOTICE_INTERRUPT_HANDLER_LOCK
+        label: Vector Peripheral Handler Lock
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_26_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_26_INTERRUPT_HANDLER
+        label: EVIC_26_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: CHANGE_NOTICE_Handler
+          type: Dynamic
+        type: Values
+      type: String
+    CHANGE_NOTICE_INTERRUPT_HANDLER:
+      attributes:
+        id: CHANGE_NOTICE_INTERRUPT_HANDLER
+        label: Vector Peripheral Handler
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: CHANGE_NOTICE_Handler
+          type: Dynamic
+        type: Values
+      type: String
+    SYS_PORT_ATLEAST_ONE_CN_USED:
+      attributes:
+        id: SYS_PORT_ATLEAST_ONE_CN_USED
+        label: At Least One CN Interrupt is Used
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SYS_PORT_CNEN:
+      attributes:
+        id: SYS_PORT_CNEN
+        label: CNEN Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_4_CN:
+      attributes:
+        id: BSP_PIN_4_CN
+        label: Change Notice Interrupt
+      children:
+      - children:
+        - attributes:
+            value: ''
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_23_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_23_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5DSR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_3_MODE:
+      attributes:
+        id: BSP_PIN_3_MODE
+        label: Pin AN3 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_22_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_22_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_22_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_22_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5CTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_4_MODE:
+      attributes:
+        id: BSP_PIN_4_MODE
+        label: Pin AN4 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_21_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_21_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_21_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_21_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5STATUS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_20_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_20_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5SHTDN
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_6_MODE:
+      attributes:
+        id: BSP_PIN_6_MODE
+        label: Pin AN6 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_26_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_26_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_26_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_26_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5DTR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_7_MODE:
+      attributes:
+        id: BSP_PIN_7_MODE
+        label: Pin AN7 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_27_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_27_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_27_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_27_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5RTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_8_MODE:
+      attributes:
+        id: BSP_PIN_8_MODE
+        label: Pin AN8 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_32_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_32_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_32_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_32_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4CTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_9_MODE:
+      attributes:
+        id: BSP_PIN_9_MODE
+        label: Pin AN9 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_33_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_33_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_33_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_33_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4DSR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_10_MODE:
+      attributes:
+        id: BSP_PIN_10_MODE
+        label: Pin AN10 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_34_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_34_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_34_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_34_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4DTR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_11_MODE:
+      attributes:
+        id: BSP_PIN_11_MODE
+        label: Pin AN11 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_35_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_35_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_35_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_35_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4RTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_12_MODE:
+      attributes:
+        id: BSP_PIN_12_MODE
+        label: Pin AN12 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_41_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_41_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_41_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_41_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: GPIO0
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_13_MODE:
+      attributes:
+        id: BSP_PIN_13_MODE
+        label: Pin AN13 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_42_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_42_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_42_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_42_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: GPIO1
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_14_MODE:
+      attributes:
+        id: BSP_PIN_14_MODE
+        label: Pin AN14 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_43_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_43_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_43_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_43_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: GPIO2
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_15_MODE:
+      attributes:
+        id: BSP_PIN_15_MODE
+        label: Pin AN15 Mode
+      children:
+      - children:
+        - attributes:
+            value: DIGITAL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_44_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_44_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_44_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_44_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: SD_CS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_6_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_6_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_6_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_6_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3STATUS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_7_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_7_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_7_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_7_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3CTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_8_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_8_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_8_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_8_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3DSR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_63_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_63_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: OSC1
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_73_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_73_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_73_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_73_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2DSR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_74_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_74_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_74_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_74_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2DTR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_76_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_76_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_76_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_76_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2RTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_77_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_77_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_77_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_77_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1SHTDN
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_78_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_78_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_78_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_78_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1STATUS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_81_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_81_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_81_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_81_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1DTR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_82_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_82_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_82_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_82_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1RTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_83_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_83_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_83_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_83_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1TXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_84_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_84_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_84_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_84_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1RXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_68_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_68_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_68_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_68_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2STATUS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_69_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_69_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_69_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_69_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2CTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_71_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_71_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_71_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_71_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: ESP_SEL
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_79_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_79_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_79_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_79_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1CTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_80_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_80_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_80_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_80_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1DSR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_93_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_93_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_93_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_93_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3TXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_94_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_94_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_94_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_94_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3RXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_98_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_98_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_98_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_98_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6STATUS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_99_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_99_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_99_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_99_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6CTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_100_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_100_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_100_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_100_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6DSR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_3_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_3_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_3_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_3_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6DTR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_4_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_4_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_4_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_4_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6RTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_5_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_5_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_5_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_5_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3SHTDN
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_18_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_18_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_18_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_18_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3DTR
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_19_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_19_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_19_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_19_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3RTS
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_87_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_87_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_87_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_87_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2TXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_88_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_88_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_88_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_88_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2RXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_51_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_51_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_51_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_51_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2SHTDN
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_90_DIR:
+      attributes:
+        id: BSP_PIN_90_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: ''
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_90_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_90_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_90_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_90_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4RXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_89_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_89_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_89_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_89_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4TXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_96_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_96_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_96_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_96_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6RXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_97_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_97_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_97_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_97_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6SHTDN
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_95_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_95_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_95_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_95_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6TXLED
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_1_FUNCTION_TYPE:
+      attributes:
+        id: BSP_PIN_1_FUNCTION_TYPE
+        label: Type
+      children:
+      - children:
+        - attributes:
+            value: GPIO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_1_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_1_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: FRES
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_17_DIR:
+      attributes:
+        id: BSP_PIN_17_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_17_LAT:
+      attributes:
+        id: BSP_PIN_17_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: ''
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_91_DIR:
+      attributes:
+        id: BSP_PIN_91_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_92_DIR:
+      attributes:
+        id: BSP_PIN_92_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_28_DIR:
+      attributes:
+        id: BSP_PIN_28_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_28_LAT:
+      attributes:
+        id: BSP_PIN_28_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: ''
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_B_TRIS:
+      attributes:
+        id: SYS_PORT_B_TRIS
+        label: TRISBCLR Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '36064'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_20_DIR:
+      attributes:
+        id: BSP_PIN_20_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_26_DIR:
+      attributes:
+        id: BSP_PIN_26_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_B_LAT:
+      attributes:
+        id: SYS_PORT_B_LAT
+        label: LATB Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '33856'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_26_LAT:
+      attributes:
+        id: BSP_PIN_26_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_27_DIR:
+      attributes:
+        id: BSP_PIN_27_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_34_DIR:
+      attributes:
+        id: BSP_PIN_34_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_34_LAT:
+      attributes:
+        id: BSP_PIN_34_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_35_DIR:
+      attributes:
+        id: BSP_PIN_35_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_44_DIR:
+      attributes:
+        id: BSP_PIN_44_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_44_LAT:
+      attributes:
+        id: BSP_PIN_44_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_C_TRIS:
+      attributes:
+        id: SYS_PORT_C_TRIS
+        label: TRISCCLR Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '16384'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_74_DIR:
+      attributes:
+        id: BSP_PIN_74_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_C_LAT:
+      attributes:
+        id: SYS_PORT_C_LAT
+        label: LATC Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '16384'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_74_LAT:
+      attributes:
+        id: BSP_PIN_74_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_9_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_9_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: SDI_MISO
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_72_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_72_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: SDI_MOSI
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_76_DIR:
+      attributes:
+        id: BSP_PIN_76_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_77_DIR:
+      attributes:
+        id: BSP_PIN_77_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_82_DIR:
+      attributes:
+        id: BSP_PIN_82_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_83_DIR:
+      attributes:
+        id: BSP_PIN_83_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_84_DIR:
+      attributes:
+        id: BSP_PIN_84_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_70_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_70_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: SPI_SCK
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_71_DIR:
+      attributes:
+        id: BSP_PIN_71_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_D_LAT:
+      attributes:
+        id: SYS_PORT_D_LAT
+        label: LATD Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '2048'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_71_LAT:
+      attributes:
+        id: BSP_PIN_71_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_47_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_47_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4RX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_48_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_48_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U4TX
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_E_TRIS:
+      attributes:
+        id: SYS_PORT_E_TRIS
+        label: TRISECLR Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '739'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_93_DIR:
+      attributes:
+        id: BSP_PIN_93_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_94_DIR:
+      attributes:
+        id: BSP_PIN_94_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_3_DIR:
+      attributes:
+        id: BSP_PIN_3_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_E_LAT:
+      attributes:
+        id: SYS_PORT_E_LAT
+        label: LATE Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '32'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_3_LAT:
+      attributes:
+        id: BSP_PIN_3_LAT
+        label: Initial Latch Value
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_4_DIR:
+      attributes:
+        id: BSP_PIN_4_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_5_DIR:
+      attributes:
+        id: BSP_PIN_5_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_19_DIR:
+      attributes:
+        id: BSP_PIN_19_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_F_TRIS:
+      attributes:
+        id: SYS_PORT_F_TRIS
+        label: TRISFCLR Value
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '11'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_87_DIR:
+      attributes:
+        id: BSP_PIN_87_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_88_DIR:
+      attributes:
+        id: BSP_PIN_88_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_52_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_52_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1RX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_51_DIR:
+      attributes:
+        id: BSP_PIN_51_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_49_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_49_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2RX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_50_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_50_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U2TX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_53_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_53_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U1TX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_40_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_40_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5RX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_39_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_39_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U5TX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_10_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_10_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6TX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_11_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_11_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3RX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_12_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_12_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U3TX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_14_FUNCTION_NAME:
+      attributes:
+        id: BSP_PIN_14_FUNCTION_NAME
+        label: Name
+      children:
+      - children:
+        - attributes:
+            value: U6RX
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_96_DIR:
+      attributes:
+        id: BSP_PIN_96_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_97_DIR:
+      attributes:
+        id: BSP_PIN_97_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_95_DIR:
+      attributes:
+        id: BSP_PIN_95_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
           type: User
         type: Values
       type: String

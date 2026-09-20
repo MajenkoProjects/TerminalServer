@@ -83,9 +83,9 @@
 
 /*** DEVCFG3 ***/
 #pragma config FSRSSEL =    PRIORITY_7
-#pragma config FVBUSONIO =  ON
+#pragma config FVBUSONIO =  OFF
 #pragma config USERID =     0xffff
-#pragma config FUSBIDIO =   ON
+#pragma config FUSBIDIO =   OFF
 #pragma config FMIIEN =     OFF
 #pragma config FETHIO =     OFF
 #pragma config FCANIO =     OFF
@@ -93,7 +93,7 @@
 
 
 
-
+#if 0
 // *****************************************************************************
 // *****************************************************************************
 // Section: Driver Initialization Data
@@ -106,7 +106,7 @@
 /* MISRA C-2023 Rule 11.8 - Deviation record ID - H3_MISRAC_2023_R_11_8_DR_1 */
 
 // <editor-fold defaultstate="collapsed" desc="ENC 60 Driver Initialization Data">
-#if 0
+
 /* ENC 600 Driver Configuration */
 const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
 {
@@ -119,9 +119,9 @@ const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
 	.spiSetup.chipSelect =  DRV_ENC28J60_SPI_CS_IDX0,
 },
 };
-#endif
-// </editor-fold>
 
+// </editor-fold>
+#endif
 
 // <editor-fold defaultstate="collapsed" desc="DRV_SPI Instance 0 Initialization Data">
 
@@ -253,7 +253,6 @@ static const DRV_USBFS_INIT drvUSBFSInit =
     
 
 };
-
 
 
 #if 0
@@ -455,7 +454,7 @@ SYS_MODULE_OBJ TCPIP_STACK_Init(void)
     return TCPIP_STACK_Initialize(0, &tcpipInit);
 }
 // </editor-fold>
-
+#endif
 /* Net Presentation Layer Data Definitions */
 #include "net_pres/pres/net_pres_enc_glue.h"
 
@@ -577,7 +576,6 @@ static const NET_PRES_INIT_DATA netPresInitData =
     .numLayers = sizeof(netPresCfgs) / sizeof(NET_PRES_INST_DATA),
     .pInitData = netPresCfgs
 };
-#endif
   
  
 
@@ -653,17 +651,24 @@ void SYS_Initialize ( void* data )
     /* Configure Debug Data Port */
     DDPCONbits.JTAGEN = 0;
 
-    GPIO_Initialize();
-//    BSP_Initialize();
-    CORETIMER_Initialize();
-    UART1_Initialize();
-    UART2_Initialize();
-    UART3_Initialize();
-    UART4_Initialize();
-    UART5_Initialize();
-    UART6_Initialize();
 
-    SPI1_Initialize();
+
+	GPIO_Initialize();
+
+	UART5_Initialize();
+
+	UART6_Initialize();
+
+    CORETIMER_Initialize();
+	UART3_Initialize();
+
+	UART4_Initialize();
+
+	UART1_Initialize();
+
+	UART2_Initialize();
+
+	SPI1_Initialize();
 
     DMAC_Initialize();
     I2C2_Initialize();
@@ -677,21 +682,33 @@ void SYS_Initialize ( void* data )
     sysObj.drvSPI0 = DRV_SPI_Initialize(DRV_SPI_INDEX_0, (SYS_MODULE_INIT *)&drvSPI0InitData);
 
 
+    /* MISRA C-2023 Rule 11.3, 11.8 deviated below. Deviation record ID -
+    H3_MISRAC_2023_R_11_3_DR_1 & H3_MISRAC_2023_R_11_8_DR_1*/
+    
     sysObj.sysTime = SYS_TIME_Initialize(SYS_TIME_INDEX_0, (SYS_MODULE_INIT *)&sysTimeInitData);
+
+    /* MISRAC 2012 deviation block end */
+
 
     /* Initialize the USB device layer */
     sysObj.usbDevObject0 = USB_DEVICE_Initialize (USB_DEVICE_INDEX_0 , ( SYS_MODULE_INIT* ) & usbDevInitData);
 
+
     /* Initialize USB Driver */ 
     sysObj.drvUSBFSObject = DRV_USBFS_Initialize(DRV_USBFS_INDEX_0, (SYS_MODULE_INIT *) &drvUSBFSInit);    
 
-    /* Network Presentation Layer Initialization */
-//    sysObj.netPres = NET_PRES_Initialize(0, (SYS_MODULE_INIT*)&netPresInitData);
-    /* TCPIP Stack Initialization */
-//    sysObj.tcpip = TCPIP_STACK_Init();
-//    SYS_ASSERT(sysObj.tcpip != SYS_MODULE_OBJ_INVALID, "TCPIP_STACK_Init Failed" );
+#if 0
+   /* Network Presentation Layer Initialization */
+   sysObj.netPres = NET_PRES_Initialize(0, (SYS_MODULE_INIT*)&netPresInitData);
+   /* TCPIP Stack Initialization */
+   sysObj.tcpip = TCPIP_STACK_Init();
+   SYS_ASSERT(sysObj.tcpip != SYS_MODULE_OBJ_INVALID, "TCPIP_STACK_Init Failed" );
+#endif
 
+
+    /* MISRAC 2023 deviation block end */
     APP_Initialize();
+
 
     EVIC_Initialize();
 

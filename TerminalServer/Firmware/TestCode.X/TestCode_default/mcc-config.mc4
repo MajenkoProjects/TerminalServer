@@ -392,7 +392,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/freertos_hooks.c
   hash: c97b8f92ad60ff513a27ac7a27b3c6824b75005eb8f7b85fe5ae18deaf568c4e
 - file: ../src/config/default/initialization.c
-  hash: bb2efb311399a52de77b0e4aac048c40077e75499cb2a36ad1bd3fa179cb58b4
+  hash: 4fa6d8efb72fdf838260e9a201441b8f4594c8faa663b484a223596c0765086f
 - file: ../src/config/default/interrupts.c
   hash: 0e013fc2a55d1b289eb671523d7f19722c85e3cfd62222edcb5e34b5a2e8881b
 - file: ../src/config/default/interrupts.h
@@ -720,9 +720,9 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/peripheral/evic/plib_evic.h
   hash: 38dbf2913f1b768b945ec0ed50c01f65b8929b1b2765893be843d02c495cdfae
 - file: ../src/config/default/peripheral/gpio/plib_gpio.c
-  hash: f42b160c28b9476eae3a0c9c380d7ac0af19eadd7f807a0c704a401c72df3ac4
+  hash: 5c67cf5674fa40cccfd1ad82db8bb12d342315914a1d4108172206c1598b4a7a
 - file: ../src/config/default/peripheral/gpio/plib_gpio.h
-  hash: 9478b2e79aa3c17424897d0630ebb0e4a75d3aa558390f084a289dded46a40c5
+  hash: 27b2439eefe02a90a52e76ee591e5c18593ab8ea257787b8fa68ae65e0b6e185
 - file: ../src/config/default/peripheral/i2c/master/plib_i2c2_master.c
   hash: 49ecf3c8c32763bae09ba0db543e47c6472fe07379b352d292373cbfbea8a7e9
 - file: ../src/config/default/peripheral/i2c/master/plib_i2c2_master.h

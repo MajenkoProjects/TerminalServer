@@ -22,7 +22,7 @@ data:
     - children:
       - attributes:
           id: uart5
-          x: '245'
+          x: '454'
           y: '436'
         type: ElementPosition
       type: ElementPositions

@@ -41,10 +41,10 @@ void uart_stop(struct port *port) {
     uint8_t c;
     switch (data->flow) {
         case UART_FLOW_RTSCTS:
-            pin_set(data->rts, 1);
+            GPIO_PinSet(data->rts);
             break;
         case UART_FLOW_DTRDSR:
-            pin_set(data->dtr, 1);
+            GPIO_PinSet(data->dtr);
             break;
         case UART_FLOW_XONXOFF:
             c = 19;
@@ -60,10 +60,10 @@ void uart_start(struct port *port) {
     uint8_t c;
     switch (data->flow) {
         case UART_FLOW_RTSCTS:
-            pin_set(data->rts, 0);
+            GPIO_PinClear(data->rts);
             break;
         case UART_FLOW_DTRDSR:
-            pin_set(data->dtr, 0);
+            GPIO_PinClear(data->dtr);
             break;
         case UART_FLOW_XONXOFF:
             c = 17;
@@ -78,9 +78,9 @@ bool uart_can_tx(struct port *port) {
     struct uart_data *data = (struct uart_data *)port->port_data;
     switch (data->flow) {
         case UART_FLOW_RTSCTS:
-            return pin_get(data->cts) == 0;
+            return GPIO_PinRead(data->cts) == 0;
         case UART_FLOW_DTRDSR:
-            return pin_get(data->dsr) == 0;
+            return GPIO_PinRead(data->dsr) == 0;
         case UART_FLOW_XONXOFF:
             return !data->paused;
         default:
@@ -91,26 +91,19 @@ bool uart_can_tx(struct port *port) {
 
 static void uart_init(struct port *port) {
     struct uart_data *data = port->port_data;
-    pin_set(data->txled, 1);
-    pin_set(data->rxled, 1);
+    GPIO_PinSet(data->txled);
+    GPIO_PinSet(data->rxled);
 
-    pin_mode(data->txled, PIN_OUTPUT);
-    pin_mode(data->rxled, PIN_OUTPUT);
-    pin_mode(data->shutdown, PIN_OUTPUT);
-    pin_set(data->shutdown, 1);
+    GPIO_PinSet(data->shutdown);
     
-    pin_mode(data->dtr, PIN_OUTPUT);
-    pin_mode(data->rts, PIN_OUTPUT);
-    pin_set(data->dtr, 1);
-    pin_set(data->rts, 0);
-    pin_mode(data->dsr, PIN_INPUT);
-    pin_mode(data->cts, PIN_INPUT);
+    GPIO_PinSet(data->dtr);
+    GPIO_PinClear(data->rts);
     
     data->fn_init();
     uart_config(data);
     
-    pin_set(data->txled, 0);
-    pin_set(data->rxled, 0);
+    GPIO_PinClear(data->txled);
+    GPIO_PinClear(data->rxled);
     
 }
 
@@ -181,7 +174,7 @@ void uart_transfer_data(struct port *port) {
         if (available_bytes > free_bytes) available_bytes = free_bytes;
 
         if (available_bytes > 0) {                        
-            pin_set(data->txled, 1);
+            GPIO_PinSet(data->txled);
             data->txled_ts = ts;
             for (int i = 0; i < available_bytes; i++) {
                 temp[i] = cb_read(&port->write_buffer);
@@ -194,7 +187,7 @@ void uart_transfer_data(struct port *port) {
     free_bytes = cb_free(&port->read_buffer);
     if (available_bytes > free_bytes) available_bytes = free_bytes;
     if (available_bytes > 0) {
-        pin_set(data->rxled, 1);
+        GPIO_PinSet(data->rxled);
         data->rxled_ts = ts;
         data->fn_read(temp, available_bytes);
 
@@ -238,12 +231,12 @@ void uart_task() {
         uint32_t ts = xTaskGetTickCount();
         if ((data->txled_ts > 0) && ((ts - data->txled_ts) > 25)) {
             data->txled_ts = 0;
-            pin_set(data->txled, 0);
+            GPIO_PinClear(data->txled);
         }
 
         if ((data->rxled_ts > 0) && ((ts - data->rxled_ts) > 25)) {
             data->rxled_ts = 0;
-            pin_set(data->rxled, 0);
+            GPIO_PinClear(data->rxled);
         }
                 
         UART_ERROR err = data->fn_get_error();
@@ -467,12 +460,12 @@ void uart_define_flow(struct port *port, uint8_t flow) {
 void uart_show_status(struct port *port, struct port *target) {
     struct uart_data *data = (struct uart_data *)port->port_data;
     port_printf(port, "DTR: %3s    DSR: %3s    RTS: %3s    CTS: %3s\r\n",
-            pin_get(data->dtr)?"On":"Off",
-            pin_get(data->dsr)?"On":"Off",
-            pin_get(data->rts)?"On":"Off",
-            pin_get(data->cts)?"On":"Off"
+            GPIO_PinRead(data->dtr)?"On":"Off",
+            GPIO_PinRead(data->dsr)?"On":"Off",
+            GPIO_PinRead(data->rts)?"On":"Off",
+            GPIO_PinRead(data->cts)?"On":"Off"
             
             );
-    port_printf(port, "Status: %3s\r\n", pin_get(data->status)?"On":"Off");
+    port_printf(port, "Status: %3s\r\n", GPIO_PinRead(data->status)?"On":"Off");
 }
 
