@@ -87,7 +87,7 @@ static char scratch[255];
 void telnet_out_transfer_data(struct port *port) {
     struct todata *data = (struct todata *)port->port_data;
 
-    int av = cb_available(&port->write_buffer);
+    int av = xStreamBufferBytesAvailable(port->write_buffer);
 
     if (av > 0) {
         int fr = TCPIP_TCP_PutIsReady(data->socket);
@@ -95,15 +95,12 @@ void telnet_out_transfer_data(struct port *port) {
             av = fr;
         }
 
-        uint8_t tmp[CIRCULAR_BUFFER_SIZE];
-        int pos = 0;
-        for (int i = 0; i < av; i++) {
-            tmp[pos++] = cb_read(&port->write_buffer);
-        }
-        TCPIP_TCP_ArrayPut(data->socket, tmp, pos);
+        uint8_t *tmp = alloca(av);
+        xStreamBufferReceive(port->write_buffer, tmp, av, 1000);
+        TCPIP_TCP_ArrayPut(data->socket, tmp, av);
     }
 
-    if (TCPIP_TCP_GetIsReady(data->socket)&& (cb_free(&port->read_buffer) > 0)) {
+    if (TCPIP_TCP_GetIsReady(data->socket)&& (xStreamBufferSpacesAvailable(port->read_buffer) > 0)) {
         uint8_t b;
         if ((TCPIP_TCP_ArrayGet(data->socket, &b, 1) == 1) ) {
            // port_printf(CONSOLE, "[%02x] ", b);
@@ -180,14 +177,14 @@ void telnet_out_transfer_data(struct port *port) {
                         if (b == TELOPT_IAC) {
                             data->iac[data->iac_pos++] = TELOPT_IAC;
                         } else {
-                            cb_write(&port->read_buffer, b);
+                            xStreamBufferSend(port->read_buffer, &b, 1, 1);
                         }
                         break;
 
                     case 1:
                         switch (b) {
                             case TELOPT_IAC:
-                                cb_write(&(port->read_buffer), b);
+                                xStreamBufferSend(port->read_buffer, &b, 1, 1);
                                 data->iac_pos = 0;                                       
                                 break;
                             case TELOPT_GA:
@@ -314,6 +311,7 @@ void telnet_out_task() {
             struct todata *data = (struct todata *)scan->port_data;
             TCP_SOCKET_INFO info;
             TCPIP_TCP_SocketInfoGet(data->socket, &info);
+            uint8_t this_byte;
             
             //   port_printf(CONSOLE, "_%d_ ", info.rxPending);
           //  vTaskDelay(10);
@@ -351,11 +349,14 @@ void telnet_out_task() {
                     break;
 
                 case TO_RUN_DNS: // Check to see if the name is resolved
-                    if (cb_read(&scan->write_buffer) == 3) {
-                        data->state = TO_BREAK;
-                        break;
+                    if (xStreamBufferBytesAvailable(scan->write_buffer) > 0) {
+                        xStreamBufferReceive(scan->write_buffer, &this_byte, 1, 1);
+                        if (this_byte == 3) {
+                            data->state = TO_BREAK;
+                            break;
 
-                    }                    
+                        }                    
+                    }
                     data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
                     if (data->dns_result == TCPIP_DNS_RES_OK) {
                         data->state = TO_FOUND_HOST;
@@ -380,10 +381,15 @@ void telnet_out_task() {
                     break;
 
                 case TO_RUN_DNS2:
-                    if (cb_read(&scan->write_buffer) == 3) {
-                        data->state = TO_BREAK;
-                        break;                        
-                    }                    
+                    if (xStreamBufferBytesAvailable(scan->write_buffer) > 0) {
+                        xStreamBufferReceive(scan->write_buffer, &this_byte, 1, 1);
+                        if (this_byte == 3) {
+                            data->state = TO_BREAK;
+                            break;
+
+                        }                    
+                    }
+                  
                     data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
                     if (data->dns_result == TCPIP_DNS_RES_OK) {
                         data->state = TO_FOUND_HOST;

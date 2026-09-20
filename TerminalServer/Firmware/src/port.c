@@ -36,37 +36,36 @@ const char *breakmode_names[] = {
 // Write a block of data to the port. Returns the actual number
 // of bytes written to the port.
 int port_write(struct port *port, uint8_t *data, size_t len) {
-    size_t buf_free = cb_free(&(port->write_buffer));
-    if (len > buf_free) {
-        len = buf_free;
-    }
+    size_t buf_free = xStreamBufferSpacesAvailable(port->write_buffer);
+    if (buf_free == 0) return 0;
     
-    for (int i = 0; i < len; i++) {
-        cb_write(&port->write_buffer, data[i]);
-    }
-    return len;
+    if (buf_free > len) buf_free = len;
+    return xStreamBufferSend(port->write_buffer, data, buf_free, 1);
 }
 
 // Read up-to len bytes from the port. Returns the actual number
 // of bytes read
 int port_read(struct port *port, uint8_t *data, size_t len) {    
-    size_t avail = cb_available(&port->read_buffer);
-    if (len > avail) {
-        len = avail;
-    }
     
-    for (int i = 0; i < len; i++) {
-        data[i] = cb_read(&port->read_buffer);
-    }
-    return len;
+    size_t avail = xStreamBufferBytesAvailable(port->read_buffer);
+    if (avail == 0) return 0;
+    if (avail > len) avail = len;
+    return xStreamBufferReceive(port->read_buffer, data, avail, 1);
 }
 
 int port_read_byte(struct port *port) {
-    return cb_read(&(port->read_buffer));
+    if (xStreamBufferBytesAvailable(port->read_buffer) == 0) return -1;
+    uint8_t b;
+    xStreamBufferReceive(port->read_buffer, &b, 1, 1);
+    return b;
 }
 
 int port_write_byte(struct port *port, uint8_t b) {
-    return cb_write(&(port->write_buffer), b);
+    if (!xStreamBufferIsFull(port->write_buffer)) {
+        xStreamBufferSend(port->write_buffer, &b, 1, 1);
+        return 1;
+    }
+    return 0;
 }
 
 struct port *add_port(enum port_type type, void *data) {
@@ -127,6 +126,8 @@ struct port *add_port(enum port_type type, void *data) {
     newport->lines = 24;
     newport->columns = 80;
     newport->keybuf_pos = 0;
+    newport->read_buffer = xStreamBufferCreate(CIRCULAR_BUFFER_SIZE, 1);
+    newport->write_buffer = xStreamBufferCreate(CIRCULAR_BUFFER_SIZE, 1);
     set_terminal_type(newport, "ANSI");
     
     int maxno = 0;    
@@ -158,10 +159,6 @@ struct port *add_port(enum port_type type, void *data) {
 void delete_port(struct port *port) {
     port->type = PORT_NONE;
     port->mode = MODE_IDLE;
-    port->read_buffer.head = 0;
-    port->read_buffer.tail = 0;
-    port->write_buffer.head = 0;
-    port->write_buffer.tail = 0;
     if (port->port_data) free(port->port_data);
     port->port_data = NULL;
     port->cmdno = 0;
@@ -208,12 +205,11 @@ struct port *get_port_by_name(const char *name) {
 }
 
 int port_available(struct port *port) {
-    return cb_available(&port->read_buffer);
+    return xStreamBufferBytesAvailable(port->read_buffer);
 }
 
 int port_printf(struct port *port, const char *fmt, ...) {
     va_list ap;
-    int count = 0;
     
     // Calculate the amount of space needed
     va_start(ap, fmt);
@@ -228,23 +224,21 @@ int port_printf(struct port *port, const char *fmt, ...) {
     vsnprintf(str, n+1, fmt, ap);
     va_end(ap);
 
-    // Send it to the output buffer
-    for (int i = 0; i < n; i++) {
-        while (cb_free(&port->write_buffer) < 3) {
-            if (port->fn_yield) {
-                port->fn_yield(port);
-            }
-        }
-        cb_write(&port->write_buffer, str[i]);
-        count++;
+    char *pos = str;
+    int to_send = n;
+    
+    while (to_send > 0) {
+        int sent = port_write(port, (uint8_t *)pos, to_send);
+        port->fn_yield(port);
+        to_send -= sent;
+        pos += sent;
     }
-
-    return count;
+    
+    return n;
 }
 
 int port_rprintf(struct port *port, const char *fmt, ...) {
     va_list ap;
-    int count = 0;
     
     // Calculate the amount of space needed
     va_start(ap, fmt);
@@ -259,16 +253,16 @@ int port_rprintf(struct port *port, const char *fmt, ...) {
     vsnprintf(str, n+1, fmt, ap);
     va_end(ap);
 
-    // Send it to the output buffer
-    for (int i = 0; i < n; i++) {
-        while (cb_free(&port->read_buffer) < 3) {
-            yield();
-        }
-        cb_write(&port->read_buffer, str[i]);
-        count++;
+    char *pos = str;
+    int to_send = n;
+    
+    while (to_send > 0) {
+        int sent = xStreamBufferSend(port->read_buffer, pos, to_send, 1);
+        port->fn_yield(port);
+        to_send -= sent;
+        pos += sent;
     }
-
-    return count;
+    return n;
 }
 
 void port_flush(struct port *port) {

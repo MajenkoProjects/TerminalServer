@@ -22,7 +22,7 @@ enum tostate {
     TO_CONNECT,
     TO_RUN,
     TO_CLOSE,
-    TO_BYE
+    
 };
 
 struct todata {

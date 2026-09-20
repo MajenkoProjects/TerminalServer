@@ -31,7 +31,7 @@ void tcp_in_transfer_data(struct port *port) {
     // it byte by byte.
 
     // Get amount of space in the circular buffer
-    free_bytes = cb_free(&port->read_buffer);
+    free_bytes = xStreamBufferSpacesAvailable(port->read_buffer);
     // Get the number of pending bytes
     available_bytes = TCPIP_TCP_GetIsReady(socket->socket);
 
@@ -42,27 +42,23 @@ void tcp_in_transfer_data(struct port *port) {
     // Grab the data from the socket and put it in our processing buffer
     TCPIP_TCP_ArrayGet(socket->socket, incoming_buffer, available_bytes);
 
-    // Process each byte in turn
-    for (int byteno = 0; byteno < available_bytes; byteno++) {
-        uint8_t this_byte = incoming_buffer[byteno];                        
-        cb_write(&port->read_buffer, this_byte);
-    }
+    
+    xStreamBufferSend(port->read_buffer, incoming_buffer, available_bytes, 1);
+
     // Now we do similar with outgoing data from the circular
     // buffer to the server. Easier this time, nothing to
     // process - just read and pipe through to the other end.
 
 
     // Number of bytes we have to send
-    available_bytes = cb_available(&port->write_buffer);
+    available_bytes = xStreamBufferBytesAvailable(port->write_buffer);
     // Amount of space to send into
     free_bytes = TCPIP_TCP_PutIsReady(socket->socket);
 
     // Truncate byte count to what space there is
     if (available_bytes > free_bytes) available_bytes = free_bytes;
 
-    for (int byteno = 0; byteno < available_bytes; byteno++) {
-        incoming_buffer[byteno] = cb_read(&port->write_buffer);
-    }
+    xStreamBufferReceive(port->write_buffer, incoming_buffer, available_bytes, 1);
     TCPIP_TCP_ArrayPut(socket->socket, incoming_buffer, available_bytes);
 }
 
@@ -73,7 +69,6 @@ void tcp_in_task() {
         struct tcp_in_socket *socket = &sockets[sockno];
         struct port *port = socket->port;
         struct port *target = socket->target;
-        struct session *session = socket->session;
         struct tcp_in_data *data = NULL;
         if (port) {
             data = (struct tcp_in_data *)port->port_data;
@@ -107,7 +102,6 @@ void tcp_in_task() {
                     socket->session = add_session(port, target, SESSION_DIRECT);
                     port->active_session = socket->session;
                     socket->port->mode = MODE_SESSION;
-                    session = socket->session;
                     socket->state = TCP_IN_CONNECTED;
                 }
                 break;

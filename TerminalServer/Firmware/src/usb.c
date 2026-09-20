@@ -148,14 +148,11 @@ void APP_USBDeviceEventHandler(USB_DEVICE_EVENT event, void * pData, uintptr_t c
 
 void usb_transfer_data(struct port *port) {
     struct usb_port_data *data = (struct usb_port_data *)port->port_data;
-    
     if (uxSemaphoreGetCount(data->write_running) == 0) {
-        int a = cb_available(&port->write_buffer);
+        int a = xStreamBufferBytesAvailable(port->write_buffer);
         if (a > USB_BUFFER_SIZE) a = USB_BUFFER_SIZE;
         if (a > 0) {
-            for (int j = 0; j < a; j++) {
-                data->write_buffer[j] = cb_read(&port->write_buffer);
-            }
+            xStreamBufferReceive(port->write_buffer, data->write_buffer, a, 1);
             xSemaphoreGive(data->write_running);
             USB_DEVICE_CDC_Write(data->cdcInstance,
                 &data->writeTransferHandle, 
@@ -172,15 +169,16 @@ void usb_transfer_data(struct port *port) {
                 &data->readTransferHandle,
                 data->read_buffer, USB_BUFFER_SIZE);                
         } else {
-            while (cb_free(&port->read_buffer) && (data->read_data_pos < data->read_data_length)) {
-                cb_write(&port->read_buffer, data->read_buffer[data->read_data_pos++]);
-            }
+            int space = xStreamBufferSpacesAvailable(port->read_buffer);
+            int avail = data->read_data_length - data->read_data_pos;
+            if (avail > space) avail = space;
+            data->read_data_pos += xStreamBufferSend(port->read_buffer, &data->read_buffer[data->read_data_pos], avail, 1);
         }
     }
 }
 
 void usb_flush(struct port *port) {
-    while (cb_available(&port->write_buffer)) {
+    while (xStreamBufferBytesAvailable(port->write_buffer) > 0) {
         usb_transfer_data(port);
     }
 }

@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 #include "definitions.h"
-#include "pin.h"
 #include "port.h"
 
 

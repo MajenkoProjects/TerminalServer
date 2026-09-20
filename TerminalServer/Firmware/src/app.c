@@ -9,7 +9,6 @@
 #include "usb.h"
 #include "port.h"
 #include "task.h"
-#include "pin.h"
 #include "uart.h"
 #include "command.h"
 #include "telnet_in.h"
@@ -269,7 +268,7 @@ void APP_Tasks ( void ) {
                         // local switch keypresses.
                         case MODE_SESSION:
                             if (scan->active_session && (scan->active_session->type == SESSION_DIRECT)) {
-                                if (port_available(scan) && (cb_free(&scan->active_session->target->write_buffer))) {
+                                if (port_available(scan) && (xStreamBufferSpacesAvailable(scan->active_session->target->write_buffer))) {
                                     int c = port_read_byte(scan);
                                     uint16_t tmp[11];
                                     int r = fancy_read(scan, c, tmp, 10);
@@ -331,7 +330,7 @@ void APP_Tasks ( void ) {
                                         }
                                     }
                                 }
-                                if (port_available(scan->active_session->target) && cb_free(&scan->write_buffer)) {
+                                if (port_available(scan->active_session->target) && xStreamBufferSpacesAvailable(scan->write_buffer)) {
                                     int c = port_read_byte(scan->active_session->target);
                                     port_write_byte(scan, c);               
                                 }

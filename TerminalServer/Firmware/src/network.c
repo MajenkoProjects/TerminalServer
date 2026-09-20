@@ -323,7 +323,7 @@ void ethernet_boot() {
             "terminal", 
              "_telnet._tcp",
             23,
-            "Scrotums",
+            (uint8_t *)"Scrotums",
             1,
             NULL,
             NULL

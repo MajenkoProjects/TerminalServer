@@ -77,7 +77,7 @@ void telnet_in_transfer_data(struct port *port) {
     // it byte by byte.
 
     // Get amount of space in the circular buffer
-    free_bytes = cb_free(&port->read_buffer);
+    free_bytes = xStreamBufferSpacesAvailable(port->read_buffer);
     // Get the number of pending bytes
     available_bytes = TCPIP_TCP_GetIsReady(socket->socket);
 
@@ -144,14 +144,14 @@ void telnet_in_transfer_data(struct port *port) {
                     if (this_byte == TELOPT_IAC) {
                         data->iac[data->iac_pos++] = TELOPT_IAC;
                     } else {
-                        cb_write(&port->read_buffer, this_byte);
+                        xStreamBufferSend(port->read_buffer, &this_byte, 1, 1);
                     }
                     break;
 
                 case 1:
                     switch (this_byte) {
                         case TELOPT_IAC:
-                            cb_write(&port->read_buffer, this_byte);
+                            xStreamBufferSend(port->read_buffer, &this_byte, 1, 1);
                             data->iac_pos = 0;                                       
                             break;
                         case TELOPT_SB:
@@ -233,16 +233,14 @@ void telnet_in_transfer_data(struct port *port) {
 
 
     // Number of bytes we have to send
-    available_bytes = cb_available(&port->write_buffer);
+    available_bytes = xStreamBufferBytesAvailable(port->write_buffer);
     // Amount of space to send into
     free_bytes = TCPIP_TCP_PutIsReady(socket->socket);
 
     // Truncate byte count to what space there is
     if (available_bytes > free_bytes) available_bytes = free_bytes;
 
-    for (int byteno = 0; byteno < available_bytes; byteno++) {
-        incoming_buffer[byteno] = cb_read(&port->write_buffer);
-    }
+    xStreamBufferReceive(port->write_buffer, incoming_buffer, available_bytes, 1);
     TCPIP_TCP_ArrayPut(socket->socket, incoming_buffer, available_bytes);
 
 

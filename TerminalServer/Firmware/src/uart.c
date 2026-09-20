@@ -169,22 +169,20 @@ void uart_transfer_data(struct port *port) {
     uint32_t ts = xTaskGetTickCount();
 
     if (port->fn_can_tx(port)) {
-        int available_bytes = cb_available(&port->write_buffer);
+        int available_bytes = xStreamBufferBytesAvailable(port->write_buffer);
         int free_bytes = data->fn_free();
         if (available_bytes > free_bytes) available_bytes = free_bytes;
 
         if (available_bytes > 0) {                        
             GPIO_PinSet(data->txled);
             data->txled_ts = ts;
-            for (int i = 0; i < available_bytes; i++) {
-                temp[i] = cb_read(&port->write_buffer);
-            }
+            xStreamBufferReceive(port->write_buffer, temp, available_bytes, 1);
             data->fn_write(temp, available_bytes);
         }
     }
                 
     available_bytes = data->fn_avail();
-    free_bytes = cb_free(&port->read_buffer);
+    free_bytes = xStreamBufferSpacesAvailable(port->read_buffer);
     if (available_bytes > free_bytes) available_bytes = free_bytes;
     if (available_bytes > 0) {
         GPIO_PinSet(data->rxled);
@@ -199,9 +197,9 @@ void uart_transfer_data(struct port *port) {
                 } else if ((data->flow == UART_FLOW_XONXOFF) && (b == 19)) {
                     data->paused = true;
                 } else {
-                    int lev1 = cb_available(&port->read_buffer);
-                    cb_write(&(port->read_buffer), b);
-                    int lev2 = cb_available(&port->read_buffer);
+                    int lev1 = xStreamBufferBytesAvailable(port->read_buffer);
+                    xStreamBufferSend(port->read_buffer, &b, 1, 1);
+                    int lev2 = xStreamBufferBytesAvailable(port->read_buffer);
                     if ((!port->stopped) && (lev1 < port->high_water) && (lev2 >= port->high_water)) {
                         port->fn_stop(port);
                         port->stopped = true;
@@ -221,7 +219,7 @@ void uart_task() {
         struct port *port = uart_ports[portno];
         struct uart_data *data = (struct uart_data *)(port->port_data);
       
-        int water = cb_available(&port->read_buffer);
+        int water = xStreamBufferBytesAvailable(port->read_buffer);
         if (port->stopped && (port->waterlevel > port->low_water) && (water <= port->low_water)) {
             port->fn_start(port);
             port->stopped = false;
@@ -274,7 +272,7 @@ void uart_task() {
 }
 
 static void uart_flush(struct port *port) {
-    while (cb_available(&port->write_buffer)) {
+    while (xStreamBufferBytesAvailable(port->write_buffer)) {
         uart_transfer_data(port);
     }
     struct uart_data *data = (struct uart_data *)port->port_data;

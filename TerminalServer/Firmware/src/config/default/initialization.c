@@ -454,7 +454,7 @@ SYS_MODULE_OBJ TCPIP_STACK_Init(void)
     return TCPIP_STACK_Initialize(0, &tcpipInit);
 }
 // </editor-fold>
-#endif
+
 /* Net Presentation Layer Data Definitions */
 #include "net_pres/pres/net_pres_enc_glue.h"
 
@@ -576,7 +576,7 @@ static const NET_PRES_INIT_DATA netPresInitData =
     .numLayers = sizeof(netPresCfgs) / sizeof(NET_PRES_INST_DATA),
     .pInitData = netPresCfgs
 };
-  
+#endif
  
 
 

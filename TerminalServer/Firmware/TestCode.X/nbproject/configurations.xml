@@ -467,7 +467,6 @@
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/command.h</itemPath>
       <itemPath>../src/uart.h</itemPath>
-      <itemPath>../src/cbuff.h</itemPath>
       <itemPath>../src/errors.h</itemPath>
       <itemPath>../src/network.h</itemPath>
       <itemPath>../src/service.h</itemPath>
@@ -762,7 +761,6 @@
       <itemPath>../src/app.c</itemPath>
       <itemPath>../src/command.c</itemPath>
       <itemPath>../src/uart.c</itemPath>
-      <itemPath>../src/cbuff.c</itemPath>
       <itemPath>../src/errors.c</itemPath>
       <itemPath>../src/network.c</itemPath>
       <itemPath>../src/service.c</itemPath>

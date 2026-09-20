@@ -4,9 +4,9 @@
 #include "definitions.h"
 #include "errors.h"
 #include "command.h"
-#include "cbuff.h"
+#include "stream_buffer.h"
 #include "ttype.h"
-
+#define CIRCULAR_BUFFER_SIZE 128
 #define MAX_COMMAND         80
 #define NUM_HISTORY         4
 
@@ -66,8 +66,10 @@ struct port {
     enum port_type type;
     enum port_mode mode;
     enum port_mode previous_mode;
-    struct circular_buffer read_buffer;
-    struct circular_buffer write_buffer;       
+    StreamBufferHandle_t read_buffer;
+    StreamBufferHandle_t write_buffer;
+//    struct circular_buffer read_buffer;
+//    struct circular_buffer write_buffer;       
     void *port_data;
     char commands[NUM_HISTORY][MAX_COMMAND];
     int cmdno;
