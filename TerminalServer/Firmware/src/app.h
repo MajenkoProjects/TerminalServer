@@ -1,7 +1,7 @@
 #ifndef _APP_H
 #define _APP_H
 
-#define VERSION "1.0.0"
+#define VERSION "1.0.1"
 
 #include <stdint.h>
 #include <stdbool.h>

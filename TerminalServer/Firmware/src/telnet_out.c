@@ -1,7 +1,6 @@
 #include <string.h>
 
 #include "telnet_out.h"
-#include "cbuff.h"
 #include "session.h"
 #include "errno.h"
 #include "telopt.h"
