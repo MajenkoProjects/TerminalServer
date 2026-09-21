@@ -39,8 +39,6 @@ const char IAC_DO_NAWS[3] = {TELOPT_IAC, TELOPT_DO, TELOPT_NAWS};
 const char IAC_DO_TTYPE[3] = {TELOPT_IAC, TELOPT_DO, TELOPT_TTYPE};
 const char IAC_SB_TTYPE_SEND[6] = {TELOPT_IAC, TELOPT_SB, TELOPT_TTYPE, SB_SEND, TELOPT_IAC, TELOPT_SE};
 
-TaskHandle_t telnet_in_thread_handle;
-
 
 static void telnet_in_listen_socket(struct tcp_socket *socket) {
     socket->socket = TCPIP_TCP_ServerOpen(IP_ADDRESS_TYPE_IPV4, PORT_TELNET, 0);

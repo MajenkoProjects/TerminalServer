@@ -6,3 +6,5 @@
 /FuckingWorkYouBastard.X/dist/.generated_files
 TerminalServer/Firmware/TestCode.X/.generated_files
 /TerminalServer/Firmware/TestCode.X/.generated_files
+/TerminalServer/Bootloader/Bootloader.X/build/
+/TerminalServer/Bootloader/Bootloader.X/dist/

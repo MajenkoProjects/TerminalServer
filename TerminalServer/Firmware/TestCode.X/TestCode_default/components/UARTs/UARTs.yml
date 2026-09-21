@@ -13,6 +13,10 @@ dependency:
   type: package
   version: V11.3.1
 - dependencyPackage: ''
+  name: bootloader
+  type: package
+  version: v3.9.0
+- dependencyPackage: ''
   name: bsp
   type: package
   version: v3.25.0
@@ -20,6 +24,10 @@ dependency:
   name: core
   type: package
   version: v3.17.0
+- dependencyPackage: ''
+  name: crypto
+  type: package
+  version: v3.9.0
 - dependencyPackage: ''
   name: csp
   type: package
@@ -32,6 +40,18 @@ dependency:
   name: usb
   type: package
   version: v3.16.0
+- dependencyPackage: ''
+  name: wolfMQTT
+  type: package
+  version: v1.19.2
+- dependencyPackage: ''
+  name: wolfssl
+  type: package
+  version: v5.9.2
+- dependencyPackage: ''
+  name: zlib
+  type: package
+  version: v1.3.2
 customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
 data:
   attachments: {}

@@ -479,6 +479,7 @@
       <itemPath>../src/util.h</itemPath>
       <itemPath>../src/port_commands.h</itemPath>
       <itemPath>../src/tcp_in.h</itemPath>
+      <itemPath>../src/version.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -498,8 +499,8 @@
               <itemPath>TestCode_default/components/Network/components/tcpipNetConfig.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipTcp.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipUdp.yml</itemPath>
-              <itemPath>TestCode_default/components/Network/components/drvExtMacEnc28j60.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/net_Pres.yml</itemPath>
+              <itemPath>TestCode_default/components/Network/components/drvExtMacEnc28j60.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipArp.yml</itemPath>
             </logicalFolder>
             <itemPath>TestCode_default/components/Network/Network.yml</itemPath>
@@ -555,11 +556,7 @@
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
-      <logicalFolder name="config" displayName="config" projectFiles="true">
-        <logicalFolder name="default" displayName="default" projectFiles="true">
-          <itemPath>../src/config/default/p32MX795F512L.ld</itemPath>
-        </logicalFolder>
-      </logicalFolder>
+      <itemPath>../src/chipKIT-application-32MX795F512.ld</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -818,13 +815,11 @@
         <makeCustomizationPostStep></makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
-        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+        <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <C32>
         <property key="additional-warnings" value="true"/>
         <property key="addresss-attribute-use" value="false"/>
-        <property key="appendMe"
-                  value="-Wno-format-truncation -Werror=incompatible-pointer-types -Werror=implicit-function-declaration"/>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
@@ -854,7 +849,7 @@
         <property key="oXC16gcc-sfr-warn" value="false"/>
         <property key="oXC16gcc-smar-io-lvl" value="1"/>
         <property key="oXC16gcc-smart-io-fmt" value=""/>
-        <property key="optimization-level" value="-O1"/>
+        <property key="optimization-level" value="-O2"/>
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -875,7 +870,6 @@
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
       <C32-AS>
-        <property key="appendMe" value=""/>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
@@ -908,7 +902,6 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
-        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -954,7 +947,6 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
-        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>
@@ -1004,7 +996,7 @@
       </C32Global>
       <ICD4Tool>
         <property key="ADC 1" value="true"/>
-        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="AutoSelectMemRanges" value="manual"/>
         <property key="CAN1" value="true"/>
         <property key="CAN2" value="true"/>
         <property key="CHANGE NOTICE" value="true"/>
@@ -1068,8 +1060,8 @@
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
-        <property key="memories.bootflash" value="true"/>
-        <property key="memories.configurationmemory" value="true"/>
+        <property key="memories.bootflash" value="false"/>
+        <property key="memories.configurationmemory" value="false"/>
         <property key="memories.configurationmemory2" value="true"/>
         <property key="memories.dataflash" value="true"/>
         <property key="memories.eeprom" value="true"/>
@@ -1111,7 +1103,7 @@
       </ICD4Tool>
       <Tool>
         <property key="ADC 1" value="true"/>
-        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="AutoSelectMemRanges" value="manual"/>
         <property key="CAN1" value="true"/>
         <property key="CAN2" value="true"/>
         <property key="CHANGE NOTICE" value="true"/>
@@ -1175,8 +1167,8 @@
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
-        <property key="memories.bootflash" value="true"/>
-        <property key="memories.configurationmemory" value="true"/>
+        <property key="memories.bootflash" value="false"/>
+        <property key="memories.configurationmemory" value="false"/>
         <property key="memories.configurationmemory2" value="true"/>
         <property key="memories.dataflash" value="true"/>
         <property key="memories.eeprom" value="true"/>

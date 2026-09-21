@@ -149,7 +149,7 @@ data:
       - children:
         - attributes:
             id: tcpipZeroConf
-            value: '832'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer

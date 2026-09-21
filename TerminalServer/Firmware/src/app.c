@@ -18,6 +18,7 @@
 #include "telnet_out.h"
 #include "util.h"
 #include "tcp_in.h"
+#include "version.h"
 //#include "arp_private.h"
 
 
@@ -85,7 +86,7 @@ void input_username(struct port *port) {
     int l = strlen(port->commands[port->cmdno]);
     if (l > 8) l = 8;
     memcpy(port->username, port->commands[port->cmdno], l);
-    port->mode = MODE_LOCAL;
+    port->cstate = CMD_LOCAL;
 }
 
 void input_password(struct port *port) {
@@ -95,7 +96,7 @@ void input_password(struct port *port) {
         port_printf(port, "%%Error: Incorrect password.\r\n");
         port->priv = false;
     }
-    port->mode = MODE_LOCAL;
+    port->cstate = CMD_LOCAL;
 }
 
 void APP_Initialize ( void ) {
@@ -164,19 +165,8 @@ void APP_Tasks ( void ) {
                     if (scan->mode != scan->previous_mode) {
                         scan->previous_mode = scan->mode;
                         if (scan->mode == MODE_LOCAL) {
-                            if (scan->priv) {
-                                port_printf(scan, "Local>>");
-                            } else {
-                                port_printf(scan, "Local>");
-                            }
-                            have_prompted = true;
-                        }
-                        if (scan->mode == MODE_USERNAME) {
-                            port_printf(scan, "Username>");
-                            have_prompted = true;
-                        }
-                        if (scan->mode == MODE_PASSWORD) {
-                            port_printf(scan, "Password>");
+                            port_printf(scan, prompt(scan));
+                            if (scan->fn_flush) scan->fn_flush(scan);
                             have_prompted = true;
                         }
                     }
@@ -217,31 +207,6 @@ void APP_Tasks ( void ) {
                             }
                             break;
 
-                        // Reading in the username and recording it in the port
-                        case MODE_USERNAME:
-                            if (scan->access == ACCESS_LOCAL) {
-                                if (port_available(scan)) {
-                                    int c = port_read_byte(scan);
-                                    if (command_process(scan, c, &input_username) == 1) {
-                                        if ((!have_prompted) && (scan->mode == MODE_USERNAME)) {
-                                            port_printf(scan, "Username> ");
-                                            have_prompted = true;
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-
-                        // Reading in the password and verifying it against the
-                        // stored password for PRIV operation
-                        case MODE_PASSWORD:
-                            if (scan->access == ACCESS_LOCAL) {
-                                if (port_available(scan)) {
-                                    int c = port_read_byte(scan);
-                                    command_process(scan, c, &input_password);
-                                }
-                            }
-                            break;
 
                         // Main Local> prompt processing mode. Deal with all commands
                         // entered.
@@ -249,13 +214,10 @@ void APP_Tasks ( void ) {
                             if (scan->access == ACCESS_LOCAL) {
                                 if (port_available(scan)) {
                                     int c = port_read_byte(scan);
-                                    if (command_process(scan, c, &command_execute) == 1) {
+                                    if (command_process(scan, c) == 1) {
                                         if ((!have_prompted) && (scan->mode == MODE_LOCAL)) {
-                                            if (scan->priv) {
-                                                port_printf(scan, "Local>>");
-                                            } else {
-                                                port_printf(scan, "Local>");
-                                            }
+                                            port_printf(scan, prompt(scan));
+                                            if (scan->fn_flush) scan->fn_flush(scan);
                                             have_prompted = true;
                                         }
                                     }

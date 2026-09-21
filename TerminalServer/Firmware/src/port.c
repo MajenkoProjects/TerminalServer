@@ -1,10 +1,12 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <stdio.h>
 
 #include "port.h"
 #include "session.h"
 #include "util.h"
+#include "version.h"
 
 struct port *ports = NULL;
 
@@ -278,7 +280,8 @@ void greet(struct port *port) {
     port_printf(port, "\r\n");
     port_printf(port, "Type HELP at the 'Local>' prompt for assistance.\r\n");
     port_printf(port, "\r\n");
-    port->mode = MODE_USERNAME;
+    port->cstate = CMD_ASKUSERNAME;
+    port->mode = MODE_LOCAL;
 }
 
 void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {

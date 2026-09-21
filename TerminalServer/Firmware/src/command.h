@@ -3,6 +3,14 @@
 
 #define COMMAND(X) error_t X(struct port *port, void *opt, int argc, char **argv)
 
+enum command_states {
+    CMD_LOCAL,
+    CMD_ASKUSERNAME,
+    CMD_ASKPRIVPASS,
+    CMD_SETPASS1,
+    CMD_SETPASS2
+};
+
 #include "port.h"
 #include "errors.h"
 
@@ -25,6 +33,15 @@ struct command {
     const struct command *sub_commands;
 };
 
-extern int command_process(struct port *port, char c, void (*func)(struct port *));
+
+struct command_state {
+    void (*fn_execute)(struct port *);
+    const char *prompt;
+    const char *privprompt;
+    bool echo;
+};
+
+extern int command_process(struct port *port, char c);
 extern void command_execute(struct port *port);
+extern const char *prompt(struct port *);
 #endif

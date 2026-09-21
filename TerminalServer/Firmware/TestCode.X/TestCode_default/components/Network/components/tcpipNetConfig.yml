@@ -36,7 +36,7 @@ data:
       - children:
         - attributes:
             id: tcpipNetConfig
-            value: '1'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer

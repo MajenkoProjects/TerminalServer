@@ -3,20 +3,21 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/network.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/TestCode.X/TODO.txt</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/tcp_in.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/app.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/session.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/uart.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/tcp_in.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_in.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/session.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_out.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/util.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/config/default/p32MX795F512L.ld</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/app.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port_commands.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port_commands.h</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/version.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_out.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_out.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/app.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/usb.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/util.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_in.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_in.h</file>
         </group>
     </open-files>
 </project-private>

@@ -27,5 +27,17 @@ data:
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
-  symbols: {}
+  symbols:
+    TCPIP_ARP_HEAP_SIZE:
+      attributes:
+        id: TCPIP_ARP_HEAP_SIZE
+        label: ARP Heap Size (bytes)
+      children:
+      - children:
+        - attributes:
+            id: tcpipArp
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: Integer
   userData: {}

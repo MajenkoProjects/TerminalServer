@@ -1,7 +1,10 @@
 #ifndef _PORT_H    
 #define _PORT_H
 
-#include "definitions.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include "FreeRTOS.h"
+//#include "definitions.h"
 #include "errors.h"
 #include "command.h"
 #include "stream_buffer.h"
@@ -29,10 +32,10 @@ enum port_mode {
     MODE_IDLE = 0,
     MODE_PREGREET,
     MODE_GREET,
-    MODE_USERNAME,
+  //  MODE_USERNAME,
     MODE_LOCAL,
     MODE_SESSION,
-    MODE_PASSWORD,
+  //  MODE_PASSWORD,
 };
 
 enum port_type {
@@ -73,6 +76,7 @@ struct port {
     void *port_data;
     char commands[NUM_HISTORY][MAX_COMMAND];
     int cmdno;
+    enum command_states cstate;
     int cpos;
     int no;
     char name[9];

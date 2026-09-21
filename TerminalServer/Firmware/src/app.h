@@ -1,14 +1,14 @@
 #ifndef _APP_H
 #define _APP_H
 
-#define VERSION "1.0.1"
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include "configuration.h"
-
+#include "command.h"
+#include "port.h"
 
 enum app_state {
     APP_STATE_BOOT=0,
@@ -20,5 +20,6 @@ enum app_state {
 extern void yield();
 extern void APP_Initialize ( void );
 extern void APP_Tasks( void );
-
+extern void input_password(struct port *port);
+extern void input_username(struct port *port);
 #endif

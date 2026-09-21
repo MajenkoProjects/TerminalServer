@@ -4990,6 +4990,129 @@ data:
           type: User
         type: Values
       type: String
+    INITIALIZATION_C:
+      attributes:
+        id: INITIALIZATION_C
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    CoreSysInitFile:
+      attributes:
+        id: CoreSysInitFile
+        label: Generate System Initialization
+      type: Boolean
+    XC32_LINKER_PREPROC_MARCOS:
+      attributes:
+        id: XC32_LINKER_PREPROC_MARCOS
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'false'
+          type: Boolean
+        type: Attributes
+      type: Setting
+    LINKER_SCRIPT:
+      attributes:
+        id: LINKER_SCRIPT
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'false'
+          type: Boolean
+        type: Attributes
+      type: File
+    ADD_LINKER_FILE:
+      attributes:
+        id: ADD_LINKER_FILE
+        label: Add linker file to project
+      children:
+      - children:
+        - attributes:
+            value: 'false'
+          type: User
+        type: Values
+      type: Boolean
+    FCE_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: FCE_INTERRUPT_ENABLE_UPDATE
+        label: FCE_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_44_ENABLE:
+      attributes:
+        id: EVIC_44_ENABLE
+        label: Enable Flash Control Event Interrupt
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    FCE_INTERRUPT_ENABLE:
+      attributes:
+        id: FCE_INTERRUPT_ENABLE
+        label: Vector Peripheral Enable
+      type: Boolean
+    EVIC_44_HANDLER_LOCK:
+      attributes:
+        id: EVIC_44_HANDLER_LOCK
+        label: EVIC_44_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    FCE_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: FCE_INTERRUPT_HANDLER_LOCK
+        label: Vector Peripheral Handler Lock
+      type: Boolean
+    EVIC_44_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_44_INTERRUPT_HANDLER
+        label: EVIC_44_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: FCE_Handler
+          type: Dynamic
+        type: Values
+      type: String
+    FCE_INTERRUPT_HANDLER:
+      attributes:
+        id: FCE_INTERRUPT_HANDLER
+        label: Vector Peripheral Handler
+      type: String
+    APP_START_ADDRESS:
+      attributes:
+        id: APP_START_ADDRESS
+        label: Application Start Address (Hex)
+      type: String
   userData:
     children:
     - attributes:

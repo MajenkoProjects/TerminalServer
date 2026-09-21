@@ -1,4 +1,7 @@
 #include <ctype.h>
+#include <string.h>
+#include <stdio.h>
+
 #include "util.h"
 #include "port.h"
 #include "ttype.h"

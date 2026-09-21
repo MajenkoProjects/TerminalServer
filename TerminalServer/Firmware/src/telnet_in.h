@@ -1,7 +1,8 @@
 #ifndef _TELNET_IN_H
 #define _TELNET_IN_H
 
-#include "tcpip/berkeley_api.h"
+#include "tcpip/tcpip.h"
+#include "tcpip/tcp.h"
 #include "port.h"
 
 struct telnet_in_data {

@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "tcpip/berkeley_api.h"
+#include "tcpip/tcpip.h"
+#include "tcpip/tcp.h"
 #include "port.h"
 #include "command.h"
 
@@ -27,8 +28,6 @@ enum tostate {
 
 struct todata {
     TCP_SOCKET socket;
-    int fd;
-    struct sockaddr_in sin;
     IP_MULTI_ADDRESS addr;
     TCPIP_DNS_RESULT dns_result;
     char hostname[255];

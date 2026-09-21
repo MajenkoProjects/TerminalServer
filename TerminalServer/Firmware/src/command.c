@@ -15,6 +15,10 @@
 #include "telnet_out.h"
 #include "port_commands.h"
 
+
+
+
+
 COMMAND(help) {
     port_printf(port, "%s", "Sorry, I haven't written the help tree parser yet.\r\n");
     port_printf(port, "%s", "Try again at some point in the dim and distant future.\r\n");
@@ -37,7 +41,7 @@ COMMAND(show_server) {
 }
 
 COMMAND(set_priv) {
-    port->mode = MODE_PASSWORD;
+    port->cstate = CMD_ASKPRIVPASS;
     return ERR_OK;
 }
 
@@ -341,6 +345,9 @@ error_t command_run(const struct command *tree, struct port *port, void *opt, in
     }
 }
 
+
+
+
 void command_execute(struct port *port) {
     int argc = 0;
     char *argv[MAX_ARGS];
@@ -363,9 +370,37 @@ void command_execute(struct port *port) {
     }
 }
 
+static void chpass1(struct port *port) {
+}
+
+static void chpass2(struct port *port) {
+}
 
 
-int command_process(struct port *port, char c, void (*func)(struct port *)) {
+
+
+
+
+
+
+
+
+static const struct command_state cstates[] = {
+    { &command_execute, "Local>", "Local>>", true },
+    { &input_username, "Username>", "Username>", true },
+    { &input_password, "Password>", "Password>", false },
+    { &chpass1, "Password>", "Password>", false },
+    { &chpass2, "Repeat>", "Repeat>", false },  
+};
+
+const char *prompt(struct port *port) {
+    if (port->priv) {
+        return cstates[port->cstate].privprompt;
+    } else {
+        return cstates[port->cstate].prompt;
+    }
+}
+int command_process(struct port *port, char c) {
     
     uint16_t buf[9];
     int ret = 0;
@@ -385,7 +420,7 @@ int command_process(struct port *port, char c, void (*func)(struct port *)) {
                             }
                         }
                     }
-                    func(port);
+                    cstates[port->cstate].fn_execute(port);
                 }
                 ret = 1;
                 port->cmdno = 0;
@@ -415,19 +450,12 @@ int command_process(struct port *port, char c, void (*func)(struct port *)) {
                     port->cmdno ++;
                 }
                 
-                if (port->priv) {
-                    if (port->tinfo->clreol) {
-                        port_printf(port, "\rLocal>>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
-                    } else {
-                        port_printf(port, "\r\nLocal>>%s", port->commands[port->cmdno]);
-                    }                    
+                if (port->tinfo->clreol) {
+                    port_printf(port, "\%s%s%s", prompt(port), port->commands[port->cmdno], port->tinfo->clreol);
                 } else {
-                    if (port->tinfo->clreol) {
-                        port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
-                    } else {
-                        port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
-                    }
-                }
+                    port_printf(port, "\r\n%s%s", prompt(port), port->commands[port->cmdno]);
+                }                    
+
                 port->cpos = strlen(port->commands[port->cmdno]);
                 break;
             case SPECIAL_KEY | KEY_DOWN:
@@ -435,19 +463,11 @@ int command_process(struct port *port, char c, void (*func)(struct port *)) {
                 if (port->cmdno > 0) {
                     port->cmdno --;
                 }
-                if (port->priv) {
-                    if (port->tinfo->clreol) {
-                        port_printf(port, "\rLocal>>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
-                    } else {
-                        port_printf(port, "\r\nLocal>>%s", port->commands[port->cmdno]);
-                    }
+                if (port->tinfo->clreol) {
+                    port_printf(port, "\%s%s%s", prompt(port), port->commands[port->cmdno], port->tinfo->clreol);
                 } else {
-                    if (port->tinfo->clreol) {
-                        port_printf(port, "\rLocal>%s%s", port->commands[port->cmdno], port->tinfo->clreol);
-                    } else {
-                        port_printf(port, "\r\nLocal>%s", port->commands[port->cmdno]);
-                    }
-                }
+                    port_printf(port, "\r\n%s%s", prompt(port), port->commands[port->cmdno]);
+                }                    
                 port->cpos = strlen(port->commands[port->cmdno]);
                 break;
             case SPECIAL_KEY | KEY_LEFT:
@@ -469,15 +489,12 @@ int command_process(struct port *port, char c, void (*func)(struct port *)) {
                             port->commands[port->cmdno][i] = port->commands[port->cmdno][i-1];
                         }
                         port->commands[port->cmdno][port->cpos++] = buf[i];
-//                        port->commands[port->cmdno].command[port->cpos] = 0;
-                        if (port->mode != MODE_PASSWORD) {
+                        if (cstates[port->cstate].echo) {
                             if (port->tinfo->inschar) {
                                 port_printf(port, "%s%c", port->tinfo->inschar, buf[i]);
                             }
                         }
                     }
-//                } else if (IS_SPECIAL(buf[i])) {
-//                    port_printf(port, "Special key %04x\r\n", buf[i]);
                 }
                 break;
         }

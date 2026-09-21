@@ -2,10 +2,10 @@
 
 manifest_file_version: 1.0.0
 project: TestCode
-creation_date: 2026-09-20T17:18:46.329+01:00[Europe/London]
+creation_date: 2026-09-21T14:28:16.358+01:00[Europe/London]
 operating_system: Linux
 mcc_mode: IDE
-mcc_mode_version: v6.25
+mcc_mode_version: v6.35
 device_name: PIC32MX795F512L
 compiler: XC32 5.00
 mcc_version: 5.7.0

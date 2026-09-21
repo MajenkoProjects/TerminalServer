@@ -123,6 +123,7 @@ const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
 // </editor-fold>
 #endif
 
+
 // <editor-fold defaultstate="collapsed" desc="DRV_SPI Instance 0 Initialization Data">
 
 /* SPI Client Objects Pool */
@@ -256,6 +257,7 @@ static const DRV_USBFS_INIT drvUSBFSInit =
 
 
 #if 0
+
 
 
 
@@ -581,6 +583,7 @@ static const NET_PRES_INIT_DATA netPresInitData =
 
 
 
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: System Initialization
@@ -704,6 +707,7 @@ void SYS_Initialize ( void* data )
    sysObj.tcpip = TCPIP_STACK_Init();
    SYS_ASSERT(sysObj.tcpip != SYS_MODULE_OBJ_INVALID, "TCPIP_STACK_Init Failed" );
 #endif
+
 
 
     /* MISRAC 2023 deviation block end */

@@ -4,7 +4,7 @@ Ports
     USB                 Done
     Telnet In           Done
     Telnet Out          Done
-    TCP In
+    TCP In              Done
     TCP Out
     UDP In
     UDP Out

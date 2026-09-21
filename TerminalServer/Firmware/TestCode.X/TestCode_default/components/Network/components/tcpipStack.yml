@@ -80,7 +80,7 @@ data:
       - children:
         - attributes:
             id: tcpipStack
-            value: '20'
+            value: '19'
           type: Dynamic
         type: Values
       type: Integer
@@ -146,6 +146,18 @@ data:
         - attributes:
             value: '1'
           type: User
+        type: Values
+      type: Integer
+    TCPIP_STACK_NET_INTERFACE_NUM:
+      attributes:
+        id: TCPIP_STACK_NET_INTERFACE_NUM
+        label: Number of Network interfaces
+      children:
+      - children:
+        - attributes:
+            id: tcpipStack
+            value: '0'
+          type: Dynamic
         type: Values
       type: Integer
   userData: {}
