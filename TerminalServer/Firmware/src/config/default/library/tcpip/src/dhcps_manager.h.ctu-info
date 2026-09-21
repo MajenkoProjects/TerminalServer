@@ -1,0 +1,4 @@
+{"summary": "MisraMacro", "data": [{"name": "H_DHCPS_MANAGER_H_", "used": true, "file": "../src/config/default/library/tcpip/src/dhcps_manager.h", "line": 50, "column": 0}]}
+{"summary": "MisraExternalIdentifiers", "data": [{"name": "TCPIP_DHCPS_Initialize", "file": "../src/config/default/library/tcpip/src/dhcps_manager.h", "line": 78, "column": 6, "decl": true}, {"name": "TCPIP_DHCPS_Deinitialize", "file": "../src/config/default/library/tcpip/src/dhcps_manager.h", "line": 105, "column": 6, "decl": true}]}
+{"summary": "MisraInternalIdentifiers", "data": []}
+{"summary": "MisraLocalIdentifiers", "data": [{"name": "stackCtrl", "file": "../src/config/default/library/tcpip/src/dhcps_manager.h", "line": 105, "column": 68}, {"name": "initData", "file": "../src/config/default/library/tcpip/src/dhcps_manager.h", "line": 78, "column": 89}]}

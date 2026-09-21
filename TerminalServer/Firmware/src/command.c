@@ -177,15 +177,44 @@ static const struct command define_server_secondary_sub[] = {
     {0, 0, 0, 0}
 };
 
+static const struct command define_server_wifi_secondary_sub[] = {
+    {"NAMESERVER", &wifi_define_secdns, CMD_PRIV, NULL},
+    {0, 0, 0, 0}
+};
+
 static const struct command define_server_dhcp_sub[] = {
     {"DISABLED", &ethernet_define_dhcp_disabled, CMD_PRIV, NULL},
     {"ENABLED", &ethernet_define_dhcp_enabled, CMD_PRIV, NULL},
     {0, 0, 0, 0}
 };
 
+static const struct command define_server_ethernet_sub[] = {
+    {"IPADDRESS", &ethernet_define_ip, CMD_PRIV, NULL},
+    {"SUBNET", &ethernet_define_subnet, CMD_PRIV, define_server_subnet_sub},
+    {"GATEWAY", &ethernet_define_gateway, CMD_PRIV, NULL},
+    {"MAC", &ethernet_define_mac_address, CMD_PRIV, define_server_mac_sub},
+    {"NAMESERVER", &ethernet_define_pridns, CMD_PRIV, NULL},
+    {"SECONDARY", NULL, 0, define_server_secondary_sub},
+    {0, 0, 0, 0}
+};
+
+static const struct command define_server_wifi_sub[] = {
+    {"IPADDRESS", &wifi_define_ip, CMD_PRIV, NULL},
+    {"SUBNET", &wifi_define_subnet, CMD_PRIV, define_server_subnet_sub},
+    {"GATEWAY", &wifi_define_gateway, CMD_PRIV, NULL},
+    {"MAC", &wifi_define_mac_address, CMD_PRIV, define_server_mac_sub},
+    {"NAMESERVER", &wifi_define_pridns, CMD_PRIV, NULL},
+    {"PSK", &wifi_define_psk, CMD_PRIV, NULL},
+    {"SECONDARY", NULL, 0, define_server_wifi_secondary_sub},
+    {"SSID", &wifi_define_ssid, CMD_PRIV, NULL},
+    {0, 0, 0, 0}
+};
+
+
 static const struct command define_server_sub[] = {
     {"DHCP", NULL, 0, define_server_dhcp_sub},
     {"DOMAIN", &system_define_domain, CMD_PRIV, NULL},
+    {"ETHERNET", NULL, CMD_PRIV, define_server_ethernet_sub},
     {"IPADDRESS", &ethernet_define_ip, CMD_PRIV, NULL},
     {"SUBNET", &ethernet_define_subnet, CMD_PRIV, define_server_subnet_sub},
     {"GATEWAY", &ethernet_define_gateway, CMD_PRIV, NULL},
@@ -193,6 +222,7 @@ static const struct command define_server_sub[] = {
     {"NAME", &system_define_name, CMD_PRIV, NULL},
     {"NAMESERVER", &ethernet_define_pridns, CMD_PRIV, NULL},
     {"SECONDARY", NULL, 0, define_server_secondary_sub},
+    {"WIFI", NULL, CMD_PRIV, define_server_wifi_sub},
     {0, 0, 0, 0}
 };
 

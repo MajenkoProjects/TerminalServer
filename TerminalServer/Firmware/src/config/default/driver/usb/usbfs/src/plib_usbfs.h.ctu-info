@@ -1,0 +1,4 @@
+{"summary": "MisraMacro", "data": [{"name": "PLIB_USB_H", "used": true, "file": "../src/config/default/driver/usb/usbfs/src/plib_usbfs.h", "line": 45, "column": 0}, {"name": "USB_MAX_EP_NUMBER", "used": false, "file": "../src/config/default/driver/usb/usbfs/src/plib_usbfs.h", "line": 88, "column": 0}]}
+{"summary": "MisraExternalIdentifiers", "data": []}
+{"summary": "MisraInternalIdentifiers", "data": []}
+{"summary": "MisraLocalIdentifiers", "data": []}

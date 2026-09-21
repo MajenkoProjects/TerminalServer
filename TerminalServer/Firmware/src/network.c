@@ -8,6 +8,7 @@
 
 
 struct ethernet_settings ethernet_settings;
+struct wifi_settings wifi_settings;
 
 
 
@@ -33,7 +34,7 @@ TCPIP_NETWORK_CONFIG TCPIP_HOSTS_CONFIGURATION[] = {
 
     /*** Network Configuration Index 0 ***/
     {
-        .interface = TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0,
+        .interface = "eth0",
         .hostName = system_settings.nodename, // TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0,
         .macAddr = ethernet_settings.macaddr, // TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0,
         .ipAddr = ethernet_settings.ip, //TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0,
@@ -46,6 +47,22 @@ TCPIP_NETWORK_CONFIG TCPIP_HOSTS_CONFIGURATION[] = {
         .pMacObject = &TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0,
 
     },
+    /*
+    {
+        .interface = "wlan0",
+        .hostName = system_settings.nodename, // TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0,
+        .macAddr = wifi_settings.macaddr, // TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0,
+        .ipAddr = wifi_settings.ip, //TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0,
+        .ipMask = wifi_settings.netmask, //TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0,
+        .gateway = wifi_settings.gateway, //TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0,
+        .priDNS = wifi_settings.pridns, //TCPIP_NETWORK_DEFAULT_DNS_IDX0,
+        .secondDNS = wifi_settings.secdns, //TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0,
+        .powerMode = TCPIP_NETWORK_DEFAULT_POWER_MODE_IDX0,
+        .startFlags = TCPIP_NETWORK_DEFAULT_INTERFACE_FLAGS_IDX0,
+        .pMacObject = &ESP32_MAC_Object,
+
+    },
+    */
 };
 
 // <editor-fold defaultstate="collapsed" desc="TCP/IP Stack Initialization Data">
@@ -274,7 +291,7 @@ void ethernet_boot() {
     sysObj.netPres = NET_PRES_Initialize(0, (SYS_MODULE_INIT*)&netPresInitData);
     sysObj.tcpip = TCPIP_STACK_Init();
 
-    const TCPIP_NET_HANDLE *handle = TCPIP_STACK_NetHandleGet(TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0);
+    const TCPIP_NET_HANDLE *handle = TCPIP_STACK_NetHandleGet("eth0");
  
     int tries = ethernet_settings.timeout * 2;
     while ((!TCPIP_STACK_NetIsLinked(handle)) && (tries > 0)) {
@@ -368,12 +385,41 @@ void ethernet_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uin
         case SETTINGS_ETHERNET_FLAGS:
             ethernet_settings.flags = (*(uint16_t *)data) | TCPIP_NETWORK_CONFIG_MULTICAST_ON;
             break;
+            
+        case SETTINGS_WIFI_MAC:
+            strncpy(wifi_settings.macaddr, (char *)data, 17);
+            break;
+        case SETTINGS_WIFI_IP:
+            strncpy(wifi_settings.ip, (char *)data, length);
+            break;
+        case SETTINGS_WIFI_NETMASK:
+            strncpy(wifi_settings.netmask, (char *)data, length);
+            break;
+        case SETTINGS_WIFI_GATEWAY:
+            strncpy(wifi_settings.gateway, (char *)data, length);
+            break;
+        case SETTINGS_WIFI_PRIDNS:
+            strncpy(wifi_settings.pridns, (char *)data, length);
+            break;
+        case SETTINGS_WIFI_SECDNS:
+            strncpy(wifi_settings.secdns, (char *)data, length);
+            break;
+        case SETTINGS_WIFI_FLAGS:
+            wifi_settings.flags = (*(uint16_t *)data) | TCPIP_NETWORK_CONFIG_MULTICAST_ON;
+            break;
+        case SETTINGS_WIFI_SSID:
+            memset(wifi_settings.ssid, 0, 33);
+            memcpy(wifi_settings.ssid, data, length < 33 ? length : 32);
+            break;
+        case SETTINGS_WIFI_PSK:
+            memset(wifi_settings.psk, 0, 64);
+            memcpy(wifi_settings.psk, data, length < 64 ? length : 63);
+            break;
     }
 }
 
 void ethernet_init_defaults() {
     snprintf(ethernet_settings.macaddr, 19, "DE:AD:BE:EF:%02X:%02X", (DEVCFG3bits.USERID >> 8) & 0xFF, DEVCFG3bits.USERID & 0xFF);
-
     strcpy(ethernet_settings.ip, "192.168.1.100");
     strcpy(ethernet_settings.netmask, "255.255.255.0");
     strcpy(ethernet_settings.gateway, "192.168.1.1");
@@ -381,10 +427,22 @@ void ethernet_init_defaults() {
     strcpy(ethernet_settings.secdns, "8.8.4.4");
     ethernet_settings.flags = (TCPIP_NETWORK_CONFIG_MULTICAST_ON | TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON | TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC);
     ethernet_settings.timeout = 10;
+
+    snprintf(wifi_settings.macaddr, 19, "BA:BE:FA:CE:%02X:%02X", (DEVCFG3bits.USERID >> 8) & 0xFF, DEVCFG3bits.USERID & 0xFF);
+    strcpy(wifi_settings.ip, "192.168.2.100");
+    strcpy(wifi_settings.netmask, "255.255.255.0");
+    strcpy(wifi_settings.gateway, "192.168.2.1");
+    strcpy(wifi_settings.pridns, "8.8.8.8");
+    strcpy(wifi_settings.secdns, "8.8.4.4");
+    wifi_settings.flags = (TCPIP_NETWORK_CONFIG_MULTICAST_ON | TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON | TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC);
+    wifi_settings.timeout = 10;
+    memset(wifi_settings.ssid, 0, 33);
+    memset(wifi_settings.psk, 0, 64);
+
 }
 
 void print_network_settings(struct port *port) {
-    port_printf(port, "Network settings:\r\n");
+    port_printf(port, "Ethernet settings:\r\n");
     port_printf(port, "   MAC Address: %s\r\n", ethernet_settings.macaddr);
     port_printf(port, "Configured:\r\n");
     port_printf(port, "   IP Address:  %-15s   Netmask:       %-15s\r\n", ethernet_settings.ip, ethernet_settings.netmask);
@@ -392,7 +450,7 @@ void print_network_settings(struct port *port) {
     if (ethernet_settings.flags & TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON) {
         port_printf(port, "   DHCP:        Enabled\r\n");
         port_printf(port, "DHCP:\r\n");
-        const TCPIP_NET_HANDLE *handle = TCPIP_STACK_NetHandleGet(TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0);
+        const TCPIP_NET_HANDLE *handle = TCPIP_STACK_NetHandleGet("eth0");
 
         
         char ip[16];
@@ -412,6 +470,39 @@ void print_network_settings(struct port *port) {
     } else {
         port_printf(port, "   DHCP:        Disabled\r\n");
     }
+
+    port_printf(port, "\nWiFi settings:\r\n");
+    port_printf(port, "   MAC Address: %s\r\n", wifi_settings.macaddr);
+    port_printf(port, "Configured:\r\n");
+    port_printf(port, "   IP Address:  %-15s   Netmask:       %-15s\r\n", wifi_settings.ip, wifi_settings.netmask);
+    port_printf(port, "   Gateway:     %-15s   DNS:           %s/%s\r\n", wifi_settings.gateway, wifi_settings.pridns, wifi_settings.secdns);
+    if (wifi_settings.flags & TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON) {
+        port_printf(port, "   DHCP:        Enabled\r\n");
+        port_printf(port, "DHCP:\r\n");
+/* TODO: Enable this when the wifi MAC code is written
+        const TCPIP_NET_HANDLE *handle = TCPIP_STACK_NetHandleGet("wlan0");
+
+        
+        char ip[16];
+        ip2str(TCPIP_STACK_NetAddress(handle), ip);
+        
+        char gw[16];
+        ip2str(TCPIP_STACK_NetAddressGateway(handle), gw);
+
+        char dns1[16];
+        ip2str(TCPIP_STACK_NetAddressDnsPrimary(handle), dns1);
+
+        char dns2[16];
+        ip2str(TCPIP_STACK_NetAddressDnsSecond(handle), dns2);
+        
+        port_printf(port, "   IP Address:  %-15s   Gateway:       %s\r\n", ip, gw);
+        port_printf(port, "   DNS Primary: %-15s   DNS Secondary: %s\r\n", dns1, dns2);
+ */
+    } else {
+        port_printf(port, "   DHCP:        Disabled\r\n");
+    }
+    port_printf(port, "   SSID: %s\r\n", wifi_settings.ssid[0] == 0 ? "None" : wifi_settings.ssid);
+    port_printf(port, "   PSK: %s\r\n", wifi_settings.psk[0] == 0 ? "Unset" : "Set");
 }
 
 COMMAND(ethernet_define_mac_address) {
@@ -425,7 +516,6 @@ COMMAND(ethernet_define_mac_address) {
     return ERR_OK;
     
 }
-
 COMMAND(ethernet_define_ip) {
     if (argv == 0) return ERR_INCOMPLETE;
     
@@ -435,7 +525,6 @@ COMMAND(ethernet_define_ip) {
     setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_IP, 0, strlen(ip), (uint8_t *)ip);    
     return ERR_OK;
 }
-
 COMMAND(ethernet_define_subnet) {
     if (argv == 0) return ERR_INCOMPLETE;
     
@@ -445,7 +534,6 @@ COMMAND(ethernet_define_subnet) {
     setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_NETMASK, 0, strlen(ip), (uint8_t *)ip);    
     return ERR_OK;
 }
-
 COMMAND(ethernet_define_gateway) {
     if (argv == 0) return ERR_INCOMPLETE;
     
@@ -455,7 +543,6 @@ COMMAND(ethernet_define_gateway) {
     setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_GATEWAY, 0, strlen(ip), (uint8_t *)ip);    
     return ERR_OK; 
 }
-
 COMMAND(ethernet_define_pridns) {
     if (argv == 0) return ERR_INCOMPLETE;
     
@@ -465,8 +552,6 @@ COMMAND(ethernet_define_pridns) {
     setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_PRIDNS, 0, strlen(ip), (uint8_t *)ip);    
     return ERR_OK; 
 }
-
-
 COMMAND(ethernet_define_secdns) {
     if (argv == 0) return ERR_INCOMPLETE;
     
@@ -476,15 +561,103 @@ COMMAND(ethernet_define_secdns) {
     setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_SECDNS, 0, strlen(ip), (uint8_t *)ip);    
     return ERR_OK; 
 }
-
 COMMAND(ethernet_define_dhcp_enabled) {
     uint16_t flags = TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON | TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC;
     setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_FLAGS, 0, 2, (uint8_t *)&flags);
     return ERR_OK;
 }
-
 COMMAND(ethernet_define_dhcp_disabled) {
     uint16_t flags = TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC;
     setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_FLAGS, 0, 2, (uint8_t *)&flags);
     return ERR_OK;
+}
+
+COMMAND(wifi_define_mac_address) {
+    if (argc == 0) {
+        return ERR_INCOMPLETE;
+    }
+    
+    char *mac = argv[0];
+    if (!validate_mac(mac)) return ERR_INVALID;
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_MAC, 0, 17, (uint8_t *)mac);
+    return ERR_OK;
+    
+}
+COMMAND(wifi_define_ip) {
+    if (argv == 0) return ERR_INCOMPLETE;
+    
+    char *ip = argv[0];
+    if (!validate_ip(ip)) return ERR_INVALID;
+    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_IP, 0, strlen(ip), (uint8_t *)ip);    
+    return ERR_OK;
+}
+COMMAND(wifi_define_subnet) {
+    if (argv == 0) return ERR_INCOMPLETE;
+    
+    char *ip = argv[0];
+    if (!validate_netmask(ip)) return ERR_INVALID;
+    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_NETMASK, 0, strlen(ip), (uint8_t *)ip);    
+    return ERR_OK;
+}
+COMMAND(wifi_define_gateway) {
+    if (argv == 0) return ERR_INCOMPLETE;
+    
+    char *ip = argv[0];
+    if (!validate_ip(ip)) return ERR_INVALID;
+    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_GATEWAY, 0, strlen(ip), (uint8_t *)ip);    
+    return ERR_OK; 
+}
+COMMAND(wifi_define_pridns) {
+    if (argv == 0) return ERR_INCOMPLETE;
+    
+    char *ip = argv[0];
+    if (!validate_ip(ip)) return ERR_INVALID;
+    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_PRIDNS, 0, strlen(ip), (uint8_t *)ip);    
+    return ERR_OK; 
+}
+COMMAND(wifi_define_secdns) {
+    if (argv == 0) return ERR_INCOMPLETE;
+    
+    char *ip = argv[0];
+    if (!validate_ip(ip)) return ERR_INVALID;
+    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_SECDNS, 0, strlen(ip), (uint8_t *)ip);    
+    return ERR_OK; 
+}
+COMMAND(wifi_define_dhcp_enabled) {
+    uint16_t flags = TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON | TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC;
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_FLAGS, 0, 2, (uint8_t *)&flags);
+    return ERR_OK;
+}
+COMMAND(wifi_define_dhcp_disabled) {
+    uint16_t flags = TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON | TCPIP_NETWORK_CONFIG_IP_STATIC;
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_FLAGS, 0, 2, (uint8_t *)&flags);
+    return ERR_OK;
+}
+COMMAND(wifi_define_ssid) {
+    if (argc != 1) return ERR_INCOMPLETE;
+    int length = strlen(argv[0]);
+    if (length > 32) length = 32;
+
+    if (strcasecmp(argv[0], "none") == 0) {
+        setting_set(MODULE_ETHERNET, SETTINGS_WIFI_SSID, 0, 0, NULL);
+    } else {
+        setting_set(MODULE_ETHERNET, SETTINGS_WIFI_SSID, 0, length, (uint8_t *)argv[0]);
+    }
+    return ERR_OK;
+}
+COMMAND(wifi_define_psk) {
+    if (argc != 1) return ERR_INCOMPLETE;
+    int length = strlen(argv[0]);
+    if (length > 63) length = 63;
+    if (strcasecmp(argv[0], "none") == 0) {
+        setting_set(MODULE_ETHERNET, SETTINGS_WIFI_SSID, 0, 0, NULL);
+    } else {
+        setting_set(MODULE_ETHERNET, SETTINGS_WIFI_PSK, 0, length, (uint8_t *)argv[0]);
+    }
+    return ERR_OK;    
 }

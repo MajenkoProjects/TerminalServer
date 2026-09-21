@@ -1,0 +1,4 @@
+{"summary": "MisraMacro", "data": [{"name": "_USB_LASTDIRECTION_UNSUPPORTED_H", "used": true, "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_LastDirection_Unsupported.h", "line": 47, "column": 0}]}
+{"summary": "MisraExternalIdentifiers", "data": [{"name": "USB_LastTransactionDirectionGet_Unsupported", "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_LastDirection_Unsupported.h", "line": 59, "column": 36, "decl": false}, {"name": "USB_ExistsLastDirection_Unsupported", "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_LastDirection_Unsupported.h", "line": 77, "column": 20, "decl": false}]}
+{"summary": "MisraInternalIdentifiers", "data": []}
+{"summary": "MisraLocalIdentifiers", "data": [{"name": "index", "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_LastDirection_Unsupported.h", "line": 59, "column": 95}]}

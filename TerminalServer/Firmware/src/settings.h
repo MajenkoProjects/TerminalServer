@@ -38,15 +38,6 @@
 #define SETTINGS_SYSTEM_DOMAIN      0x02
 
 
-#define SETTINGS_WIFI_IP            0x01
-#define SETTINGS_WIFI_NETMASK       0x02
-#define SETTINGS_WIFI_GATEWAY       0x03
-#define SETTINGS_WIFI_PRIDNS        0x04
-#define SETTINGS_WIFI_SECDNS        0x05
-#define SETTINGS_WIFI_FLAGS         0x06
-#define SETTINGS_WIFI_SSID          0x07
-#define SETTINGS_WIFI_PSK           0x08
-
 #define SETTINGS_UART_NAME          0x01
 #define SETTINGS_UART_BAUD          0x02
 #define SETTINGS_UART_FLAGS         0x03
