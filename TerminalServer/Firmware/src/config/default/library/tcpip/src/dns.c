@@ -2039,18 +2039,23 @@ static bool F_DNS_ProcessPacket(TCPIP_DNS_DCPT* pDnsDcpt)
 
     while(true)
     {
+        int ix;
         dnsHE = NULL;
         procFail = false;
 
         if((DNSHeader.Flags.v[0] & 0x03U) != 0U)
         {   
             evType = TCPIP_DNS_EVENT_NAME_ERROR;
+
+            for(ix = (int)TCPIP_DNS_RR_TYPE_QUESTION; ix < (int)TCPIP_DNS_RR_TYPES; ix++) {
+                (void)F_DNS_ProcessRR(pDnsDcpt, &procRR, (TCPIP_DNS_RR_TYPE)ix);
+            }
+            dnsHE = procRR.dnsHE;
             procFail = true;
             break;
         }
 
         // process queries and all types of RRs
-        int ix;
         for(ix = (int)TCPIP_DNS_RR_TYPE_QUESTION; ix < (int)TCPIP_DNS_RR_TYPES; ix++) 
         {
             (void)F_DNS_ProcessRR(pDnsDcpt, &procRR, (TCPIP_DNS_RR_TYPE)ix);
@@ -2094,14 +2099,17 @@ static bool F_DNS_ProcessPacket(TCPIP_DNS_DCPT* pDnsDcpt)
         }
         else
         {
+            //(void)F_DNSCompleteHashEntry(pDnsDcpt, dnsHE);
             // do nothing
             // if(evType == TCPIP_DNS_EVENT_NAME_ERROR && dnsHE != NULL)
             // Remove name if "No Such name"
-            // (void)TCPIP_DNS_RemoveEntry(dnsHE->pHostName);
+            //(void)TCPIP_DNS_RemoveEntry(dnsHE->pHostName);
+            (void)F_DNSCompleteHashEntry(pDnsDcpt, dnsHE);
         }
     }
     else if (evDbgType != TCPIP_DNS_DBG_EVENT_NONE)
     {
+            (void)F_DNSCompleteHashEntry(pDnsDcpt, dnsHE);
         F_DNS_DbgEvent(pDnsDcpt, dnsHE, evDbgType);
     }
     else
