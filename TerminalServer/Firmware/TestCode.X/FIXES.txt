@@ -56,3 +56,32 @@ to read
             (void)TCPIP_UDP_Bind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL); 
 
 (that is, change both IP_ADDRESS_TYPE_ANY to IP_ADDRESS_TYPE_IPV4).
+
+3. DNS retries with delays on NXDomain
+
+It should just treat it the same as a NO_IP response otherwise DNS lookups
+take forever to process.
+
+In config/default/library/tcpip/src/dns.c find the function 
+    static bool F_DNS_ProcessPacket(TCPIP_DNS_DCPT* pDnsDcpt)
+
+Look for the TCPIP_DNS_EVENT_NAME_ERROR block, and add a section
+to parse the RR data and set the dnsHE pointer:
+
+        if((DNSHeader.Flags.v[0] & 0x03U) != 0U)
+        {   
+            evType = TCPIP_DNS_EVENT_NAME_ERROR;
+            // Add these four lines vvv
+            for(ix = (int)TCPIP_DNS_RR_TYPE_QUESTION; ix < (int)TCPIP_DNS_RR_TYPES; ix++) {
+                (void)F_DNS_ProcessRR(pDnsDcpt, &procRR, (TCPIP_DNS_RR_TYPE)ix);
+            }
+            dnsHE = procRR.dnsHE;
+            procFail = true;
+            break;
+        }
+
+Next, further down, in the TCPIP_DNS_EVENT_NAME_RESOLVED else section add:
+
+            (void)F_DNSCompleteHashEntry(pDnsDcpt, dnsHE);
+
+Repeat this in the TCPIP_DNS_DBG_EVENT_NONE section.

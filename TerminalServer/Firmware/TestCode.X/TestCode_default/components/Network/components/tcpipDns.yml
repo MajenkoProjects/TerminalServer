@@ -35,7 +35,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '20'
+            value: '5'
           type: User
         type: Values
       type: Integer
@@ -46,7 +46,29 @@ data:
       children:
       - children:
         - attributes:
-            value: '10'
+            value: '5'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_DNS_CLIENT_CONSOLE_CMD:
+      attributes:
+        id: TCPIP_DNS_CLIENT_CONSOLE_CMD
+        label: Enable Console Commands
+      children:
+      - children:
+        - attributes:
+            value: 'false'
+          type: User
+        type: Values
+      type: Boolean
+    TCPIP_DNS_CLIENT_MAX_SELECT_INTERFACES:
+      attributes:
+        id: TCPIP_DNS_CLIENT_MAX_SELECT_INTERFACES
+        label: Maximum Number of Interfaces Considered for DNS resolution
+      children:
+      - children:
+        - attributes:
+            value: '1'
           type: User
         type: Values
       type: Integer

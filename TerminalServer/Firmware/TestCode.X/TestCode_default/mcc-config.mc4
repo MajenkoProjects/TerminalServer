@@ -56,7 +56,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/FreeRTOSConfig.h
   hash: fd10b1e3df3ddf31272bc3ba5a60eece7e6de3813988c6fdeab7024bddc73e14
 - file: ../src/config/default/configuration.h
-  hash: 26c15b4176e38cb78e58932e8d0ffaf40cc4903e1899080dc87932bfd447f2f5
+  hash: 5a39c2a25ed6560d89752961883fe29dcbce2ca560ffa097905adb86a56587cf
 - file: ../src/config/default/definitions.h
   hash: 4ad5f153af68bac5e920633a9de78997d90e7c6ac19d256893b37b4b44d103f2
 - file: ../src/config/default/device.h
