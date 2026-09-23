@@ -56,7 +56,12 @@ COMMAND(connect_local) {
     
     if (argc != 1) return ERR_INCOMPLETE;
     struct port *t = get_port_by_name(argv[0]);
-    if (!t) return ERR_NOTFOUND;
+    if (!t) {
+        uint32_t n = strtoul(argv[0], NULL, 10);
+        if (n == 0) return ERR_NOTFOUND;
+        t = get_port_by_number(n);
+        if (!t) return ERR_NOTFOUND;
+    }
     
     for (struct session *scan = sessions; scan; scan = scan->next) {
         if (scan->target == t) return ERR_BUSY;
