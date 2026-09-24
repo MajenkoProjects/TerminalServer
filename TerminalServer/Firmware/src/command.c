@@ -58,6 +58,7 @@ const char *shift(int *argc, char **argv) {
 enum cmds {
     CMD_FOUND = 0,
     CMD_HAS_SUB,
+    CMD_FOUND_WITH_SUB,
     CMD_NOT_FOUND,
 };
 
@@ -65,9 +66,14 @@ enum cmds find_command_in_list(const char *command, const struct command *list, 
     for (int i = 0; list[i].command != 0; i++) {
         if (strcasecmp(command, list[i].command) == 0) {
             *ptr = &list[i];
+
             if (list[i].sub_commands != NULL) {
+                if (list[i].func != NULL) {
+                    return CMD_FOUND_WITH_SUB;
+                }
                 return CMD_HAS_SUB;
             }
+            
             return CMD_FOUND;
         }
     }
@@ -91,7 +97,7 @@ COMMAND(help) {
                     port_printf(port, "Sorry, help has not been written for that yet.\r\n");
                     return ERR_OK;
                 }
-                port_printf(port, "\r\n%s\r\n", fptr->help);
+                port_printf(port, "%s\r\n", fptr->help);
                 return ERR_OK;
             case CMD_NOT_FOUND:
                 port_printf(port, "No help found for %s\r\n", cmd);
@@ -99,6 +105,15 @@ COMMAND(help) {
             case CMD_HAS_SUB:
                 lastptr = ptr;
                 ptr = fptr->sub_commands;
+                break;
+            case CMD_FOUND_WITH_SUB:
+                lastptr = ptr;
+                ptr = fptr->sub_commands;
+                if (fptr->help == NULL) {
+                    port_printf(port, "Sorry, help has not been written for that yet.\r\n");
+                    break;
+                }
+                port_printf(port, "%s\r\n", fptr->help);
                 break;
         }
     }
@@ -127,7 +142,25 @@ COMMAND(help) {
     return ERR_OK;
 }
 
+void display_command_tree(struct port *port, const struct command *list, int indent) {
+    for (int i = 0; list[i].command != 0; i++) {
+        for (int j = 0; j < indent; j++) {
+            port_printf(port, "    ");
+        }
+        port_printf(port, "%s %c\r\n", list[i].command, 
+                ((list[i].func != NULL) & (list[i].help != NULL)) ? ' ' : (list[i].func == NULL) ? ' ' : '*'
+                );
+        if (list[i].sub_commands) {
+            display_command_tree(port, list[i].sub_commands, indent+1);
+        }
+    }
+}
 
+COMMAND(show_command_tree) {
+    display_command_tree(port, commands, 0);
+    port_printf(port, "\r\n* = Needs help to be written\r\n");
+    return ERR_OK;
+}
 
 
 void print_strarr(struct port *port, int argc, char **argv) {

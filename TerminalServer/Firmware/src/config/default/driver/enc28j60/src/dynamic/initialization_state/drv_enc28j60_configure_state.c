@@ -684,8 +684,7 @@ int32_t DRV_ENC28J60_ConfigStateTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst
             busRes = (*pDrvInst->busVTable->fpOpResult)(pDrvInst, curSt->op, true);
             if(busRes == DRV_ENC28J60_BR_SUCCESS)
             {
-                curSt->state = DRV_ENC28J60_CS_DONE;
-                retVal = 1;
+                curSt->state = DRV_ENC28J60_CS_SET_ERXFCON;
                 break;
             }
             else if(busRes < 0)
@@ -697,6 +696,42 @@ int32_t DRV_ENC28J60_ConfigStateTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst
                 // else wait some more
             }
             break;
+
+
+
+
+        case DRV_ENC28J60_CS_SET_ERXFCON:
+            // Set the back-to-back inter-packet gap time to IEEE specified
+            // requirements.  The meaning of the MABBIPG value changes with the duplex
+            // state, so it must be updated in this function.
+            // In full duplex, 0x15 represents 9.6us; 0x12 is 9.6us in half duplex
+            reg.value = 0xA3;   
+            ret = (*pDrvInst->busVTable->fpSfrWr)(pDrvInst, DRV_ENC28J60_SFR_ERXFCON, reg, false);
+            if (ret != 0)
+            {
+                curSt->op = ret;
+                curSt->state = DRV_ENC28J60_CS_WAIT_ERXFCON;
+            }
+            // else retry
+            break;
+
+        case DRV_ENC28J60_CS_WAIT_ERXFCON:
+            busRes = (*pDrvInst->busVTable->fpOpResult)(pDrvInst, curSt->op, true);
+            if(busRes == DRV_ENC28J60_BR_SUCCESS)
+            {
+                curSt->state = DRV_ENC28J60_CS_DONE;
+                retVal = 1;
+            }
+            else if(busRes < 0)
+            {   // some error, retry
+                curSt->state = DRV_ENC28J60_CS_SET_ERXFCON;
+            }
+            else
+            {
+                // else wait some more
+            }
+            break;
+
 
         default:
             // do nothing

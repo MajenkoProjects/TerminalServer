@@ -19,7 +19,7 @@
 #include "util.h"
 #include "tcp_in.h"
 #include "version.h"
-//#include "arp_private.h"
+#include "mdns.h"
 
 
 struct module {
@@ -46,6 +46,7 @@ static const struct module modules[] = {
     /* Telnet In */         { NULL,                     &telnet_in_initialize,  &telnet_in_task },
     /* Telnet Out */        { NULL,                     &telnet_out_initialize, &telnet_out_task },
     /* TCP In */            { NULL,                     &tcp_in_init,           &tcp_in_task },
+                            { NULL,                     &mdns_init,             &mdns_tasks },
     /* Final boot */        { NULL,                     &final_boot_message,    NULL },
 };
 

@@ -11,13 +11,11 @@ struct ethernet_settings ethernet_settings;
 struct wifi_settings wifi_settings;
 
 
-
-
 /*** Zeroconfig initialization data ***/
-const ZCLL_MODULE_CONFIG tcpipZCLLInitData =
-{
-    0
-};
+//const ZCLL_MODULE_CONFIG tcpipZCLLInitData =
+//{
+//    0
+//};
 
 /* ENC 600 Driver Configuration */
 const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
@@ -134,7 +132,7 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] = {
     {TCPIP_MODULE_TCP,              &tcpipTCPInitData},             // TCPIP_MODULE_TCP
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
-    {TCPIP_MODULE_ZCLL,             0},                             // TCPIP_MODULE_ZCLL,
+ //   {TCPIP_MODULE_ZCLL,             0},                             // TCPIP_MODULE_ZCLL,
     {TCPIP_MODULE_MDNS,             0},                             // TCPIP_MODULE_MDNS,
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER
     {TCPIP_MODULE_MAC_ENCJ60,       &drvEnc28j60InitData},          // TCPIP_MODULE_MAC_ENCJ60
@@ -313,6 +311,7 @@ void ethernet_boot() {
     uint32_t ts = xTaskGetTickCount();
     if (ethernet_settings.flags & TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON) {
         port_printf(CONSOLE, "Waiting for DHCP address...");
+        CONSOLE->fn_flush(CONSOLE);
         while (!TCPIP_STACK_NetIsReady(handle)) {
             vTaskDelay(500);
             if (xTaskGetTickCount() - ts >= 500) {
@@ -333,33 +332,66 @@ void ethernet_boot() {
     port_printf(CONSOLE, "IP Address: %-15s Gateway: %s\r\n", ip, gw);
     CONSOLE->fn_flush(CONSOLE);
 
-    
+#if 1
 //    MDNSD_ERR_CODE
     switch (TCPIP_MDNS_ServiceRegister(
             handle, 
-            "terminal", 
-             "_telnet._tcp",
+            "Telnet on Terminal Server", 
+             "_telnet._tcp.local",
             23,
-            (uint8_t *)"Scrotums",
+            (uint8_t *)"",
             1,
             NULL,
             NULL
-            )) {
+            )) {        
         case MDNSD_SUCCESS:
-            port_printf(CONSOLE, "MDNS: Bound and running\r\n");
+            port_printf(CONSOLE, "mDNS: Bound and running\r\n");
             break;
         case MDNSD_ERR_BUSY:
-            port_printf(CONSOLE, "MDNS: Already in use by another service\r\n");
+            port_printf(CONSOLE, "mDNS: Already in use by another service\r\n");
             break;
         case MDNSD_ERR_CONFLICT:
-            port_printf(CONSOLE, "MDNS: Name conflict detected\r\n");
+            port_printf(CONSOLE, "mDNS: Name conflict detected\r\n");
             break;
         case MDNSD_ERR_INVAL:
-            port_printf(CONSOLE, "MDNS: Invalid parameter specified\r\n");
+            port_printf(CONSOLE, "mDNS: Invalid parameter specified\r\n");
             break;
     
     }
     CONSOLE->fn_flush(CONSOLE);
+#endif    
+    /*
+    for (struct port *scan = ports; scan; scan = scan->next) {
+        if ((scan->access = ACCESS_REMOTE) || (scan->access = ACCESS_DYNAMIC)) {
+            switch(TCPIP_MDNS_ServiceRegister(
+                handle, 
+                scan->name,
+                "_serial._tcp.local",
+                3000 + scan->no,
+                (uint8_t *)"",
+                1,
+                NULL,
+                NULL
+            )) {
+        
+        case MDNSD_SUCCESS:
+            port_printf(CONSOLE, "mDNS: Bound and running\r\n");
+            break;
+        case MDNSD_ERR_BUSY:
+            port_printf(CONSOLE, "mDNS: Already in use by another service\r\n");
+            break;
+        case MDNSD_ERR_CONFLICT:
+            port_printf(CONSOLE, "mDNS: Name conflict detected\r\n");
+            break;
+        case MDNSD_ERR_INVAL:
+            port_printf(CONSOLE, "mDNS: Invalid parameter specified\r\n");
+            break;
+    
+    }
+
+        }
+    }
+    */
 }
 
 void ethernet_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {
@@ -660,4 +692,8 @@ COMMAND(wifi_define_psk) {
         setting_set(MODULE_ETHERNET, SETTINGS_WIFI_PSK, 0, length, (uint8_t *)argv[0]);
     }
     return ERR_OK;    
+}
+
+void add_mac(int index, TCPIP_MAC_ADDR *mac) {
+    TCPIP_HOSTS_CONFIGURATION[index].pMacObject->MAC_RxFilterHashTableEntrySet(NULL, mac);
 }

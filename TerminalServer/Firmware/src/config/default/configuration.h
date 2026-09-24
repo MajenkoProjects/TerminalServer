@@ -174,6 +174,31 @@ extern "C" {
 
 
 
+/*** TCP Configuration ***/
+#define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
+#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			512
+#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			512
+#define TCPIP_TCP_DYNAMIC_OPTIONS             			true
+#define TCPIP_TCP_START_TIMEOUT_VAL		        	1000
+#define TCPIP_TCP_DELAYED_ACK_TIMEOUT		    		100
+#define TCPIP_TCP_FIN_WAIT_2_TIMEOUT		    		5000
+#define TCPIP_TCP_KEEP_ALIVE_TIMEOUT		    		10000
+#define TCPIP_TCP_CLOSE_WAIT_TIMEOUT		    		0
+#define TCPIP_TCP_MAX_RETRIES		            		5
+#define TCPIP_TCP_MAX_UNACKED_KEEP_ALIVES			6
+#define TCPIP_TCP_MAX_SYN_RETRIES		        	3
+#define TCPIP_TCP_AUTO_TRANSMIT_TIMEOUT_VAL			40
+#define TCPIP_TCP_WINDOW_UPDATE_TIMEOUT_VAL			200
+#define TCPIP_TCP_MAX_SOCKETS		                50
+#define TCPIP_TCP_TASK_TICK_RATE		        	1
+#define TCPIP_TCP_MSL_TIMEOUT		        	    0
+#define TCPIP_TCP_QUIET_TIME		        	    0
+#define TCPIP_TCP_COMMANDS   false
+#define TCPIP_TCP_EXTERN_PACKET_PROCESS   false
+#define TCPIP_TCP_DISABLE_CRYPTO_USAGE		        	    true
+
+
+
 #define TCPIP_STACK_USE_ZEROCONF_LINK_LOCAL
 #define TCPIP_ZC_LL_PROBE_WAIT 1
 #define TCPIP_ZC_LL_PROBE_MIN 1
@@ -206,31 +231,6 @@ extern "C" {
 #define TCPIP_ZC_MDNS_ANNOUNCE_NUM 3
 #define TCPIP_ZC_MDNS_ANNOUNCE_INTERVAL 250
 #define TCPIP_ZC_MDNS_ANNOUNCE_WAIT 250
-
-
-
-/*** TCP Configuration ***/
-#define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
-#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			64
-#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			128
-#define TCPIP_TCP_DYNAMIC_OPTIONS             			true
-#define TCPIP_TCP_START_TIMEOUT_VAL		        	1000
-#define TCPIP_TCP_DELAYED_ACK_TIMEOUT		    		100
-#define TCPIP_TCP_FIN_WAIT_2_TIMEOUT		    		5000
-#define TCPIP_TCP_KEEP_ALIVE_TIMEOUT		    		10000
-#define TCPIP_TCP_CLOSE_WAIT_TIMEOUT		    		0
-#define TCPIP_TCP_MAX_RETRIES		            		5
-#define TCPIP_TCP_MAX_UNACKED_KEEP_ALIVES			6
-#define TCPIP_TCP_MAX_SYN_RETRIES		        	3
-#define TCPIP_TCP_AUTO_TRANSMIT_TIMEOUT_VAL			40
-#define TCPIP_TCP_WINDOW_UPDATE_TIMEOUT_VAL			200
-#define TCPIP_TCP_MAX_SOCKETS		                50
-#define TCPIP_TCP_TASK_TICK_RATE		        	1
-#define TCPIP_TCP_MSL_TIMEOUT		        	    0
-#define TCPIP_TCP_QUIET_TIME		        	    0
-#define TCPIP_TCP_COMMANDS   false
-#define TCPIP_TCP_EXTERN_PACKET_PROCESS   false
-#define TCPIP_TCP_DISABLE_CRYPTO_USAGE		        	    true
 
 
 
@@ -401,7 +401,7 @@ extern "C" {
 
 /*** UDP Configuration ***/
 #define TCPIP_UDP_MAX_SOCKETS		                	10
-#define TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE		    	64
+#define TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE		    	512
 #define TCPIP_UDP_SOCKET_DEFAULT_TX_QUEUE_LIMIT    	 	3
 #define TCPIP_UDP_SOCKET_DEFAULT_RX_QUEUE_LIMIT			3
 #define TCPIP_UDP_USE_POOL_BUFFERS   false

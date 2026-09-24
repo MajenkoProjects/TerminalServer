@@ -104,9 +104,17 @@ COMMAND(show_port_status) {
     return ERR_OK;
 }
 COMMAND(list_ports) {
+    port_printf(port, "Id | Type             | Name     | Access  | Username\r\n");
+    port_printf(port, "---+------------------+----------+---------+---------\r\n");
     for (struct port *scan = ports; scan; scan = scan->next) {
         if (scan->type != PORT_NONE) {
-            port_printf(port, "%-2d | %-16s | %s\r\n", scan->no, port_types[scan->type], scan->name);
+            port_printf(port, "%-2d | %-16s | %-8s | %-7s | %-8s\r\n", 
+                    scan->no, 
+                    port_types[scan->type], 
+                    scan->name,
+                    access_names[scan->access],
+                    scan->username
+                    );
         }
     }
     return ERR_OK;

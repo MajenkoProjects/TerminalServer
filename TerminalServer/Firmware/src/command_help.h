@@ -150,6 +150,119 @@
 "Sends a BREAK signal to your currently connected session. Only has any effect\r\n" \
 "on Serial ports.\r\n"
 
+#define HELP_SHOW_COMMAND_TREE \
+"SHOW COMMAND TREE\r\n" \
+"\n" \
+"Show a tree view of every command available on the system.\r\n"
+
+#define HELP_DEFINE_PORT_ACCESS_DYNAMIC \
+"DEFINE PORT [<port>] ACCESS DYNAMIC\r\n" \
+"\n" \
+"Sets a port to operate in Dynamic access mode. In Dynamic access mode a port\r\n" \
+"is both Remote and Local at the same time. Under normal operation a Local>\r\n" \
+"prompt is presented on the port for interaction by a user, but the option to\r\n" \
+"connect to the port from another port or session remains available. Takes\r\n" \
+"after the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_ACCESS_LOCAL \
+"DEFINE PORT [<port>] ACCESS LOCAL\r\n" \
+"\n" \
+"Sets a port to operate solely in Local mode. In Local mode a Local> prompt is\r\n" \
+"presented on the port for interaction by a user. It is not possible to connect\r\n" \
+"to the port from another port or session. Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_ACCESS_REMOTE \
+"DEFINE PORT [<port>] ACCESS REMOTE\r\n" \
+"\n" \
+"Sets a port to operate solely in Remote mode. In Remote mode the port is\r\n" \
+"inactive until another port or session connects to that port at which point\r\n" \
+"the port becomes active and communicates with the connected device. Takes\r\n" \
+"effect after the next reboot.\r\n"
+
+
+
+#define HELP_DEFINE_PORT_BACKWARD \
+"DEFINE PORT [<port>] BACKWARD <key>\r\n" \
+"\n" \
+"Sets the keypress to switch to the previous session when connected to a remote\r\n" \
+"system. For control keys prefix the desired character with ^. Symbolic names\r\n" \
+"for many standard special keys (F1, PF3, etc) are available. Takes effect after\r\n" \
+"the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_FORWARD \
+"DEFINE PORT [<port>] FORWARD <key>\r\n" \
+"\n" \
+"Sets the keypress to switch to the next session when connected to a remote\r\n" \
+"system. For control keys prefix the desired character with ^. Symbolic names\r\n" \
+"for many standard special keys (F1, PF3, etc) are available. Takes effect after\r\n" \
+"the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_LOCAL \
+"DEFINE PORT [<port>] LOCAL <key>\r\n" \
+"\n" \
+"Sets the keypress to switch to the Local> prompt when connected to a remote\r\n" \
+"system. For control keys prefix the desired character with ^. Symbolic names\r\n" \
+"for many standard special keys (F1, PF3, etc) are available. Takes effect after\r\n" \
+"the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_BREAK_LOCAL \
+"DEFINE PORT [<port>] BREAK LOCAL\r\n" \
+"\n" \
+"Sets the Break mode to Local on a selected, or the current, port. In Local\r\n" \
+"Break mode any Break signal received on the selected port will cause that port\r\n" \
+"to enter the Local> prompt for user interaction. Takes effect after the next\r\n" \
+"reboot.\r\n"
+
+#define HELP_DEFINE_PORT_BREAK_REMOTE \
+"DEFINE PORT [<port>] BREAK REMOTE\r\n" \
+"\n" \
+"Sets the Break mode to Remote on a selected, or the current, port. In Remote\r\n" \
+"Break mode any Break signal received on the selected port will be forwarded to\r\n" \
+"the system currently being communicated with, if any. Takes effect after the\r\n" \
+"next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_BREAK_DISABLED \
+"DEFINE PORT [<port>] BREAK DISABLED\r\n" \
+"\n" \
+"Sets the Break mode to Disabled on a selected, or the current, port. In Disabled\r\n" \
+"Break mode any Break signal received on the selected port will be ignored.\r\n" \
+"Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_FLOW_NONE \
+"DEFINE PORT [<port>] FLOW NONE\r\n" \
+"\n" \
+"Disables flow control on the specified (or current if ommitted) port. Only\r\n" \
+"applicable to Serial ports. Takes effect after next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_FLOW_XONXOFF \
+"DEFINE PORT [<port>] FLOW XONXOFF\r\n" \
+"\n" \
+"Set the flow control on the specified (or current if ommitted) port to XON/XOFF.\r\n" \
+"Only applicable to Serial ports. Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_FLOW_RTSCTS \
+"DEFINE PORT [<port>] FLOW RTSCTS\r\n" \
+"\n" \
+"Set the flow control on the specified (or current if ommitted) port to RTS/CTS.\r\n" \
+"Only applicable to Serial ports. Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_FLOW_DTRDSR \
+"DEFINE PORT [<port>] FLOW HELP_DEFINE_PORT_FLOW_DTRDSR\r\n" \
+"\n" \
+"Set the flow control on the specified (or current if ommitted) port to DTR/DSR.\r\n" \
+"Only applicable to Serial ports. Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_PORT_NAME \
+"DEFINE PORT [<port>] NAME <name>\r\n" \
+"\n" \
+"Set the name of a port. Used for easy identification of the device connected\r\n" \
+"to the port, and with CONNECT LOCAL. Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_SERVER_DOMAIN \
+"DEFINE SERVER DOMAIN [NAME] <name>\r\n" \
+"\n" \
+"Sets the server's default DNS domain name for use in hostname lookups. Takes\r\n" \
+"effect after the next reboot.\r\n"
 
 #endif
 

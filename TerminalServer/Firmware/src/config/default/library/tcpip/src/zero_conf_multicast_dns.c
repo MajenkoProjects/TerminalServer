@@ -53,6 +53,8 @@ Microchip or any third party.
 #include "zero_conf_link_local_private.h"
 #include "zero_conf_helper.h"
 
+#include "port.h"
+
 #define MDNS_TASK_TICK_RATE     TCPIP_ZC_MDNS_TASK_TICK_RATE     // task rate, ms
 
 #define MDNS_PORT            TCPIP_ZC_MDNS_PORT
@@ -613,6 +615,7 @@ static void F_mDNSPutString(char* string, DNSDesc_t * pDNSdesc)
        // Also, skip over the '.' in the input string
        (void)TCPIP_UDP_Put(pDNSdesc->mDNS_socket, len);
        (void)TCPIP_UDP_ArrayPut(pDNSdesc->mDNS_socket, (uint8_t*)label, (uint16_t)len);
+
        string =  right_ptr;
 
        if(ch == '\0' || ch == '/' || ch == ',' || ch == '>')
@@ -970,6 +973,7 @@ static bool F_mDNSSendRR(mDNSResourceRecord *pRecord
                     (void)TCPIP_UDP_ArrayPut(pDNSdesc->mDNS_socket, ptrRecord, (uint16_t)sizeof(ptrRecord));
                 }
                 F_mDNSPutString( FC_CtxCom2CtxSd(pRecord->pOwnerCtx)->sd_qualified_name, pDNSdesc); //0x97
+												
             }
             break;
 
@@ -1515,7 +1519,7 @@ static uint16_t F_mDNSFetch(uint16_t wOffset, uint16_t wLen, uint8_t *pcString,D
 
 // Note: the resursive form of the F_mDNSDeCompress is currently maintained for comparison/debugging purposes
 // it will be eventually removed
-#define M_MDNS_DECOMP_ENABLE_RECURSION     0
+#define M_MDNS_DECOMP_ENABLE_RECURSION     1
 
 #if (M_MDNS_DECOMP_ENABLE_RECURSION != 0)
 static uint16_t F_mDNSDeCompress(uint16_t wPos, char *pcString, bool bFollowPtr, uint8_t cElement, uint8_t cDepth, DNSDesc_t *pDNSdesc)
@@ -2177,6 +2181,20 @@ static void F_mDNSResponder(DNSDesc_t *pDNSdesc)
             {
                 break;
             }
+
+
+	    {
+	        UDP_SOCKET_INFO info;
+                TCPIP_UDP_SocketInfoGet(pDNSdesc->mDNS_socket, &info);
+
+		if (info.sourceIPaddress.v4Add.Val == TCPIP_STACK_NetAddressGet(pDNSdesc->mTcpIpNetIf)) {
+			TCPIP_UDP_Discard(pDNSdesc->mDNS_socket);
+		    	(void)TCPIP_UDP_RemoteBind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL); 
+            		(void)TCPIP_UDP_Bind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL); 
+			break;
+		}
+	    }
+
 
             /* Reset the Remote-node information in UDP-socket */
             (void)TCPIP_UDP_RemoteBind(pDNSdesc->mDNS_socket, IP_ADDRESS_TYPE_IPV4, MDNS_PORT, NULL); 

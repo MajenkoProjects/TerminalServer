@@ -51,5 +51,5 @@ extern COMMAND(logout);
 extern COMMAND(set_priv);
 extern COMMAND(set_nopriv);
 extern COMMAND(help);
-
+extern COMMAND(show_command_tree);
 #endif
