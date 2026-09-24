@@ -8,3 +8,11 @@ TerminalServer/Firmware/TestCode.X/.generated_files
 /TerminalServer/Firmware/TestCode.X/.generated_files
 /TerminalServer/Bootloader/Bootloader.X/build/
 /TerminalServer/Bootloader/Bootloader.X/dist/
+*.bak?
+version.bin
+license.txt
+*.blend
+*.blend?
+*-cache
+*-table
+.history
