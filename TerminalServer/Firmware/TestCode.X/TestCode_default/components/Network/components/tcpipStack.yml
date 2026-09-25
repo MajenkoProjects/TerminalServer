@@ -22,8 +22,8 @@ data:
     - children:
       - attributes:
           id: tcpipStack
-          x: '1614'
-          y: '109'
+          x: '1424'
+          y: '182'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
@@ -57,7 +57,7 @@ data:
       children:
       - children:
         - attributes:
-            value: 'true'
+            value: 'false'
           type: User
         type: Values
       type: Boolean
@@ -80,7 +80,7 @@ data:
       - children:
         - attributes:
             id: tcpipStack
-            value: '19'
+            value: '73'
           type: Dynamic
         type: Values
       type: Integer

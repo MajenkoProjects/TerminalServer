@@ -17,7 +17,6 @@ groupModules:
   - tcpipStack
   - tcpipTcp
   - tcpipUdp
-  - tcpipZeroConf
 - group: Group1
   modules:
   - uart1
@@ -56,7 +55,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/FreeRTOSConfig.h
   hash: fd10b1e3df3ddf31272bc3ba5a60eece7e6de3813988c6fdeab7024bddc73e14
 - file: ../src/config/default/configuration.h
-  hash: 5a39c2a25ed6560d89752961883fe29dcbce2ca560ffa097905adb86a56587cf
+  hash: 89501017d5460d13f5df12d0afdff173622842abe2b98e90ca6e1853a3038639
 - file: ../src/config/default/definitions.h
   hash: 4ad5f153af68bac5e920633a9de78997d90e7c6ac19d256893b37b4b44d103f2
 - file: ../src/config/default/device.h
@@ -392,7 +391,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/freertos_hooks.c
   hash: c97b8f92ad60ff513a27ac7a27b3c6824b75005eb8f7b85fe5ae18deaf568c4e
 - file: ../src/config/default/initialization.c
-  hash: 4fa6d8efb72fdf838260e9a201441b8f4594c8faa663b484a223596c0765086f
+  hash: 911ec51fd5162e766f240f15756be15e9e32f6072af3243facc2e516be5a5b76
 - file: ../src/config/default/interrupts.c
   hash: 0e013fc2a55d1b289eb671523d7f19722c85e3cfd62222edcb5e34b5a2e8881b
 - file: ../src/config/default/interrupts.h
@@ -594,7 +593,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/library/tcpip/src/tcpip_packet.h
   hash: 2e5fb1156038bcc08245c1fd0270d7f40678fa005f0855653c94cb030053f3c0
 - file: ../src/config/default/library/tcpip/src/tcpip_private.h
-  hash: 80ce6ae20730be12005dfeb4882e85c957929bcca655fc77909c6c968f1f80d3
+  hash: 12b381ebba67db775ec9694a474fbe89eaf0c7dff7a7dca6436cbdda8414f205
 - file: ../src/config/default/library/tcpip/src/tcpip_reboot_manager.h
   hash: ae0c90024a3a67c01b1e3b624f620ccc2f216577879f5f4977bf400f6c0e33a7
 - file: ../src/config/default/library/tcpip/src/tcpip_types.h
@@ -619,22 +618,16 @@ generatedFileHashHistoryMap:
   hash: a3c7138f31d56ac604b52a1ccae780b1d17d9db76f7d44c980ede9b947787257
 - file: ../src/config/default/library/tcpip/src/wsc_private.h
   hash: 09704fba5dbbbe4ebdf5f926f28d7d8dc8272f5e9111895cc920954c2d35b8e0
-- file: ../src/config/default/library/tcpip/src/zero_conf_helper.c
-  hash: 9500220ab22b3b8c9860321ba5fd1599429c000755e265dbedd69819123bdcfb
 - file: ../src/config/default/library/tcpip/src/zero_conf_helper.h
   hash: fc6bd610d1e2cc529aab3f5d44d8a5b5fa554eeb7c62ae4922c6dbba6050c09d
-- file: ../src/config/default/library/tcpip/src/zero_conf_link_local.c
-  hash: 5c428f4885430bc9401fbae1e2a1e8e646331200225790d2b6630b55e3d6341a
 - file: ../src/config/default/library/tcpip/src/zero_conf_link_local_private.h
   hash: a186e628ce3de4a151758bb5c959df31bb2c54692098e7f957b811cd175add4a
 - file: ../src/config/default/library/tcpip/src/zero_conf_manager.h
   hash: 8fca0a795bc4967de3dfebb6fcb4c2f85e25de71e337eee0d849160d027d5112
-- file: ../src/config/default/library/tcpip/src/zero_conf_multicast_dns.c
-  hash: 988d5c14949f50d15e2d178bf1bece7e914b76b46e8104e0ec68d3b092b16b41
 - file: ../src/config/default/library/tcpip/tcp.h
   hash: e33c13ce23cdc23473bef55b68ac033f1abc6fcbff919ca82b4af97801137e59
 - file: ../src/config/default/library/tcpip/tcpip.h
-  hash: 8937d695ff9d6e7cfb98c979f062fc34c8b8b2a7cfac481da6f7bcc5734cfbcb
+  hash: f2b3ac2a448eac233ed3c87f57e10806e4c70b883335b8eb2876f718f41b6b9c
 - file: ../src/config/default/library/tcpip/tcpip_announce.h
   hash: fdb314e051ce514dffcb6f4205c1a826f61e4de8d513b48cae614e9c3a479ae6
 - file: ../src/config/default/library/tcpip/tcpip_commands.h

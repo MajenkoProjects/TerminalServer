@@ -36,7 +36,7 @@ data:
       - children:
         - attributes:
             id: tcpipUdp
-            value: '2920'
+            value: '16360'
           type: Dynamic
         type: Values
       type: Integer
@@ -47,7 +47,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '64'
+            value: '512'
           type: User
         type: Values
       type: Integer

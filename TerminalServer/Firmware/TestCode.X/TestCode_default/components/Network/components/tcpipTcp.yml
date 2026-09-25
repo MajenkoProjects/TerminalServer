@@ -74,7 +74,7 @@ data:
       - children:
         - attributes:
             id: tcpipTcp
-            value: '16200'
+            value: '57800'
           type: Dynamic
         type: Values
       type: Integer
@@ -96,7 +96,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '64'
+            value: '512'
           type: User
         type: Values
       type: Integer
@@ -107,7 +107,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '128'
+            value: '512'
           type: User
         type: Values
       type: Integer

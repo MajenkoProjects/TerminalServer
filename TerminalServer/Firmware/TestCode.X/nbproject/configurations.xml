@@ -482,6 +482,7 @@
       <itemPath>../src/version.h</itemPath>
       <itemPath>../src/command_tree.h</itemPath>
       <itemPath>../src/command_help.h</itemPath>
+      <itemPath>../src/mdns.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -496,7 +497,6 @@
               <itemPath>TestCode_default/components/Network/components/tcpipDns.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipDhcp.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipStack.yml</itemPath>
-              <itemPath>TestCode_default/components/Network/components/tcpipZeroConf.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipIcmp.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipNetConfig.yml</itemPath>
               <itemPath>TestCode_default/components/Network/components/tcpipTcp.yml</itemPath>
@@ -644,9 +644,6 @@
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_notify.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_packet.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/udp.c</itemPath>
-                <itemPath>../src/config/default/library/tcpip/src/zero_conf_helper.c</itemPath>
-                <itemPath>../src/config/default/library/tcpip/src/zero_conf_link_local.c</itemPath>
-                <itemPath>../src/config/default/library/tcpip/src/zero_conf_multicast_dns.c</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
@@ -771,6 +768,7 @@
       <itemPath>../src/util.c</itemPath>
       <itemPath>../src/port_commands.c</itemPath>
       <itemPath>../src/tcp_in.c</itemPath>
+      <itemPath>../src/mdns.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -823,6 +821,8 @@
       <C32>
         <property key="additional-warnings" value="true"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe"
+                  value="-Wno-format-truncation -Werror=incompatible-pointer-types -Werror=implicit-function-declaration"/>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
@@ -873,6 +873,7 @@
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
       <C32-AS>
+        <property key="appendMe" value=""/>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
@@ -905,6 +906,7 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -950,6 +952,7 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>
