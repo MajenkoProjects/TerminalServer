@@ -1,4 +1,0 @@
-{"summary": "MisraMacro", "data": [{"name": "BSP_H", "used": true, "file": "../src/config/default/bsp/bsp.h", "line": 44, "column": 0}, {"name": "custom_bsp", "used": false, "file": "../src/config/default/bsp/bsp.h", "line": 63, "column": 0}, {"name": "BSP_NAME", "used": false, "file": "../src/config/default/bsp/bsp.h", "line": 64, "column": 0}]}
-{"summary": "MisraExternalIdentifiers", "data": [{"name": "BSP_Initialize", "file": "../src/config/default/bsp/bsp.c", "line": 73, "column": 6, "decl": false}]}
-{"summary": "MisraInternalIdentifiers", "data": []}
-{"summary": "MisraLocalIdentifiers", "data": []}

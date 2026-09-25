@@ -324,11 +324,6 @@ const TCPIP_ICMP_MODULE_CONFIG tcpipICMPInitData =
 
 
 
-/*** Zeroconfig initialization data ***/
-const ZCLL_MODULE_CONFIG tcpipZCLLInitData =
-{
-    0
-};
 
 
 
@@ -410,8 +405,6 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] =
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
 
-    {TCPIP_MODULE_ZCLL,             0},                             // TCPIP_MODULE_ZCLL,
-    {TCPIP_MODULE_MDNS,             0},                             // TCPIP_MODULE_MDNS,
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER
 
 // MAC modules

@@ -11,11 +11,6 @@ struct ethernet_settings ethernet_settings;
 struct wifi_settings wifi_settings;
 
 
-/*** Zeroconfig initialization data ***/
-//const ZCLL_MODULE_CONFIG tcpipZCLLInitData =
-//{
-//    0
-//};
 
 /* ENC 600 Driver Configuration */
 const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
@@ -132,8 +127,6 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] = {
     {TCPIP_MODULE_TCP,              &tcpipTCPInitData},             // TCPIP_MODULE_TCP
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
- //   {TCPIP_MODULE_ZCLL,             0},                             // TCPIP_MODULE_ZCLL,
-    {TCPIP_MODULE_MDNS,             0},                             // TCPIP_MODULE_MDNS,
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER
     {TCPIP_MODULE_MAC_ENCJ60,       &drvEnc28j60InitData},          // TCPIP_MODULE_MAC_ENCJ60
 };
@@ -332,7 +325,7 @@ void ethernet_boot() {
     port_printf(CONSOLE, "IP Address: %-15s Gateway: %s\r\n", ip, gw);
     CONSOLE->fn_flush(CONSOLE);
 
-#if 1
+#if 0
 //    MDNSD_ERR_CODE
     switch (TCPIP_MDNS_ServiceRegister(
             handle, 
@@ -694,6 +687,6 @@ COMMAND(wifi_define_psk) {
     return ERR_OK;    
 }
 
-void add_mac(int index, TCPIP_MAC_ADDR *mac) {
-    TCPIP_HOSTS_CONFIGURATION[index].pMacObject->MAC_RxFilterHashTableEntrySet(NULL, mac);
-}
+//void add_mac(int index, TCPIP_MAC_ADDR *mac) {
+//    TCPIP_HOSTS_CONFIGURATION[index].pMacObject->MAC_RxFilterHashTableEntrySet(NULL, mac);
+//}

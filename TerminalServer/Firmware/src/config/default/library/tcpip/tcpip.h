@@ -798,8 +798,6 @@ typedef struct
 #include "tcpip/arp.h"
 #include "tcpip/tcp.h"
 #include "tcpip/udp.h"
-#include "tcpip/zero_conf_link_local.h"
-#include "tcpip/zero_conf_multicast_dns.h"
 #include "tcpip/icmp.h"
 #endif  // __TCPIP_H__
 

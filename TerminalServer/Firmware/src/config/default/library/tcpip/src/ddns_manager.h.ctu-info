@@ -1,4 +1,0 @@
-{"summary": "MisraMacro", "data": [{"name": "H_DYN_DNS_MANAGER_H", "used": true, "file": "../src/config/default/library/tcpip/src/ddns_manager.h", "line": 51, "column": 0}]}
-{"summary": "MisraExternalIdentifiers", "data": [{"name": "TCPIP_DDNS_Initialize", "file": "../src/config/default/library/tcpip/src/ddns_manager.h", "line": 85, "column": 6, "decl": true}, {"name": "TCPIP_DDNS_Deinitialize", "file": "../src/config/default/library/tcpip/src/ddns_manager.h", "line": 111, "column": 6, "decl": true}]}
-{"summary": "MisraInternalIdentifiers", "data": []}
-{"summary": "MisraLocalIdentifiers", "data": [{"name": "stackData", "file": "../src/config/default/library/tcpip/src/ddns_manager.h", "line": 85, "column": 65}, {"name": "initData", "file": "../src/config/default/library/tcpip/src/ddns_manager.h", "line": 85, "column": 88}]}

@@ -1,5 +1,0 @@
-{"summary": "MisraTypedefInfo", "data": [{"name": "DRV_HANDLE", "file": "../src/config/default/driver/driver_common.h", "line": 265, "column": 1, "used": false}]}
-{"summary": "MisraMacro", "data": [{"name": "DRIVER_COMMON_H", "used": true, "file": "../src/config/default/driver/driver_common.h", "line": 48, "column": 0}, {"name": "DRV_IO_ISBLOCKING", "used": false, "file": "../src/config/default/driver/driver_common.h", "line": 179, "column": 0}, {"name": "DRV_IO_ISNONBLOCKING", "used": false, "file": "../src/config/default/driver/driver_common.h", "line": 195, "column": 0}, {"name": "DRV_IO_ISEXCLUSIVE", "used": false, "file": "../src/config/default/driver/driver_common.h", "line": 211, "column": 0}, {"name": "DRV_HANDLE_INVALID", "used": false, "file": "../src/config/default/driver/driver_common.h", "line": 284, "column": 0}]}
-{"summary": "MisraExternalIdentifiers", "data": []}
-{"summary": "MisraInternalIdentifiers", "data": []}
-{"summary": "MisraLocalIdentifiers", "data": []}

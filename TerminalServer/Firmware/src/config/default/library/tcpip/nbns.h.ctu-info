@@ -1,5 +1,0 @@
-{"summary": "MisraTypedefInfo", "data": [{"name": "TCPIP_NBNS_MODULE_CONFIG", "file": "../src/config/default/library/tcpip/nbns.h", "line": 80, "column": 3, "used": false}]}
-{"summary": "MisraMacro", "data": [{"name": "H_NBNS_H_", "used": true, "file": "../src/config/default/library/tcpip/nbns.h", "line": 53, "column": 0}]}
-{"summary": "MisraExternalIdentifiers", "data": [{"name": "TCPIP_NBNS_Task", "file": "../src/config/default/library/tcpip/nbns.h", "line": 111, "column": 7, "decl": true}]}
-{"summary": "MisraInternalIdentifiers", "data": []}
-{"summary": "MisraLocalIdentifiers", "data": []}

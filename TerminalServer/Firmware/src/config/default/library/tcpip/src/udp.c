@@ -2639,6 +2639,20 @@ bool TCPIP_UDP_TxOffsetSet(UDP_SOCKET hUDP, uint16_t wOffset, bool relative)
     return false;
 }
 
+uint16_t TCPIP_UDP_TxOffsetGet(UDP_SOCKET hUDP) {
+    UDP_SOCKET_DCPT* pSkt = UDPSocketDcpt(hUDP);
+
+    if(pSkt != NULL)
+    {
+        if(UDPTxPktValid(pSkt))
+        {
+	    return pSkt->txWrite - pSkt->txStart;
+        }
+    }
+
+    return 0;
+}
+
 uint8_t* TCPIP_UDP_TxPointerGet(UDP_SOCKET s)
 {
     UDP_SOCKET_DCPT* pSkt = UDPSocketDcpt(s);

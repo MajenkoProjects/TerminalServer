@@ -1131,6 +1131,9 @@ bool                TCPIP_UDP_SocketInfoGet(UDP_SOCKET hUDP, UDP_SOCKET_INFO* pI
   */
 bool                TCPIP_UDP_TxOffsetSet(UDP_SOCKET hUDP, uint16_t wOffset, bool relative);
 
+uint16_t TCPIP_UDP_TxOffsetGet(UDP_SOCKET hUDP);
+
+
 // *****************************************************************************
 
 /*

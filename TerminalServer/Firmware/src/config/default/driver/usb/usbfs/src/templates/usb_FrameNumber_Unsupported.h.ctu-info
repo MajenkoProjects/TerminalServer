@@ -1,4 +1,0 @@
-{"summary": "MisraMacro", "data": [{"name": "_USB_FRAMENUMBER_UNSUPPORTED_H", "used": true, "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_FrameNumber_Unsupported.h", "line": 47, "column": 0}]}
-{"summary": "MisraExternalIdentifiers", "data": [{"name": "USB_FrameNumberGet_Unsupported", "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_FrameNumber_Unsupported.h", "line": 60, "column": 24, "decl": false}, {"name": "USB_ExistsFrameNumber_Unsupported", "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_FrameNumber_Unsupported.h", "line": 79, "column": 20, "decl": false}]}
-{"summary": "MisraInternalIdentifiers", "data": []}
-{"summary": "MisraLocalIdentifiers", "data": [{"name": "index", "file": "../src/config/default/driver/usb/usbfs/src/templates/usb_FrameNumber_Unsupported.h", "line": 60, "column": 70}]}
