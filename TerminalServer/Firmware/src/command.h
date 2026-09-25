@@ -18,6 +18,7 @@ enum command_states {
 
 #define CMD_TARGET          0x01
 #define CMD_SESSION         0x02
+#define CMD_SEMIPRIV        0x40
 #define CMD_PRIV            0x80
 
 #define OPT_TARGET struct port *target = port; if (opt) target = (struct port *)opt;

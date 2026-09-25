@@ -11,7 +11,6 @@
 #include "port.h"
 #include "network.h"
 #include "util.h"
-//#include "arp_private.h"
 
 UDP_SOCKET mdns_socket;
 
@@ -95,10 +94,7 @@ struct word {
     uint16_t offset;
 };
 
-#define RR_A 1
-#define RR_PTR 12
-#define RR_TXT 16
-#define RR_SRV 33
+
 
 struct mdns_rr *rr_data = NULL;
 struct word *rr_words = NULL;
@@ -212,7 +208,6 @@ void mdns_queue_rr_srv(char *instance, char *service, char *protocol, char *targ
     mdns_queue_rr(RR_SRV, srv);
 }
 
-
 void mdns_add_word(const char *word, uint16_t offset) {
     struct word *w = malloc(sizeof(struct word));
     if (!w) {
@@ -292,7 +287,6 @@ void mdns_finish_rr() {
     TCPIP_UDP_Put(mdns_socket, 0x00);
     TCPIP_UDP_Put(mdns_socket, 0x00);
 
-    
     for (struct mdns_rr *scan = rr_data; scan; scan = scan->next) {
         struct mdns_rr_srv *srv;
         struct mdns_rr_txt *txt;
@@ -416,8 +410,6 @@ void mdns_finish_rr() {
     discard_words();
     discard_rr_data();
 }
-
-
 
 int mdns_expand_name(uint8_t *buf, int offset, char *out, int maxlen) {
     char tmp[64] = {0};

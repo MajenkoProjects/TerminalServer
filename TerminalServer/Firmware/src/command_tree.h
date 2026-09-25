@@ -6,66 +6,66 @@
 #define END_OF_LIST {0, 0, 0, 0, 0}
 
 static const struct command show_port_sub[] = {
-    {"CHARACTERISTICS", &show_port_characteristics,     0,              NULL,                               NULL },
-    {"STATUS",          &show_port_status,              0,              NULL,                               NULL },
+    {"CHARACTERISTICS", &show_port_characteristics,     0,              NULL,                               HELP_SHOW_PORT_CHARACTERISTICS },
+    {"STATUS",          &show_port_status,              0,              NULL,                               HELP_SHOW_PORT_STATUS },
     END_OF_LIST
 };
 
 
 static const struct command show_all_sub[] = {
-    {"COMMANDS",        &show_command_tree,             0,              NULL,                               NULL},
-    {"PORTS",           &list_ports,                    0,              NULL,                               NULL},
+    {"COMMANDS",        &show_command_tree,             0,              NULL,                               HELP_SHOW_ALL_COMMANDS},
+    {"PORTS",           &list_ports,                    0,              NULL,                               HELP_SHOW_ALL_PORTS},
     END_OF_LIST
 };
 
 static const struct command show_sub[] = {
     {"ALL",             NULL,                           0,              show_all_sub,                       NULL},
-    {"PORT",            &show_port_characteristics,     CMD_TARGET,     show_port_sub,                      NULL},
-    {"SERVER",          &show_server,                   0,              NULL,                               NULL},
-    {"SESSIONS",        &show_sessions,                 CMD_TARGET,     NULL,                               NULL},
+    {"PORT",            &show_port_characteristics,     CMD_TARGET,     show_port_sub,                      HELP_SHOW_PORT_CHARACTERISTICS},
+    {"SERVER",          &show_server,                   0,              NULL,                               HELP_SHOW_SERVER},
+    {"SESSIONS",        &show_sessions,                 CMD_TARGET,     NULL,                               HELP_SHOW_SESSIONS},
     END_OF_LIST
 };
 
 static const struct command set_port_flow_sub[] = {
-    {"NONE",            &port_set_flow_none,            0,              NULL,                               NULL},
-    {"RTSCTS",          &port_set_flow_rts,             0,              NULL,                               NULL},
-    {"DTRDSR",          &port_set_flow_dtr,             0,              NULL,                               NULL},
-    {"XONXOFF",         &port_set_flow_xon,             0,              NULL,                               NULL},
+    {"NONE",            &port_set_flow_none,            0,              NULL,                               HELP_SET_PORT_FLOW_NONE},
+    {"RTSCTS",          &port_set_flow_rts,             0,              NULL,                               HELP_SET_PORT_FLOW_RTSCTS},
+    {"DTRDSR",          &port_set_flow_dtr,             0,              NULL,                               HELP_SET_PORT_FLOW_DTRDSR},
+    {"XONXOFF",         &port_set_flow_xon,             0,              NULL,                               HELP_SET_PORT_FLOW_XONXOFF},
     END_OF_LIST
 };
 
 static const struct command set_port_break_sub[] = {
-    {"DISABLED",        &port_set_break_disabled,       0,              NULL,                               NULL},
-    {"LOCAL",           &port_set_break_local,          0,              NULL,                               NULL},
-    {"REMOTE",          &port_set_break_remote,         0,              NULL,                               NULL},
+    {"DISABLED",        &port_set_break_disabled,       0,              NULL,                               HELP_SET_PORT_BREAK_DISABLED},
+    {"LOCAL",           &port_set_break_local,          0,              NULL,                               HELP_SET_PORT_BREAK_LOCAL},
+    {"REMOTE",          &port_set_break_remote,         0,              NULL,                               HELP_SET_PORT_BREAK_REMOTE},
     END_OF_LIST
 };
 
 static const struct command set_port_terminal_sub[] = {
-    {"TYPE",            &port_set_terminal_type,        0,              NULL,                               NULL},
+    {"TYPE",            &port_set_terminal_type,        0,              NULL,                               HELP_SET_PORT_TERMINAL_TYPE},
     END_OF_LIST
 };
 
 static const struct command set_port_local_sub[] = {
-    {"SWITCH",          &port_set_local_switch,         0,              NULL,                               NULL},
+    {"SWITCH",          &port_set_local_switch,         0,              NULL,                               HELP_SET_PORT_LOCAL},
     END_OF_LIST
 };
 
 static const struct command set_port_sub[] = {
-    {"BACKWARD",        &port_set_backward_switch,      0,              NULL,                               NULL},
+    {"BACKWARD",        &port_set_backward_switch,      0,              NULL,                               HELP_SET_PORT_BACKWARD},
     {"BREAK",           NULL,                           0,              set_port_break_sub,                 NULL},
     {"FLOW",            NULL,                           0,              set_port_flow_sub,                  NULL},
-    {"FORWARD",         &port_set_forward_switch,       0,              NULL,                               NULL},
-    {"LOCAL",           &port_set_local_switch,         0,              set_port_local_sub,                 NULL},
-    {"SPEED",           &port_set_speed,                0,              NULL,                               NULL},
+    {"FORWARD",         &port_set_forward_switch,       0,              NULL,                               HELP_SET_PORT_FORWARD},
+    {"LOCAL",           &port_set_local_switch,         0,              set_port_local_sub,                 HELP_SET_PORT_LOCAL},
+    {"SPEED",           &port_set_speed,                0,              NULL,                               HELP_SET_PORT_SPEED},
     {"TERMINAL",        NULL,                           0,              set_port_terminal_sub,              NULL},
     END_OF_LIST
 };
 
 static const struct command set_sub[] = {
-    {"NOPRIVILEGED",    &set_nopriv,                    0,              NULL, NULL},
-    {"PORT",            NULL,                           CMD_TARGET,     set_port_sub,                       NULL},
-    {"PRIVILEGED",      &set_priv,                      0,              NULL,                               NULL},
+    {"NOPRIVILEGED",    &set_nopriv,                    0,              NULL,                               HELP_SET_NOPRIVILEGED},
+    {"PORT",            NULL,                           CMD_TARGET | CMD_SEMIPRIV,     set_port_sub,                       NULL},
+    {"PRIVILEGED",      &set_priv,                      0,              NULL,                               HELP_SET_PRIVILEGED},
     END_OF_LIST
 };
 
@@ -93,7 +93,7 @@ static const struct command define_port_access_sub[] = {
 };
 
 static const struct command define_port_terminal_sub[] = {
-    {"TYPE",            &port_define_terminal_type,     CMD_PRIV,       NULL,                               NULL},
+    {"TYPE",            &port_define_terminal_type,     CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_TERMINAL_TYPE},
     END_OF_LIST
 };
 
@@ -131,12 +131,12 @@ static const struct command define_server_wifi_subnet_sub[] = {
 };
 
 static const struct command define_server_secondary_sub[] = {
-    {"NAMESERVER",      &ethernet_define_secdns,        CMD_PRIV,       NULL,                               NULL},
+    {"NAMESERVER",      &ethernet_define_secdns,        CMD_PRIV,       NULL,                               HELP_DEFINE_SERVER_SECONDARY_NAMESERVER},
     END_OF_LIST
 };
 
 static const struct command define_server_wifi_secondary_sub[] = {
-    {"NAMESERVER",      &wifi_define_secdns,            CMD_PRIV,       NULL,                               NULL},
+    {"NAMESERVER",      &wifi_define_secdns,            CMD_PRIV,       NULL,                               HELP_DEFINE_SERVER_WIFI_SECONDARY_NAMESERVER},
     END_OF_LIST
 };
 
@@ -165,14 +165,14 @@ static const struct command define_server_ethernet_sub[] = {
 
 static const struct command define_server_wifi_sub[] = {
     {"DHCP",            NULL,                           0,              define_server_wifi_dhcp_sub,        NULL},
-    {"IPADDRESS",       &wifi_define_ip,                CMD_PRIV,       NULL,                               NULL},
-    {"SUBNET",          &wifi_define_subnet,            CMD_PRIV,       define_server_wifi_subnet_sub,      NULL},
-    {"GATEWAY",         &wifi_define_gateway,           CMD_PRIV,       NULL,                               NULL},
-    {"MAC",             &wifi_define_mac_address,       CMD_PRIV,       define_server_wifi_mac_sub,         NULL},
-    {"NAMESERVER",      &wifi_define_pridns,            CMD_PRIV,       NULL,                               NULL},
-    {"PSK",             &wifi_define_psk,               CMD_PRIV,       NULL,                               NULL},
+    {"IPADDRESS",       &wifi_define_ip,                CMD_PRIV,       NULL,                               HELP_DEFINE_SERVER_WIFI_IPADDRESS},
+    {"SUBNET",          &wifi_define_subnet,            CMD_PRIV,       define_server_wifi_subnet_sub,      HELP_DEFINE_SERVER_WIFI_SUBNET},
+    {"GATEWAY",         &wifi_define_gateway,           CMD_PRIV,       NULL,                               HELP_DEFINE_SERVER_WIFI_GATEWAY},
+    {"MAC",             &wifi_define_mac_address,       CMD_PRIV,       define_server_wifi_mac_sub,         HELP_DEFINE_SERVER_WIFI_MAC_ADDRESS},
+    {"NAMESERVER",      &wifi_define_pridns,            CMD_PRIV,       NULL,                               HELP_DEFINE_SERVER_WIFI_NAMESERVER},
+    {"PSK",             &wifi_define_psk,               CMD_PRIV,       NULL,                               HELP_DEFINE_SERVER_WIFI_PSK},
     {"SECONDARY",       NULL,                           0,              define_server_wifi_secondary_sub,   NULL},
-    {"SSID",            &wifi_define_ssid,              CMD_PRIV,       NULL,                               NULL},
+    {"SSID",            &wifi_define_ssid,              CMD_PRIV,       NULL,                               HELP_DEFINE_SERVER_WIFI_SSID},
     END_OF_LIST
 };
 
@@ -197,7 +197,7 @@ static const struct command define_server_sub[] = {
 };
 
 static const struct command define_sub[] = {
-    {"PORT",            NULL,                           CMD_TARGET,     define_port_sub,                    NULL},
+    {"PORT",            NULL,                           CMD_TARGET | CMD_SEMIPRIV,     define_port_sub,                    NULL},
     {"SERVER",          NULL,                           0,              define_server_sub,                  NULL},
     END_OF_LIST
 };

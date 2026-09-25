@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+#define RR_A 1
+#define RR_PTR 12
+#define RR_TXT 16
+#define RR_SRV 33
+
 struct mdns_header {
     uint16_t tid;
     struct {

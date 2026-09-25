@@ -60,6 +60,12 @@
 "DHCP for obtaining network settings automatically. See also DEFINE SERVER\r\n" \
 "SECONDARY NAMESERVER. Takes effect on next reboot.\r\n"
 
+#define HELP_DEFINE_SERVER_WIFI_NAMESERVER \
+"DEFINE SERVER WIFI NAMESERVER <ip>\r\n" \
+"\n" \
+"Set the primary name server for the WiFi connection for use whan not using\r\n" \
+"DHCP for obtaining network settings automatically. See also DEFINE SERVER\r\n" \
+"WIFI SECONDARY NAMESERVER. Takes effect on next reboot.\r\n"
 
 #define HELP_DEFINE_SERVER_NAME \
 "DEFINE SERVER NAME <name>\r\n" \
@@ -80,6 +86,12 @@
 "Set the default gateway for the Ethernet connection when not using DHCP for\r\n" \
 "automatic configuration. Takes effect on next reboot.\r\n"
 
+#define HELP_DEFINE_SERVER_WIFI_GATEWAY \
+"DEFINE SERVER WIFI GATEWAY <ip>\r\n" \
+"\n" \
+"Set the default gateway for the WiFi connection when not using DHCP for\r\n" \
+"automatic configuration. Takes effect on next reboot.\r\n"
+
 #define HELP_DEFINE_SERVER_SUBNET \
 "DEFINE SERVER [ETHERNET] SUBNET [MASK] <mask>\r\n" \
 "\n" \
@@ -90,6 +102,12 @@
 "DEFINE SERVER [ETHERNET] IPADDRESS <ip>\r\n" \
 "\n" \
 "Set the static IP address of the Ethernet interface when not using DHCP for\r\n" \
+"automatic configuration. Takes effect on next reboot.\r\n"
+
+#define HELP_DEFINE_SERVER_WIFI_IPADDRESS \
+"DEFINE SERVER WIFI IPADDRESS <ip>\r\n" \
+"\n" \
+"Set the static IP address of the WiFi interface when not using DHCP for\r\n" \
 "automatic configuration. Takes effect on next reboot.\r\n"
 
 #define HELP_DEFINE_PORT_SPEED \
@@ -264,6 +282,156 @@
 "Sets the server's default DNS domain name for use in hostname lookups. Takes\r\n" \
 "effect after the next reboot.\r\n"
 
+#define HELP_DEFINE_PORT_TERMINAL_TYPE \
+"DEFINE PORT [<port>] TERMINAL TYPE <type>\r\n" \
+"\n" \
+"Sets the terminal type for a port. Used for command line control and telnet\r\n" \
+"connections. Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_SERVER_SECONDARY_NAMESERVER \
+"DEFINE SERVER [ETHERNET] SECONDARY NAMESERVER <ip>\r\n" \
+"\n" \
+"Sets the secondary DNS name server for the Ethernet port. Used when DHCP is not\r\n" \
+"being used for automatic configuration. Takes effect after the next reboot.\r\n"
+
+#define HELP_DEFINE_SERVER_WIFI_PSK \
+"DEFINE SERVER WIFI PSK <key>\r\n" \
+"\n" \
+"Set the Pre-Shared Key for the WiFi interface. Takes effect after the next\r\n" \
+"reboot.\r\n"
+
+#define HELP_DEFINE_SERVER_WIFI_SSID \
+"DEFINE SERVER WIFI SSID <name>\r\n" \
+"\n" \
+"Set the name of the WiFi network to connect to. Takes effect after the next\r\n" \
+"reboot.\r\n"
+
+#define HELP_DEFINE_SERVER_WIFI_SECONDARY_NAMESERVER \
+"DEFINE SERVER WIFI SECONDARY NAMESERVER <ip>\r\n" \
+"\n" \
+"Sets the secondary DNS name server for the WiFi port. Used when DHCP is not\r\n" \
+"being used for automatic configuration. Takes effect after the next reboot.\r\n"
+
+#define HELP_SET_PRIVILEGED \
+"SET PRIVILEGED\r\n" \
+"\n" \
+"Enables privileged mode for this port. Requires the privileged password.\r\n"
+
+#define HELP_SET_NOPRIVILEGED \
+"SET NOPRIVILEGED\r\n" \
+"\n" \
+"Disables privileged mode for this port."
+        
+
+#define HELP_SET_PORT_BACKWARD \
+"SET PORT [<port>] BACKWARD <key>\r\n" \
+"\n" \
+"Temporarily sets the keypress to switch to the previous session when connected\r\n" \
+"to a remote system. For control keys prefix the desired character with ^.\r\n" \
+"Symbolic names for many standard special keys (F1, PF3, etc) are available.\r\n" 
+
+#define HELP_SET_PORT_FORWARD \
+"SET PORT [<port>] FORWARD <key>\r\n" \
+"\n" \
+"Temporarily sets the keypress to switch to the next session when connected to a\r\n" \
+"remote system. For control keys prefix the desired character with ^. Symbolic\r\n" \
+"names for many standard special keys (F1, PF3, etc) are available.\r\n"
+
+#define HELP_SET_PORT_LOCAL \
+"SET PORT [<port>] LOCAL <key>\r\n" \
+"\n" \
+"Temporarily sets the keypress to switch to the Local> prompt when connected to\r\n" \
+"a remote system. For control keys prefix the desired character with ^. Symbolic\r\n" \
+"names for many standard special keys (F1, PF3, etc) are available.\r\n"
+
+#define HELP_SET_PORT_BREAK_LOCAL \
+"SET PORT [<port>] BREAK LOCAL\r\n" \
+"\n" \
+"Temporarily sets the Break mode to Local on a selected, or the current, port.\r\n" \
+"In Local Break mode any Break signal received on the selected port will cause\r\n" \
+"that port to enter the Local> prompt for user interaction.\r\n"
+
+#define HELP_SET_PORT_BREAK_REMOTE \
+"SET PORT [<port>] BREAK REMOTE\r\n" \
+"\n" \
+"Temporarily sets the Break mode to Remote on a selected, or the current, port.\r\n" \
+"In Remote Break mode any Break signal received on the selected port will be\r\n" \
+"forwarded to the system currently being communicated with, if any.\r\n" 
+
+#define HELP_SET_PORT_BREAK_DISABLED \
+"SET PORT [<port>] BREAK DISABLED\r\n" \
+"\n" \
+"Temporarily sets the Break mode to Disabled on a selected, or the current, port.\r\n" \
+"In Disabled Break mode any Break signal received on the selected port will be\r\n" \
+"ignored.\r\n"
+
+#define HELP_SET_PORT_FLOW_NONE \
+"SET PORT [<port>] FLOW NONE\r\n" \
+"\n" \
+"Temporarily disables flow control on the specified (or current if ommitted)\r\n" \
+"port. Only applicable to Serial ports.\r\n"
+
+#define HELP_SET_PORT_FLOW_XONXOFF \
+"SET PORT [<port>] FLOW XONXOFF\r\n" \
+"\n" \
+"Temporarily set the flow control on the specified (or current if ommitted) port\r\n" \
+"to XON/XOFF. Only applicable to Serial ports.\r\n"
+
+#define HELP_SET_PORT_FLOW_RTSCTS \
+"SET PORT [<port>] FLOW RTSCTS\r\n" \
+"\n" \
+"Temporarily set the flow control on the specified (or current if ommitted) port\r\n" \
+"to RTS/CTS. Only applicable to Serial ports.\r\n"
+
+#define HELP_SET_PORT_FLOW_DTRDSR \
+"SET PORT [<port>] FLOW HELP_DEFINE_PORT_FLOW_DTRDSR\r\n" \
+"\n" \
+"Temporarily et the flow control on the specified (or current if ommitted) port\r\n" \
+"to DTR/DSR. Only applicable to Serial ports.\r\n"
+
+#define HELP_SET_PORT_SPEED \
+"SET PORT [<port>] SPEED <baud>\r\n" \
+"\n" \
+"Temporarily set the baud rate of a Serial port. Takes an optional port number,\r\n" \
+"otherwise it operates on the current port. Any symmetric baud rate up to 1Mbaud\r\n" \
+"is supported. Note that asymmetric baud rates, like 1200/75 are not supported.\r\n" 
+
+#define HELP_SET_PORT_TERMINAL_TYPE \
+"SET PORT [<port>] TERMINAL TYPE <type>\r\n" \
+"\n" \
+"Temporarily sets the terminal type for a port. Used for command line control\r\n" \
+"and telnet connections.\r\n"
+
+#define HELP_SHOW_ALL_COMMANDS \
+"SHOW ALL COMMANDS\r\n" \
+"\n" \
+"Show a tree view of all available commands defined in the system.\r\n"
+
+#define HELP_SHOW_ALL_PORTS \
+"SHOW ALL PORTS\r\n" \
+"\n" \
+"List all the available ports and their current status.\r\n"
+
+#define HELP_SHOW_PORT_CHARACTERISTICS \
+"SHOW PORT [<port>] [CHARACTERISTICS]\r\n" \
+"\n" \
+"Show the current settings and status for a port."
+
+#define HELP_SHOW_PORT_STATUS \
+"SHOW PORT [<port>] STATUS\r\n" \
+"\n" \
+"Display the current operating status of a port including any handshaking\r\n" \
+"signals available."
+
+#define HELP_SHOW_SERVER \
+"SHOW SERVER\r\n" \
+"\n" \
+"Show the current status and settings of the terminal server."
+
+#define HELP_SHOW_SESSIONS \
+"SHOW SESSIONS\r\n" \
+"\n" \
+"List the currently active sessions associated with the current port."
 #endif
 
         

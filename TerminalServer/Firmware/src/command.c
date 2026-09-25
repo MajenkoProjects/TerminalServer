@@ -109,11 +109,13 @@ COMMAND(help) {
             case CMD_FOUND_WITH_SUB:
                 lastptr = ptr;
                 ptr = fptr->sub_commands;
-                if (fptr->help == NULL) {
-                    port_printf(port, "Sorry, help has not been written for that yet.\r\n");
-                    break;
+                if (argc == 0) {
+                    if (fptr->help == NULL) {
+                        port_printf(port, "Sorry, help has not been written for that yet.\r\n");
+                        break;
+                    }
+                    port_printf(port, "%s\r\n", fptr->help);
                 }
-                port_printf(port, "%s\r\n", fptr->help);
                 break;
         }
     }
@@ -214,6 +216,9 @@ error_t command_run(const struct command *tree, struct port *port, void *opt, in
                 if (!opt) {
                     return ERR_BADPORT;
                 }
+                if (matched->flags & CMD_SEMIPRIV) {
+                    if (!port->priv) return ERR_PRIV;
+                }
             }
         } else if (matched->flags & CMD_SESSION) {
             if ((argv[0][0] >= '0') && (argv[0][0] <= '9')) {
@@ -222,6 +227,9 @@ error_t command_run(const struct command *tree, struct port *port, void *opt, in
                 opt = get_session_by_number(pno);
                 if (!opt) {
                     return ERR_NOSESSION;
+                }
+                if (matched->flags & CMD_SEMIPRIV) {
+                    if (!port->priv) return ERR_PRIV;
                 }
             }
         }
