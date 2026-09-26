@@ -39,5 +39,18 @@ extern COMMAND(port_set_backward_switch);
 extern COMMAND(port_define_local_switch);
 extern COMMAND(port_define_forward_switch);
 extern COMMAND(port_define_backward_switch);
+extern COMMAND(port_set_bits);
+extern COMMAND(port_define_bits);
 
+extern COMMAND(port_set_parity_odd);
+extern COMMAND(port_set_parity_even);
+extern COMMAND(port_set_parity_mark);
+extern COMMAND(port_set_parity_space);
+extern COMMAND(port_set_parity_none);
+
+extern COMMAND(port_define_parity_odd);
+extern COMMAND(port_define_parity_even);
+extern COMMAND(port_define_parity_mark);
+extern COMMAND(port_define_parity_space);
+extern COMMAND(port_define_parity_none);
 #endif

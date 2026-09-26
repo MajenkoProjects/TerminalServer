@@ -249,25 +249,25 @@
 #define HELP_DEFINE_PORT_FLOW_NONE \
 "DEFINE PORT [<port>] FLOW NONE\r\n" \
 "\n" \
-"Disables flow control on the specified (or current if ommitted) port. Only\r\n" \
+"Disables flow control on the specified (or current if omitted) port. Only\r\n" \
 "applicable to Serial ports. Takes effect after next reboot.\r\n"
 
 #define HELP_DEFINE_PORT_FLOW_XONXOFF \
 "DEFINE PORT [<port>] FLOW XONXOFF\r\n" \
 "\n" \
-"Set the flow control on the specified (or current if ommitted) port to XON/XOFF.\r\n" \
+"Set the flow control on the specified (or current if omitted) port to XON/XOFF.\r\n" \
 "Only applicable to Serial ports. Takes effect after the next reboot.\r\n"
 
 #define HELP_DEFINE_PORT_FLOW_RTSCTS \
 "DEFINE PORT [<port>] FLOW RTSCTS\r\n" \
 "\n" \
-"Set the flow control on the specified (or current if ommitted) port to RTS/CTS.\r\n" \
+"Set the flow control on the specified (or current if omitted) port to RTS/CTS.\r\n" \
 "Only applicable to Serial ports. Takes effect after the next reboot.\r\n"
 
 #define HELP_DEFINE_PORT_FLOW_DTRDSR \
 "DEFINE PORT [<port>] FLOW HELP_DEFINE_PORT_FLOW_DTRDSR\r\n" \
 "\n" \
-"Set the flow control on the specified (or current if ommitted) port to DTR/DSR.\r\n" \
+"Set the flow control on the specified (or current if omitted) port to DTR/DSR.\r\n" \
 "Only applicable to Serial ports. Takes effect after the next reboot.\r\n"
 
 #define HELP_DEFINE_PORT_NAME \
@@ -368,25 +368,25 @@
 #define HELP_SET_PORT_FLOW_NONE \
 "SET PORT [<port>] FLOW NONE\r\n" \
 "\n" \
-"Temporarily disables flow control on the specified (or current if ommitted)\r\n" \
+"Temporarily disables flow control on the specified (or current if omitted)\r\n" \
 "port. Only applicable to Serial ports.\r\n"
 
 #define HELP_SET_PORT_FLOW_XONXOFF \
 "SET PORT [<port>] FLOW XONXOFF\r\n" \
 "\n" \
-"Temporarily set the flow control on the specified (or current if ommitted) port\r\n" \
+"Temporarily set the flow control on the specified (or current if omitted) port\r\n" \
 "to XON/XOFF. Only applicable to Serial ports.\r\n"
 
 #define HELP_SET_PORT_FLOW_RTSCTS \
 "SET PORT [<port>] FLOW RTSCTS\r\n" \
 "\n" \
-"Temporarily set the flow control on the specified (or current if ommitted) port\r\n" \
+"Temporarily set the flow control on the specified (or current if omitted) port\r\n" \
 "to RTS/CTS. Only applicable to Serial ports.\r\n"
 
 #define HELP_SET_PORT_FLOW_DTRDSR \
 "SET PORT [<port>] FLOW HELP_DEFINE_PORT_FLOW_DTRDSR\r\n" \
 "\n" \
-"Temporarily et the flow control on the specified (or current if ommitted) port\r\n" \
+"Temporarily set the flow control on the specified (or current if omitted) port\r\n" \
 "to DTR/DSR. Only applicable to Serial ports.\r\n"
 
 #define HELP_SET_PORT_SPEED \
@@ -399,7 +399,7 @@
 #define HELP_SET_PORT_TERMINAL_TYPE \
 "SET PORT [<port>] TERMINAL TYPE <type>\r\n" \
 "\n" \
-"Temporarily sets the terminal type for a port. Used for command line control\r\n" \
+"Temporarily set the terminal type for a port. Used for command line control\r\n" \
 "and telnet connections.\r\n"
 
 #define HELP_SHOW_ALL_COMMANDS \

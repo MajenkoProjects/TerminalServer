@@ -18,19 +18,16 @@ struct system_settings system_settings;
 
 struct settings_callbacks {
     void(*cbLoad)(uint8_t module, uint8_t parameter, uint8_t index, uint8_t len, uint8_t *data);
-    bool(*cbGetName)(uint8_t module, uint8_t parameter, uint8_t index, char *buf, uint8_t *len);
-    bool(*cbRenderSetting)(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data, char *buf, uint8_t *len);
-
 };
 
 static struct settings_callbacks callbacks[] = {
-    { &system_load_setting, NULL, NULL },
-    { &uart_load_setting, &uart_get_setting_name, &uart_render_setting },
-    { &usb_load_setting, NULL, NULL },
-    { NULL, NULL, NULL }, // SD
-    { &ethernet_load_setting, NULL, NULL },
-    { NULL, NULL, NULL }, // WIFI
-    { &port_load_setting, NULL, NULL }, // Global port settings
+    { &system_load_setting },
+    { &uart_load_setting },
+    { &usb_load_setting },
+    { NULL }, // SD
+    { &ethernet_load_setting },
+    { NULL }, // WIFI
+    { &port_load_setting }, // Global port settings
 };
 
 #define NUM_MODULES (sizeof(callbacks) / sizeof(struct settings_callbacks))
@@ -169,50 +166,6 @@ void setting_set(uint8_t module, uint8_t parameter, uint8_t index, uint8_t len, 
         memcpy(&buf[2], &setting, 128);
         I2C2_Write(i2c_addr, buf, 130);
         while (I2C2_IsBusy());
-    }
-}
-
-void settings_dump(struct port *port) {
-    char name[128];
-    uint8_t len = 128;
-    struct setting setting;
-    uint8_t set_addr[2];
-    uint8_t i2c_addr = 0x50;
-    
-    I2C2_Initialize();
-    
-    for (int addr = 0; addr < 131072; addr+=128) {
-        if (addr >= 65536) {
-            int a = addr - 65536;
-            set_addr[0] = (a >> 8) & 0xFF;
-            set_addr[1] = a & 0xFF;
-            i2c_addr = 0x54;
-        } else {
-            int a = addr;
-            set_addr[0] = (a >> 8) & 0xFF;
-            set_addr[1] = a & 0xFF;
-            i2c_addr = 0x50;
-        }
-        I2C2_Write(i2c_addr, set_addr, 2);
-        while (I2C2_IsBusy());
-        I2C2_Read(i2c_addr, (uint8_t *)&setting, 3); //sizeof(struct setting));
-        while (I2C2_IsBusy());
-        
-        if (setting.module < NUM_MODULES) {
-            I2C2_Read(i2c_addr, (uint8_t *)&setting + 3, sizeof(struct setting) - 3);
-            while (I2C2_IsBusy());
-            if (callbacks[setting.module].cbGetName != NULL) {
-                len = 128;
-                if (callbacks[setting.module].cbGetName(setting.module, setting.parameter, setting.index, name, &len)) {
-                    port_printf(port, "%s=", name);
-                }
-                len = 128;
-                if (callbacks[setting.module].cbRenderSetting(setting.module, setting.parameter, setting.index, setting.length, setting.data, name, &len)) {
-                    port_printf(port, "%s", name);
-                }
-                port_printf(port, "\r\n");
-            }
-        }
     }
 }
 

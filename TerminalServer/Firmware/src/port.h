@@ -9,6 +9,23 @@
 #include "command.h"
 #include "stream_buffer.h"
 #include "ttype.h"
+
+
+enum parity {
+    PARITY_NONE,
+    PARITY_ODD,
+    PARITY_EVEN,
+    PARITY_MARK,
+    PARITY_SPACE
+};
+
+enum flow {
+    FLOW_NONE,
+    FLOW_RTSCTS,
+    FLOW_DTRDSR,
+    FLOW_XONXOFF
+};
+
 #define CIRCULAR_BUFFER_SIZE 128
 #define MAX_COMMAND         80
 #define NUM_HISTORY         4
@@ -24,6 +41,7 @@ enum port_setting {
     SETTING_PORT_LOCAL_SWITCH,
     SETTING_PORT_BACKWARD_SWITCH,
     SETTING_PORT_FORWARD_SWITCH,
+    SETTING_PORT_NAME,
 };
 
 
@@ -64,6 +82,16 @@ enum break_mode {
 #define LOCAL_SWITCH_NONE -1
 #define LOCAL_SWITCH_ERROR -2
 
+struct port;
+
+struct port_setting_functions {
+    error_t (*speed)(struct port *port, uint32_t speed);
+    error_t (*parity)(struct port *port, enum parity speed);
+    error_t (*bits)(struct port *port, uint8_t bits);
+    error_t (*stop)(struct port *port, uint8_t stop);
+    error_t (*flow)(struct port *port, enum flow flow);
+};
+
 struct port {
     struct port *next;
     enum port_type type;
@@ -100,6 +128,8 @@ struct port {
     uint8_t keybuf_pos;
     struct session *active_session;
     bool priv;
+    struct port_setting_functions set;
+    struct port_setting_functions define;
     void (*fn_stop)(struct port *);
     void (*fn_start)(struct port *);
     bool (*fn_can_tx)(struct port *);
@@ -107,6 +137,7 @@ struct port {
     void (*fn_show_detail)(struct port *, struct port *);
     void (*fn_flush)(struct port *);
     void (*fn_yield)(struct port *);
+    error_t (*fn_status)(struct port *, struct port *);
 };
 
 extern struct port *ports;

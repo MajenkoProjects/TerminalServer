@@ -35,7 +35,6 @@ struct command {
     const char *help;
 };
 
-
 struct command_state {
     void (*fn_execute)(struct port *);
     const char *prompt;

@@ -38,11 +38,7 @@
 #define SETTINGS_SYSTEM_DOMAIN      0x02
 
 
-#define SETTINGS_UART_NAME          0x01
-#define SETTINGS_UART_BAUD          0x02
-#define SETTINGS_UART_FLAGS         0x03
 
-#define SETTINGS_USB_NAME           0x01
 
 struct setting {
     uint8_t module;

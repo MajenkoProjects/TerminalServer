@@ -1,56 +1,36 @@
 #include <ctype.h>
+#include <string.h>
+#include <stdio.h>
 
-#include "port_commands.h"
 #include "settings.h"
 #include "port.h"
-#include "uart.h"
-#include "usb.h"
 #include "util.h"
 #include "session.h"
 
 COMMAND(port_set_speed) {
     OPT_TARGET
-    if (target->type != PORT_SERIAL) {
-        return ERR_BADPORT;
-    }
-    
-    uart_set_baud(target, strtoul(argv[1], NULL, 10));
-    return ERR_OK;
+    if (argc != 1) return ERR_INCOMPLETE;
+    if (target->set.speed) return target->set.speed(target, strtoul(argv[0], NULL, 10));
+    return ERR_BADPORT;
 }
 COMMAND(port_set_name) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_set_name(target, argv[1]);
-            return ERR_OK;
-        case PORT_CDC:
-            usb_set_name(target, argv[1]);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (argc != 1) return ERR_INCOMPLETE;
+    snprintf(target->name, 9, argv[0]);
+    target->name[8] = 0;
+    return ERR_OK;
 }
 COMMAND(port_define_speed) {
     OPT_TARGET
-    if (target->type != PORT_SERIAL) {
-        return ERR_BADPORT;
-    }
-    
-    uart_define_baud(target, strtoul(argv[1], NULL, 10));
-    return ERR_OK;
+    if (argc != 1) return ERR_INCOMPLETE;
+    if (target->define.speed) return target->define.speed(target, strtoul(argv[0], NULL, 10));
+    return ERR_BADPORT;
 }
 COMMAND(port_define_name) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_define_name(target, argv[1]);
-            return ERR_OK;
-//        case PORT_CDC:
-//            usb_define_name(target, argv[1]);
-//            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (argc != 1) return ERR_INCOMPLETE;
+    setting_set(MODULE_PORT, SETTING_PORT_NAME, target->no, strlen(argv[0]), (uint8_t *)argv[0]);
+    return ERR_OK;
 }
 COMMAND(show_port_characteristics) {
     OPT_TARGET
@@ -93,15 +73,8 @@ COMMAND(show_port_characteristics) {
 }
 COMMAND(show_port_status) {
     OPT_TARGET
-    switch (port->type) {
-        case PORT_SERIAL:
-            uart_show_status(port, target);
-            break;
-        default:
-            port_printf(port, "No status for this port type\r\n");
-            break;
-    }
-    return ERR_OK;
+    if (port->fn_status) return port->fn_status(port, target);
+    return ERR_BADPORT;
 }
 COMMAND(list_ports) {
     port_printf(port, "Id | Type             | Name     | Access  | Username\r\n");
@@ -121,85 +94,43 @@ COMMAND(list_ports) {
 }
 COMMAND(port_set_flow_none) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_set_flow(target, UART_FLOW_NONE);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->set.flow) return target->set.flow(target, FLOW_NONE);
+    return ERR_BADPORT;
 }
 COMMAND(port_set_flow_rts) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_set_flow(target, UART_FLOW_RTSCTS);
-            target->fn_start(target);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->set.flow) return target->set.flow(target, FLOW_RTSCTS);
+    return ERR_BADPORT;
 }
 COMMAND(port_set_flow_dtr) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_set_flow(target, UART_FLOW_DTRDSR);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->set.flow) return target->set.flow(target, FLOW_DTRDSR);
+    return ERR_BADPORT;
 }
 COMMAND(port_set_flow_xon) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_set_flow(target, UART_FLOW_XONXOFF);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->set.flow) return target->set.flow(target, FLOW_XONXOFF);
+    return ERR_BADPORT;
 }
 COMMAND(port_define_flow_none) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_define_flow(target, UART_FLOW_NONE);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->define.flow) return target->define.flow(target, FLOW_NONE);
+    return ERR_BADPORT;
 }
 COMMAND(port_define_flow_rts) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_define_flow(target, UART_FLOW_RTSCTS);
-            target->fn_start(target);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->define.flow) return target->define.flow(target, FLOW_RTSCTS);
+    return ERR_BADPORT;
 }
 COMMAND(port_define_flow_dtr) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_define_flow(target, UART_FLOW_DTRDSR);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->define.flow) return target->define.flow(target, FLOW_DTRDSR);
+    return ERR_BADPORT;
 }
 COMMAND(port_define_flow_xon) {
     OPT_TARGET
-    switch (target->type) {
-        case PORT_SERIAL:
-            uart_define_flow(target, UART_FLOW_XONXOFF);
-            return ERR_OK;
-        default:
-            return ERR_BADPORT;
-    }
+    if (target->define.flow) return target->define.flow(target, FLOW_XONXOFF);
+    return ERR_BADPORT;
 }
 COMMAND(port_send_break) {
     if (!port->active_session) return ERR_NOSESSION;
@@ -361,4 +292,66 @@ COMMAND(port_define_backward_switch) {
     }
     setting_set(MODULE_PORT, SETTING_PORT_BACKWARD_SWITCH, target->no, 4, (uint8_t *)&key);
     return ERR_OK;
+}
+COMMAND(port_set_parity_odd) {
+    OPT_TARGET
+    if (!target->set.parity) return ERR_BADPORT;
+    return target->set.parity(target, PARITY_ODD);
+}
+COMMAND(port_set_parity_even) {
+    OPT_TARGET
+    if (!target->set.parity) return ERR_BADPORT;
+    return target->set.parity(target, PARITY_EVEN);
+}
+COMMAND(port_set_parity_mark) {
+    OPT_TARGET
+    if (!target->set.parity) return ERR_BADPORT;
+    return target->set.parity(target, PARITY_MARK);
+}
+COMMAND(port_set_parity_space) {
+    OPT_TARGET
+    if (!target->set.parity) return ERR_BADPORT;
+    return target->set.parity(target, PARITY_SPACE);
+}
+COMMAND(port_set_parity_none) {
+    OPT_TARGET
+    if (!target->set.parity) return ERR_BADPORT;    
+    return target->set.parity(target, PARITY_NONE);
+}
+COMMAND(port_define_parity_odd) {
+    OPT_TARGET
+    if (!target->define.parity) return ERR_BADPORT;
+    return target->define.parity(target, PARITY_ODD);
+}
+COMMAND(port_define_parity_even) {
+    OPT_TARGET
+    if (!target->define.parity) return ERR_BADPORT;
+    return target->define.parity(target, PARITY_EVEN);
+}
+COMMAND(port_define_parity_mark) {
+    OPT_TARGET
+    if (!target->define.parity) return ERR_BADPORT;
+    return target->define.parity(target, PARITY_MARK);
+}
+COMMAND(port_define_parity_space) {
+    OPT_TARGET
+    if (target->define.parity) return target->define.parity(target, PARITY_SPACE);
+    return ERR_BADPORT;
+}
+COMMAND(port_define_parity_none) {
+    OPT_TARGET
+    if (target->define.parity) return target->define.parity(target, PARITY_NONE);
+    return ERR_BADPORT;
+}
+COMMAND(port_set_bits) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    if (target->set.bits) return target->set.bits(target, strtoul(argv[0], NULL, 10));
+    return ERR_BADPORT;
+}
+COMMAND(port_define_bits) {
+    OPT_TARGET
+    if (argc != 1) return ERR_INCOMPLETE;
+    if (target->define.bits) return target->define.bits(target, strtoul(argv[0], NULL, 10));
+    return ERR_BADPORT;
 }

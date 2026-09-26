@@ -32,22 +32,67 @@ static bool running = false;
 
 static struct port *uart_ports[6];
 
+static uint8_t uart_parity(uint8_t in, enum parity parity) {
+    uint8_t t = in;
+    uint8_t p = 0;
+    switch (parity) {
+        case PARITY_NONE:
+            return in;
+        case PARITY_MARK:
+            return in | 0x80;
+        case PARITY_SPACE:
+            return in & 0x7F;
+        case PARITY_EVEN:
+            for (int i = 0; i < 7; i++) {
+                p ^= (t & 0x01);
+                t>>=1;
+            }
+            return (in & 0x7F) | (p << 7);
+        case PARITY_ODD:
+            for (int i = 0; i < 7; i++) {
+                p ^= (t & 0x01);
+                t>>=1;
+            }
+            p ^= 1;
+            return (in & 0x7F) | (p << 7);
+            
+    }
+    return in;
+}
 
-//TaskHandle_t uart_tasks_handle;
+static void uart_calculate_parity(struct port *port, uint8_t *buf, int len) {
+    struct uart_data *data = (struct uart_data *)port->port_data;
+    if (data->bits == 8) return;
+    for (int i = 0; i < len; i++) {
+        buf[i] = uart_parity(buf[i], data->parity);
+    }
+}
+
+// We don't really care about the parity. Just strip the parity bit out
+// and throw it away. We *could* check it, but... meh...
+static void uart_check_parity(struct port *port, uint8_t *buf, int len) {
+    struct uart_data *data = (struct uart_data *)port->port_data;
+    if (data->bits == 8) return;
+    for (int i = 0; i < len; i++) {
+        buf[i] &= 0x7F;
+    }
+}
+
 
 void uart_stop(struct port *port) {
     //port_printf(CONSOLE, "STOP\r\n");
     struct uart_data *data = (struct uart_data *)port->port_data;
     uint8_t c;
     switch (data->flow) {
-        case UART_FLOW_RTSCTS:
+        case FLOW_RTSCTS:
             GPIO_PinSet(data->rts);
             break;
-        case UART_FLOW_DTRDSR:
+        case FLOW_DTRDSR:
             GPIO_PinSet(data->dtr);
             break;
-        case UART_FLOW_XONXOFF:
+        case FLOW_XONXOFF:
             c = 19;
+            uart_calculate_parity(port, &c, 1);
             data->fn_write(&c, 1);
             break;
         default:
@@ -59,14 +104,15 @@ void uart_start(struct port *port) {
     struct uart_data *data = (struct uart_data *)port->port_data;
     uint8_t c;
     switch (data->flow) {
-        case UART_FLOW_RTSCTS:
+        case FLOW_RTSCTS:
             GPIO_PinClear(data->rts);
             break;
-        case UART_FLOW_DTRDSR:
+        case FLOW_DTRDSR:
             GPIO_PinClear(data->dtr);
             break;
-        case UART_FLOW_XONXOFF:
+        case FLOW_XONXOFF:
             c = 17;
+            uart_calculate_parity(port, &c, 1);
             data->fn_write(&c, 1);
             break;
         default:
@@ -77,11 +123,11 @@ void uart_start(struct port *port) {
 bool uart_can_tx(struct port *port) {
     struct uart_data *data = (struct uart_data *)port->port_data;
     switch (data->flow) {
-        case UART_FLOW_RTSCTS:
+        case FLOW_RTSCTS:
             return GPIO_PinRead(data->cts) == 0;
-        case UART_FLOW_DTRDSR:
+        case FLOW_DTRDSR:
             return GPIO_PinRead(data->dsr) == 0;
-        case UART_FLOW_XONXOFF:
+        case FLOW_XONXOFF:
             return !data->paused;
         default:
             break;
@@ -113,6 +159,7 @@ void uart_config(struct uart_data *data) {
     setup.baudRate = data->baud;
   
     switch (data->bits) {
+        case 7:
         case 8:
             setup.dataWidth = UART_DATA_8_BIT;
             break;
@@ -124,19 +171,25 @@ void uart_config(struct uart_data *data) {
             break;
     }
     
-    switch (data->parity) {
-        case UART_PAR_NONE:
-            setup.parity = UART_PARITY_NONE;
-            break;
-        case UART_PAR_EVEN:
-            setup.parity = UART_PARITY_EVEN;
-            break;
-        case UART_PAR_ODD:
-            setup.parity = UART_PARITY_ODD;
-            break;
-        default:
-            setup.parity = UART_PARITY_INVALID;
-            break;
+    
+    if (data->bits == 8) {
+        switch (data->parity) {
+            case PARITY_NONE:
+                setup.parity = UART_PARITY_NONE;
+                break;
+            case PARITY_EVEN:
+                setup.parity = UART_PARITY_EVEN;
+                break;
+            case PARITY_ODD:
+                setup.parity = UART_PARITY_ODD;
+                break;
+            default:
+                setup.parity = UART_PARITY_INVALID;
+                break;
+        }
+    } else {
+        // We do parity manually for 7 bit.
+        setup.parity = UART_PARITY_NONE;        
     }
 
     switch (data->stop) {
@@ -153,10 +206,16 @@ void uart_config(struct uart_data *data) {
     data->fn_setup(&setup, 0);
 }
 
-int uart_write_byte(struct uart_data *data, uint8_t b) {
-    data->fn_write(&b, 1);
-    return 1;
-}
+//int uart_write_byte(struct port *port, uint8_t b) {
+//    struct uart_data *data = (struct uart_data *)(port->port_data);
+//    uart_calculate_parity(port, &b, 1);
+//    data->fn_write(&b, 1);
+//    return 1;
+//}
+
+
+
+
 
 //static void UART_Tasks(void *pvParameters) {
 
@@ -177,6 +236,7 @@ void uart_transfer_data(struct port *port) {
             GPIO_PinSet(data->txled);
             data->txled_ts = ts;
             xStreamBufferReceive(port->write_buffer, temp, available_bytes, 1);
+            uart_calculate_parity(port, temp, available_bytes);
             data->fn_write(temp, available_bytes);
         }
     }
@@ -188,13 +248,13 @@ void uart_transfer_data(struct port *port) {
         GPIO_PinSet(data->rxled);
         data->rxled_ts = ts;
         data->fn_read(temp, available_bytes);
-
+        uart_check_parity(port, temp, available_bytes);
         if (((port->access == ACCESS_REMOTE) && in_session(port)) || (port->access == ACCESS_LOCAL)) {
             for (int i = 0; i < available_bytes; i++) {
                 uint8_t b = temp[i];
-                if ((data->flow == UART_FLOW_XONXOFF) && (b == 17)) {
+                if ((data->flow == FLOW_XONXOFF) && (b == 17)) {
                     data->paused = false;
-                } else if ((data->flow == UART_FLOW_XONXOFF) && (b == 19)) {
+                } else if ((data->flow == FLOW_XONXOFF) && (b == 19)) {
                     data->paused = true;
                 } else {
                     int lev1 = xStreamBufferBytesAvailable(port->read_buffer);
@@ -260,6 +320,7 @@ void uart_task() {
             data->baud = data->baud / 2;
             uart_config(data);
             uint8_t zero = 0xff;
+            uart_calculate_parity(port, &zero, 1);
             data->fn_write(&zero, 1);
             while (data->fn_write_get() > 0);
             while (!data->fn_tx_complete());
@@ -281,19 +342,6 @@ static void uart_flush(struct port *port) {
     }
 }
 
-void uart_create_ports() {
-    for (int i = 0; i < 6; i++) {
-        struct port *port = add_port(PORT_SERIAL, &uart_settings[i]);
-        port->local_switch = LOCAL_SWITCH_NONE;
-        port->fn_stop = &uart_stop;
-        port->fn_start = &uart_start;
-        port->fn_can_tx = &uart_can_tx;
-        port->fn_show_detail = &uart_show_port_characteristics;
-        port->fn_flush = &uart_flush;
-        port->fn_yield = &uart_transfer_data;
-        uart_ports[i] = port;
-    }    
-}
 
 void uart_boot() {
 
@@ -346,52 +394,26 @@ void uart_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t
     if (port == NULL) return;
     
     switch (parameter) {
-        case SETTINGS_UART_NAME:
-            if (length > 8) length = 8;
-            memset(port->name, 0, 9);
-            memcpy(port->name, data, length);
-            break;
         case SETTINGS_UART_BAUD:
             port_data->baud = *(uint32_t *)data;
             break;
-        case SETTINGS_UART_FLAGS:
-            port_data->parity = ((*(uint32_t *)data) >> 24) & 0xFF;
-            port_data->stop = ((*(uint32_t *)data) >> 16) & 0xFF;
-            port_data->bits = ((*(uint32_t *)data) >> 8) & 0xFF;
-            port_data->flow = (*(uint32_t *)data) & 0xFF;
+        case SETTINGS_UART_FLOW:
+            port_data->flow = data[0];
+            break;
+        case SETTINGS_UART_PARITY:
+            port_data->parity = data[0];
+            break;
+        case SETTINGS_UART_BITS:
+            port_data->bits = data[0];
+            break;
+        case SETTINGS_UART_STOPBITS:
+            port_data->stop = data[0];
             break;
           
     }
 }
 
-bool uart_get_setting_name(uint8_t module, uint8_t parameter, uint8_t index, char *buf, uint8_t *len) {
-    switch (parameter) {
-        case SETTINGS_UART_NAME:
-            *len = snprintf(buf, *len, "uart.%d.name", index+1);
-            return true;
-        case SETTINGS_UART_BAUD:
-            *len = snprintf(buf, *len, "uart.%d.baud", index+1);
-            return true;
-    }
-    return false;
-}
 
-bool uart_render_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data, char *buf, uint8_t *len) {
-    switch (parameter) {
-        case SETTINGS_UART_NAME:
-            memset(buf, 0, *len);
-            if (length > *len - 1) {
-                length = *len - 1;
-            }
-            memcpy(buf, data, length);
-            *len = length;
-            return true;
-        case SETTINGS_UART_BAUD:
-            *len = snprintf(buf, *len, "%u", *(uint32_t *)data);
-            return true;
-    }
-    return false;    
-}
 
 
 int get_index_from_port(struct port *port) {
@@ -403,59 +425,8 @@ int get_index_from_port(struct port *port) {
     return -1;
 }
 
-void uart_set_baud(struct port *port, uint32_t baud) {
-    int idx = get_index_from_port(port);
-    if (idx > 5) return;
-    uart_settings[idx].baud = baud;
-    uart_config(&uart_settings[idx]);
-}
 
-void uart_define_baud(struct port *port, uint32_t baud) {
-    int idx = get_index_from_port(port);
-    if (idx > 5) return;
- //   uart_settings[idx].baud = baud;
- //   uart_config(&uart_settings[idx]);
-    setting_set(MODULE_UART, SETTINGS_UART_BAUD, idx, 4, (uint8_t *)&baud);
-}
-
-void uart_set_name(struct port *port, const char *name) {
-    snprintf(port->name, 9, name);
-    port->name[8] = 0;
-}
-
-void uart_define_name(struct port *port, const char *name) {
-   // snprintf(port->name, 9, name);
-   // port->name[8] = 0;
-    int idx = get_index_from_port(port);
-    if (idx > 5) return;
-    setting_set(MODULE_UART, SETTINGS_UART_NAME, idx, strlen(name), (uint8_t *)name);
-}
-
-void uart_set_flow(struct port *port, uint8_t flow) {
-    int idx = get_index_from_port(port);
-    if (idx > 5) return;
-    struct uart_data *data = (struct uart_data *)port->port_data;
-    data->flow = flow;
-    uart_config(&uart_settings[idx]);
-}
-
-void uart_define_flow(struct port *port, uint8_t flow) {
-    int idx = get_index_from_port(port);
-    if (idx > 5) return;
-    struct uart_data *data = (struct uart_data *)port->port_data;
-    data->flow = flow;
-    uart_config(&uart_settings[idx]);
-
-    uint32_t flags = (
-            (data->parity << 24) |
-            (data->stop << 16) |
-            (data->bits << 8) |
-            data->flow
-            );
-    setting_set(MODULE_UART, SETTINGS_UART_FLAGS, idx, 4, (uint8_t *)&flags);
-}
-
-void uart_show_status(struct port *port, struct port *target) {
+static error_t uart_show_status(struct port *port, struct port *target) {
     struct uart_data *data = (struct uart_data *)port->port_data;
     port_printf(port, "DTR: %3s    DSR: %3s    RTS: %3s    CTS: %3s\r\n",
             GPIO_PinRead(data->dtr)?"On":"Off",
@@ -465,5 +436,115 @@ void uart_show_status(struct port *port, struct port *target) {
             
             );
     port_printf(port, "Status: %3s\r\n", GPIO_PinRead(data->status)?"On":"Off");
+    return ERR_OK;
+}
+static error_t uart_set_parity(struct port *port, enum parity parity) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    struct uart_data *data = (struct uart_data *)port->port_data;
+    data->parity = parity;
+    uart_config(&uart_settings[idx]);    
+    return ERR_OK;
+}
+static error_t uart_set_baud(struct port *port, uint32_t baud) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    uart_settings[idx].baud = baud;
+    uart_config(&uart_settings[idx]);
+    return ERR_OK;
+}
+static error_t uart_set_bits(struct port *port, uint8_t bits) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    struct uart_data *data = (struct uart_data *)port->port_data;
+    data->bits = bits;
+    uart_config(&uart_settings[idx]);    
+    return ERR_OK;
+}
+static error_t uart_set_stop(struct port *port, uint8_t stop) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    struct uart_data *data = (struct uart_data *)port->port_data;
+    if (stop < 1) return ERR_INVALID;
+    if (stop > 2) return ERR_INVALID;
+    data->stop = stop;
+    uart_config(&uart_settings[idx]);
+    return ERR_OK;
+}
+static error_t uart_set_flow(struct port *port, enum flow flow) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    struct uart_data *data = (struct uart_data *)port->port_data;
+    data->flow = flow;
+    uart_config(&uart_settings[idx]);
+    return ERR_OK;
+}
+static error_t uart_define_parity(struct port *port, enum parity parity) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    uint8_t p = parity;
+    setting_set(MODULE_UART, SETTINGS_UART_PARITY, idx, 1, (uint8_t *)&p);
+    return ERR_OK;
+}
+static error_t uart_define_baud(struct port *port, uint32_t baud) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    setting_set(MODULE_UART, SETTINGS_UART_BAUD, idx, 4, (uint8_t *)&baud);
+    return ERR_OK;
+}
+static error_t uart_define_bits(struct port *port, uint8_t bits) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    setting_set(MODULE_UART, SETTINGS_UART_BITS, idx, 1, (uint8_t *)&bits);
+    return ERR_OK;
+}
+static error_t uart_define_stop(struct port *port, uint8_t stop) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    setting_set(MODULE_UART, SETTINGS_UART_STOPBITS, idx, 1, (uint8_t *)&stop);
+    return ERR_OK;
+}
+static error_t uart_define_flow(struct port *port, enum flow flow) {
+    int idx = get_index_from_port(port);
+    if (idx > 5) return ERR_BADPORT;
+    uint8_t f = flow;
+    setting_set(MODULE_UART, SETTINGS_UART_FLOW, idx, 1, (uint8_t *)&f);
+    return ERR_OK;
 }
 
+
+
+
+
+
+
+
+
+
+void uart_create_ports() {
+    for (int i = 0; i < 6; i++) {
+        struct port *port = add_port(PORT_SERIAL, &uart_settings[i]);
+        port->local_switch = LOCAL_SWITCH_NONE;
+        port->fn_stop = &uart_stop;
+        port->fn_start = &uart_start;
+        port->fn_can_tx = &uart_can_tx;
+        port->fn_show_detail = &uart_show_port_characteristics;
+        port->fn_flush = &uart_flush;
+        port->fn_yield = &uart_transfer_data;
+        port->fn_status = &uart_show_status;
+
+        port->set.parity = &uart_set_parity;
+        port->set.speed = &uart_set_baud;
+        port->set.bits = &uart_set_bits;
+        port->set.stop = &uart_set_stop;
+        port->set.flow = &uart_set_flow;
+        
+        port->define.parity = &uart_define_parity;
+        port->define.speed = &uart_define_baud;
+        port->define.bits = &uart_define_bits;
+        port->define.stop = &uart_define_stop;
+        port->define.flow = &uart_define_flow;
+        
+        uart_ports[i] = port;
+    }    
+}

@@ -255,7 +255,3 @@ void fail_write() {
 void usb_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {
 }
 
-void usb_set_name(struct port *port, const char *name) {
-    snprintf(port->name, 9, name);
-    port->name[8] = 0;
-}

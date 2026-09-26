@@ -50,6 +50,8 @@
 #include "driver/spi/drv_spi.h"
 #include "system/debug/sys_debug.h"
 
+//port_printf(CONSOLE, "%s\r\n", X); CONSOLE->fn_flush(CONSOLE);
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Global Data
@@ -1165,6 +1167,7 @@ bool DRV_SPI_TransferSetup (
     return isSuccess;
 }
 
+
 void DRV_SPI_WriteReadTransferAdd (
     const DRV_HANDLE handle,
     void* pTransmitData,
@@ -1251,7 +1254,6 @@ void DRV_SPI_WriteReadTransferAdd (
         /* Update the unique transfer handle in output parameter.This handle can
          * be used by user to poll the status of transfer operation */
         *transferHandle = transferObj->transferHandle;
-
         /* Add the buffer object to the transfer buffer list */
         if (lDRV_SPI_TransferObjAddToList(dObj, transferObj) == true)
         {
@@ -1269,7 +1271,6 @@ void DRV_SPI_WriteReadTransferAdd (
                 (void) dObj->spiPlib->writeRead(transferObj->pTransmitData, transferObj->txSize, transferObj->pReceiveData, transferObj->rxSize);
             }
         }
-
         lDRV_SPI_ResourceUnlock(dObj);
     }
 }

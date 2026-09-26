@@ -51,12 +51,23 @@ static const struct command set_port_local_sub[] = {
     END_OF_LIST
 };
 
+static const struct command set_port_parity_sub[] = {
+    {"EVEN", &port_set_parity_even, CMD_TARGET | CMD_SEMIPRIV, NULL, NULL },
+    {"MARK", &port_set_parity_mark, CMD_TARGET | CMD_SEMIPRIV, NULL, NULL },
+    {"NONE", &port_set_parity_none, CMD_TARGET | CMD_SEMIPRIV, NULL, NULL },
+    {"ODD", &port_set_parity_odd, CMD_TARGET | CMD_SEMIPRIV, NULL, NULL },
+    {"SPACE", &port_set_parity_space, CMD_TARGET | CMD_SEMIPRIV, NULL, NULL },
+    END_OF_LIST
+};
+
 static const struct command set_port_sub[] = {
     {"BACKWARD",        &port_set_backward_switch,      0,              NULL,                               HELP_SET_PORT_BACKWARD},
+    {"BITS",            &port_set_bits,                 CMD_TARGET | CMD_SEMIPRIV, NULL, NULL},
     {"BREAK",           NULL,                           0,              set_port_break_sub,                 NULL},
     {"FLOW",            NULL,                           0,              set_port_flow_sub,                  NULL},
     {"FORWARD",         &port_set_forward_switch,       0,              NULL,                               HELP_SET_PORT_FORWARD},
     {"LOCAL",           &port_set_local_switch,         0,              set_port_local_sub,                 HELP_SET_PORT_LOCAL},
+    {"PARITY",          NULL,                           0,              set_port_parity_sub,                NULL},
     {"SPEED",           &port_set_speed,                0,              NULL,                               HELP_SET_PORT_SPEED},
     {"TERMINAL",        NULL,                           0,              set_port_terminal_sub,              NULL},
     END_OF_LIST
@@ -97,14 +108,25 @@ static const struct command define_port_terminal_sub[] = {
     END_OF_LIST
 };
 
+static const struct command define_port_parity_sub[] = {
+    {"EVEN", &port_define_parity_even, CMD_PRIV, NULL, NULL},
+    {"MARK", &port_define_parity_mark, CMD_PRIV, NULL, NULL},
+    {"NONE", &port_define_parity_none, CMD_PRIV, NULL, NULL},
+    {"ODD", &port_define_parity_odd, CMD_PRIV, NULL, NULL},
+    {"SPACE", &port_define_parity_space, CMD_PRIV, NULL, NULL},
+    END_OF_LIST
+};
+
 static const struct command define_port_sub[] = {
     {"ACCESS",          NULL,                           0,              define_port_access_sub,             NULL},
     {"BACKWARD",        &port_define_backward_switch,   CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_BACKWARD},
+    {"BITS",            &port_define_bits,              CMD_PRIV,       NULL, NULL},
     {"BREAK",           NULL,                           0,              define_port_break_sub,              NULL},
     {"FLOW",            NULL,                           0,              define_port_flow_sub,               NULL},
     {"FORWARD",         &port_define_forward_switch,    CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_FORWARD},
     {"LOCAL",           &port_define_local_switch,      CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_LOCAL},
     {"NAME",            &port_define_name,              CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_NAME},
+    {"PARITY",          NULL,                           CMD_PRIV,       define_port_parity_sub,             NULL},
     {"SPEED",           &port_define_speed,             CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_SPEED},
     {"TERMINAL",        NULL,                           0,              define_port_terminal_sub,           NULL},
     END_OF_LIST

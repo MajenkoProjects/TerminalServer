@@ -7,6 +7,7 @@
 #include "session.h"
 #include "util.h"
 #include "version.h"
+#include "usb.h"
 
 struct port *ports = NULL;
 
@@ -95,6 +96,17 @@ struct port *add_port(enum port_type type, void *data) {
             scan->fn_can_tx = NULL;
             scan->fn_close = NULL;
             scan->fn_show_detail = NULL;
+            scan->fn_status = NULL;
+            scan->set.bits = NULL;
+            scan->set.flow = NULL;
+            scan->set.parity = NULL;
+            scan->set.speed = NULL;
+            scan->set.stop = NULL;
+            scan->define.bits = NULL;
+            scan->define.flow = NULL;
+            scan->define.parity = NULL;
+            scan->define.speed = NULL;
+            scan->define.stop = NULL;
             scan->lines = 24;
             scan->columns = 80;
             scan->keybuf_pos = 0;
@@ -125,6 +137,17 @@ struct port *add_port(enum port_type type, void *data) {
     newport->fn_can_tx = NULL;
     newport->fn_close = NULL;
     newport->fn_show_detail = NULL;
+    newport->fn_status = NULL;
+    newport->set.bits = NULL;
+    newport->set.flow = NULL;
+    newport->set.parity = NULL;
+    newport->set.speed = NULL;
+    newport->set.stop = NULL;
+    newport->define.bits = NULL;
+    newport->define.flow = NULL;
+    newport->define.parity = NULL;
+    newport->define.speed = NULL;
+    newport->define.stop = NULL;
     newport->lines = 24;
     newport->columns = 80;
     newport->keybuf_pos = 0;
@@ -175,6 +198,8 @@ void delete_port(struct port *port) {
     port->lines = 24;
     port->ticks = 0;
     port->active_session = NULL;
+    memset(&port->set, 0, sizeof(struct port_setting_functions));
+    memset(&port->define, 0, sizeof(struct port_setting_functions));
     port->fn_stop = NULL;
     port->fn_start = NULL;
     port->fn_can_tx = NULL;
@@ -182,6 +207,7 @@ void delete_port(struct port *port) {
     port->fn_show_detail = NULL;    
     port->fn_flush = NULL;
     port->fn_yield = NULL;
+    port->fn_status = NULL;
 }
 
 struct port *get_port_by_number(int num) {
@@ -286,30 +312,35 @@ void greet(struct port *port) {
 
 void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data) {
     struct port *port = get_port_by_number(index);
+    if (!port) return;
+    if (port->no > 6 + USB_DEVICE_CDC_INSTANCES_NUMBER) return;
     char temp[17] = {0};
-    if (port) {
-        switch (parameter) {
-            case SETTING_PORT_BREAKMODE:
-                port->breakmode = *(uint8_t *)data;
-                break;
-            case SETTING_PORT_ACCESS:
-                port->access = *(uint8_t *)data;
-                break;
-            case SETTING_PORT_TERMINAL_TYPE:
-                if (length > 16) length = 16;
-                memcpy(temp, data, length);
-                set_terminal_type(port, temp);
-                break;
-            case SETTING_PORT_LOCAL_SWITCH:
-                port->local_switch = *(int *)data;
-                break;
-            case SETTING_PORT_FORWARD_SWITCH:
-                port->forward_switch = *(int *)data;
-                break;
-            case SETTING_PORT_BACKWARD_SWITCH:
-                port->backward_switch = *(int *)data;
-                break;
-        }
+    switch (parameter) {
+        case SETTING_PORT_BREAKMODE:
+            port->breakmode = *(uint8_t *)data;
+            break;
+        case SETTING_PORT_ACCESS:
+            port->access = *(uint8_t *)data;
+            break;
+        case SETTING_PORT_TERMINAL_TYPE:
+            if (length > 16) length = 16;
+            memcpy(temp, data, length);
+            set_terminal_type(port, temp);
+            break;
+        case SETTING_PORT_LOCAL_SWITCH:
+            port->local_switch = *(int *)data;
+            break;
+        case SETTING_PORT_FORWARD_SWITCH:
+            port->forward_switch = *(int *)data;
+            break;
+        case SETTING_PORT_BACKWARD_SWITCH:
+            port->backward_switch = *(int *)data;
+            break;
+        case SETTING_PORT_NAME:
+            if (length > 8) length = 8;
+            memset(port->name, 0, 9);
+            memcpy(port->name, data, length);
+            break;
     }
 }
 

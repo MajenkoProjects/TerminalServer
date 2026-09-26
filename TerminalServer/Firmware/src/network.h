@@ -56,7 +56,6 @@ extern void ethernet_init_defaults();
 extern void ethernet_boot();
 extern void ethernet_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t length, uint8_t *data);
 extern void print_network_settings(struct port *port);
-extern void add_mac(int index, TCPIP_MAC_ADDR *mac);
 
 
 
