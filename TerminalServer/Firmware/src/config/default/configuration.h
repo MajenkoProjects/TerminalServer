@@ -116,9 +116,6 @@ extern "C" {
 /* SPI Driver Instance 0 Configuration Options */
 #define DRV_SPI_INDEX_0                       0
 #define DRV_SPI_CLIENTS_NUMBER_IDX0           2
-#define DRV_SPI_DMA_MODE
-#define DRV_SPI_XMIT_DMA_CH_IDX0              SYS_DMA_CHANNEL_0
-#define DRV_SPI_RCV_DMA_CH_IDX0               SYS_DMA_CHANNEL_1
 #define DRV_SPI_QUEUE_SIZE_IDX0               4
 
 
@@ -156,7 +153,7 @@ extern "C" {
 /*** ICMPv4 Client Configuration ***/
 #define TCPIP_STACK_USE_ICMP_CLIENT
 #define TCPIP_ICMP_ECHO_REQUEST_TIMEOUT        500
-#define TCPIP_ICMP_TASK_TICK_RATE              10
+#define TCPIP_ICMP_TASK_TICK_RATE              5
 #define TCPIP_STACK_MAX_CLIENT_ECHO_REQUESTS   4
 #define TCPIP_ICMP_COMMAND_ENABLE              false
 
@@ -235,7 +232,7 @@ extern "C" {
 
 
 /* Network Configuration Index 0 */
-#define TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0 "eth0"
+#define TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0 "ENC28J60"
 
 #define TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0              "MCHPENC28_E"
 #define TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0               "00:04:a3:12:34:56"
@@ -346,7 +343,7 @@ extern "C" {
 /* TCP/IP stack event notification */
 #define TCPIP_STACK_USE_EVENT_NOTIFICATION
 #define TCPIP_STACK_USER_NOTIFICATION   false
-#define TCPIP_STACK_DOWN_OPERATION   false
+#define TCPIP_STACK_DOWN_OPERATION   true
 #define TCPIP_STACK_IF_UP_DOWN_OPERATION   true
 #define TCPIP_STACK_MAC_DOWN_OPERATION  true
 #define TCPIP_STACK_INTERFACE_CHANGE_SIGNALING   false

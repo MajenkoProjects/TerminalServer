@@ -3,7 +3,7 @@
 
 #include "config/default/driver/enc28j60/drv_enc28j60.h"
 
-
+#define ETHERNET_ENABLED
 #define WIFI_ENABLED
 
 
@@ -26,6 +26,7 @@ const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
 TCPIP_NETWORK_CONFIG TCPIP_HOSTS_CONFIGURATION[] = {
 
     /*** Network Configuration Index 0 ***/
+#ifdef ETHERNET_ENABLED
     {
         .interface = "eth0",
         .hostName = system_settings.nodename, // TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0,
@@ -40,6 +41,7 @@ TCPIP_NETWORK_CONFIG TCPIP_HOSTS_CONFIGURATION[] = {
         .pMacObject = &TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0,
 
     },
+#endif
 #ifdef WIFI_ENABLED
     {
         .interface = "wlan0",
@@ -123,7 +125,9 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] = {
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER
+#ifdef ETHERNET_ENABLED
     {TCPIP_MODULE_MAC_ENCJ60,       &drvEnc28j60InitData},          // TCPIP_MODULE_MAC_ENCJ60
+#endif
 };
 
 const size_t TCPIP_STACK_MODULE_CONFIG_TBL_SIZE = sizeof (TCPIP_STACK_MODULE_CONFIG_TBL) / sizeof (*TCPIP_STACK_MODULE_CONFIG_TBL);
@@ -132,6 +136,7 @@ const size_t TCPIP_STACK_MODULE_CONFIG_TBL_SIZE = sizeof (TCPIP_STACK_MODULE_CON
 SYS_MODULE_OBJ TCPIP_STACK_Init(void) {
     TCPIP_STACK_INIT    tcpipInit;
 
+#ifdef ETHERNET_ENABLED
     TCPIP_HOSTS_CONFIGURATION[0].hostName = system_settings.nodename;
     TCPIP_HOSTS_CONFIGURATION[0].macAddr = ethernet_settings.macaddr;
     TCPIP_HOSTS_CONFIGURATION[0].ipAddr = ethernet_settings.ip;
@@ -140,8 +145,9 @@ SYS_MODULE_OBJ TCPIP_STACK_Init(void) {
     TCPIP_HOSTS_CONFIGURATION[0].priDNS = ethernet_settings.pridns;
     TCPIP_HOSTS_CONFIGURATION[0].secondDNS = ethernet_settings.secdns;
     TCPIP_HOSTS_CONFIGURATION[0]. startFlags = ethernet_settings.flags;   
-
+#endif
 #ifdef WIFI_ENABLED
+#ifdef ETHERNET_ENABLED
     TCPIP_HOSTS_CONFIGURATION[1].hostName = system_settings.nodename;
     TCPIP_HOSTS_CONFIGURATION[1].macAddr = wifi_settings.macaddr;
     TCPIP_HOSTS_CONFIGURATION[1].ipAddr = wifi_settings.ip;
@@ -150,6 +156,16 @@ SYS_MODULE_OBJ TCPIP_STACK_Init(void) {
     TCPIP_HOSTS_CONFIGURATION[1].priDNS = wifi_settings.pridns;
     TCPIP_HOSTS_CONFIGURATION[1].secondDNS = wifi_settings.secdns;
     TCPIP_HOSTS_CONFIGURATION[1]. startFlags = wifi_settings.flags;   
+#else
+    TCPIP_HOSTS_CONFIGURATION[0].hostName = system_settings.nodename;
+    TCPIP_HOSTS_CONFIGURATION[0].macAddr = wifi_settings.macaddr;
+    TCPIP_HOSTS_CONFIGURATION[0].ipAddr = wifi_settings.ip;
+    TCPIP_HOSTS_CONFIGURATION[0].ipMask = wifi_settings.netmask;
+    TCPIP_HOSTS_CONFIGURATION[0].gateway = wifi_settings.gateway;
+    TCPIP_HOSTS_CONFIGURATION[0].priDNS = wifi_settings.pridns;
+    TCPIP_HOSTS_CONFIGURATION[0].secondDNS = wifi_settings.secdns;
+    TCPIP_HOSTS_CONFIGURATION[0]. startFlags = wifi_settings.flags;   
+#endif
 #endif
 
     

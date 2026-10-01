@@ -62,8 +62,6 @@ void UART_1_InterruptHandler( void );
 void UART_3_InterruptHandler( void );
 void UART_2_InterruptHandler( void );
 void I2C_2_InterruptHandler( void );
-void DMA_0_InterruptHandler( void );
-void DMA_1_InterruptHandler( void );
 void DRV_USBFS_USB_Handler( void );
 void UART_4_InterruptHandler( void );
 void UART_6_InterruptHandler( void );

@@ -14,10 +14,14 @@ struct wifi_settings wifi_settings;
 #include "network_config.h"
 
 void ethernet_boot() {
+#ifdef ETHERNET_ENABLED
     port_printf(CONSOLE, "Ethernet MAC Address: %s\r\n", ethernet_settings.macaddr);
     CONSOLE->fn_flush(CONSOLE);
+#endif
+#ifdef WIFI_ENABLED
     port_printf(CONSOLE, "WiFi MAC Address:     %s\r\n", wifi_settings.macaddr);
     CONSOLE->fn_flush(CONSOLE);
+#endif
     port_printf(CONSOLE, "Initializing network.\r\n");
     CONSOLE->fn_flush(CONSOLE);
     sysObj.netPres = NET_PRES_Initialize(0, (SYS_MODULE_INIT*)&netPresInitData);
@@ -152,7 +156,7 @@ void ethernet_init_defaults() {
 void print_network_settings(struct port *port) {
     const TCPIP_NET_HANDLE *eth0 = TCPIP_STACK_NetHandleGet("eth0");
 
-
+#ifdef ETHERNET_ENABLED
     port_printf(port, "Ethernet settings:\r\n");
     port_printf(port, "   MAC Address: %s\r\n", ethernet_settings.macaddr);
  
@@ -186,7 +190,7 @@ void print_network_settings(struct port *port) {
         port_printf(port, "   DHCP:        Disabled\r\n");
     }
 
-    
+#endif    
 #ifdef WIFI_ENABLED
 
     const TCPIP_NET_HANDLE *wlan0 = TCPIP_STACK_NetHandleGet("wlan0");

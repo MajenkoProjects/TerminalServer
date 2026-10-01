@@ -76,7 +76,6 @@
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
-#include "peripheral/dmac/plib_dmac.h"
 #include "peripheral/i2c/master/plib_i2c2_master.h"
 #include "net_pres/pres/net_pres.h"
 #include "net_pres/pres/net_pres_encryptionproviderapi.h"

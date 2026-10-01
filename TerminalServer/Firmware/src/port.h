@@ -10,7 +10,8 @@
 #include "stream_buffer.h"
 #include "ttype.h"
 
-#define DBG(...) port_printf(CONSOLE, __VA_ARGS__); CONSOLE->fn_flush(CONSOLE);
+#define DBG(...) port_printf(CONSOLE, __VA_ARGS__);
+//CONSOLE->fn_flush(CONSOLE);
 
 enum parity {
     PARITY_NONE,
