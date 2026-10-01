@@ -615,7 +615,7 @@ int32_t DRV_ENC28J60_ConfigStateTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst
             break;
 
         case DRV_ENC28J60_CS_SET_EIE:
-            reg.value = 0x5b;   // PKTIE, LINKIE, TXIE, TXERIE, RXERIE
+            reg.value = 0xDb;   // INTIE, PKTIE, LINKIE, TXIE, TXERIE, RXERIE
             ret = (*pDrvInst->busVTable->fpSfrBitSet)(pDrvInst, DRV_ENC28J60_SFR_EIE, reg, false);
             if(ret != 0)
             {

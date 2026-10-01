@@ -128,6 +128,7 @@ typedef struct
     DRV_SPI_TRANSFER_SETUP spiSetup;    
     /* Use Interrupts or not.*/
     bool intEnable;
+    int8_t intPin;
    
 }  DRV_ENC28J60_Configuration;
 
