@@ -10,6 +10,7 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>../src</sourceRootElem>
+                <sourceRootElem>../ESP32/wifi_bridge/main</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

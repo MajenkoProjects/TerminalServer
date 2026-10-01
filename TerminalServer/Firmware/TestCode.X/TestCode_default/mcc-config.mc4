@@ -55,9 +55,9 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/FreeRTOSConfig.h
   hash: fd10b1e3df3ddf31272bc3ba5a60eece7e6de3813988c6fdeab7024bddc73e14
 - file: ../src/config/default/configuration.h
-  hash: 89501017d5460d13f5df12d0afdff173622842abe2b98e90ca6e1853a3038639
+  hash: 60bf6c2e97db1586fc1729e3fee2a9e2d3b2f3f6ae5bb9beb06dce68145dbdb4
 - file: ../src/config/default/definitions.h
-  hash: 4ad5f153af68bac5e920633a9de78997d90e7c6ac19d256893b37b4b44d103f2
+  hash: ff3d1cbf94262f1a515a44e85018edf40770e6063412a7dc0d8c88c8416287e8
 - file: ../src/config/default/device.h
   hash: 4d4341a6f9628cea0bf73f980b639f7cb81089e55a60ad7e434be2a71e477442
 - file: ../src/config/default/driver/driver.h
@@ -141,11 +141,11 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/driver/spi/drv_spi.h
   hash: eda8fa2bb72a0ae5ec7e02371f071fb0836de15b4e3e90e13f7bb4ba0b687457
 - file: ../src/config/default/driver/spi/drv_spi_definitions.h
-  hash: ba06e15b49c559da9db2e2c1756bf29738c224a13a47fa77cd2722267fe3e68f
+  hash: 92f0a3e5c52999719e33e290cd002b19a2bef4f1f003b80f6373d2ebaa1c07f3
 - file: ../src/config/default/driver/spi/src/drv_spi.c
-  hash: 2e874cbc4bfca82c64fb21f109d4eb234fa97876caaffdadb0f431b5d566dad5
+  hash: 969545ebfd8a973c36fb6cbb17f59c30252645bb3424f45aa8b5757397faf921
 - file: ../src/config/default/driver/spi/src/drv_spi_local.h
-  hash: da64dbcce9bce2318aa28a15329ca8d8426e435993923aed858c933b7d56245d
+  hash: d19b6335d37bb86224a50feaac9678342de36b4c6649ca29b47caa39cf4e11fd
 - file: ../src/config/default/driver/usb/drv_usb.h
   hash: ee59efb38b1cf87e1c4bb6e833a9c9be0c106005daa6c1ccd90fca9fb5c17b44
 - file: ../src/config/default/driver/usb/drv_usb_external_dependencies.h
@@ -391,13 +391,13 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/freertos_hooks.c
   hash: c97b8f92ad60ff513a27ac7a27b3c6824b75005eb8f7b85fe5ae18deaf568c4e
 - file: ../src/config/default/initialization.c
-  hash: 911ec51fd5162e766f240f15756be15e9e32f6072af3243facc2e516be5a5b76
+  hash: 4d97e79af022e2d47bd4f92896796fc897d2f93205b0cdf7bbc744fce5dc7e3f
 - file: ../src/config/default/interrupts.c
-  hash: 0e013fc2a55d1b289eb671523d7f19722c85e3cfd62222edcb5e34b5a2e8881b
+  hash: 5a0825c8328390e15f44547729b6f882c9b1dba84a896867d0e389e7bad1c019
 - file: ../src/config/default/interrupts.h
-  hash: 709e1168abe3ad88124af60721f2efa68537ad78a072764d206926cd97f6c8e3
+  hash: 64579b6f69ff14c1a0d858fe55801053610472f07fd37cef4bcd13272d504d61
 - file: ../src/config/default/interrupts_a.S
-  hash: dde367ec6577f2912664ab5b258f0a36872a78b4f31471a37c00edc90bb2df08
+  hash: bebaafc8f1e3d1e0c118915309e88609c41b742808a5867650757b6a84f14575
 - file: ../src/config/default/library/tcpip/arp.h
   hash: 450ad6b0a80ffdcf33eab32bf8f662318da13ad5df0896a845cc28a490ff83a6
 - file: ../src/config/default/library/tcpip/berkeley_api.h
@@ -702,18 +702,14 @@ generatedFileHashHistoryMap:
   hash: d2e0839da9beba86ea927aad046330882835e6d1177f6f327eba3e7ecc7e66ff
 - file: ../src/config/default/peripheral/coretimer/plib_coretimer.h
   hash: 150fd91657d573ce1b1e905ee3d6cf71919849148320ac59a4cd5ac7579a0fd3
-- file: ../src/config/default/peripheral/dmac/plib_dmac.c
-  hash: 497b35209dc3d025476802ca0ee567dcd4a351f8ce08981b7b9eca2837b4055e
-- file: ../src/config/default/peripheral/dmac/plib_dmac.h
-  hash: 9309c5ea16bb0831a193a804866340b23c84452210e71c88161c2c5b84352b47
 - file: ../src/config/default/peripheral/evic/plib_evic.c
-  hash: cd1ad418d81b81bb90d635cd5a704c5fa3e0a18f4a6900ff3feabce396718e23
+  hash: 46e3b7e081f97146b59a5cdaad96083b0af87a04f644dba02a79c54b97005b53
 - file: ../src/config/default/peripheral/evic/plib_evic.h
   hash: 38dbf2913f1b768b945ec0ed50c01f65b8929b1b2765893be843d02c495cdfae
 - file: ../src/config/default/peripheral/gpio/plib_gpio.c
   hash: 5c67cf5674fa40cccfd1ad82db8bb12d342315914a1d4108172206c1598b4a7a
 - file: ../src/config/default/peripheral/gpio/plib_gpio.h
-  hash: 27b2439eefe02a90a52e76ee591e5c18593ab8ea257787b8fa68ae65e0b6e185
+  hash: 8ef62c7b0863c51d5ca4c66edab375e29a0a84a9bae4291a4d7c8fa984756a40
 - file: ../src/config/default/peripheral/i2c/master/plib_i2c2_master.c
   hash: 49ecf3c8c32763bae09ba0db543e47c6472fe07379b352d292373cbfbea8a7e9
 - file: ../src/config/default/peripheral/i2c/master/plib_i2c2_master.h
@@ -763,11 +759,11 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/system/debug/sys_debug.h
   hash: aa94da8f32cbcb40672145542d149d077ff8f4b25c08d47d53e3d206d1c6bb83
 - file: ../src/config/default/system/dma/sys_dma.c
-  hash: 6697075e2dd0c93e8af4afb996ae9c70dd8fac27d592a671130f32a9b8649b0b
+  hash: 772a0f1332b9de8ac954f390a0a69dad05fe6976d2d6fbc3de30a50021eb148f
 - file: ../src/config/default/system/dma/sys_dma.h
   hash: 2ace2bdc6e02e0084c855be7edbdcc0e96bbc5241c5d3c4e24fad1ac8c5330e7
 - file: ../src/config/default/system/dma/sys_dma_mapping.h
-  hash: 834d16463a4ad2643f1b3c521a9ef3a854d9f10895a4197392047f8e582e2f73
+  hash: edbc703ae272ef9118fece15f4e08a9dc755cc797448e96e34d8404e7089b42f
 - file: ../src/config/default/system/int/src/sys_int.c
   hash: 30ac5e334ca90204f545f1ab769ae26f421b910b3fb3be99354b364febceee64
 - file: ../src/config/default/system/int/sys_int.h

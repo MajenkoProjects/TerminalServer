@@ -281,7 +281,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -293,7 +293,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -1903,7 +1903,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '6416'
+            value: '0'
           type: Dynamic
         type: Values
       type: Hex
@@ -1915,7 +1915,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '1'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer
@@ -1927,7 +1927,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '25'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer
@@ -1951,7 +1951,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'false'
+            value: 'true'
           type: Dynamic
         type: Values
       type: Boolean
@@ -1963,7 +1963,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -1975,7 +1975,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -1987,7 +1987,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -1999,7 +1999,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2011,7 +2011,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: DMA_0_InterruptHandler
+            value: DMA_0_Handler
           type: Dynamic
         type: Values
       type: String
@@ -2023,7 +2023,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: DMA_0_InterruptHandler
+            value: DMA_0_Handler
           type: Dynamic
         type: Values
       type: String
@@ -2048,7 +2048,7 @@ data:
             id: enabled
           children:
           - type: Value
-            value: 'true'
+            value: 'false'
           type: Boolean
         type: Attributes
       type: File
@@ -2061,7 +2061,7 @@ data:
             id: enabled
           children:
           - type: Value
-            value: 'true'
+            value: 'false'
           type: Boolean
         type: Attributes
       type: File
@@ -2074,7 +2074,7 @@ data:
             id: enabled
           children:
           - type: Value
-            value: 'true'
+            value: 'false'
           type: Boolean
         type: Attributes
       type: File
@@ -2087,7 +2087,7 @@ data:
             id: enabled
           children:
           - type: Value
-            value: 'true'
+            value: 'false'
           type: Boolean
         type: Attributes
       type: File
@@ -2099,7 +2099,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2111,7 +2111,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2123,7 +2123,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: SPI1_TX
+            value: Software Trigger
           type: Dynamic
         type: Values
       type: Combo
@@ -2135,7 +2135,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2147,7 +2147,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '-1'
           type: Dynamic
         type: Values
       type: Integer
@@ -2171,7 +2171,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '6160'
+            value: '0'
           type: Dynamic
         type: Values
       type: Hex
@@ -2183,7 +2183,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '1'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer
@@ -2195,7 +2195,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '24'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer
@@ -2207,7 +2207,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'false'
+            value: 'true'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2219,7 +2219,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2231,7 +2231,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2243,7 +2243,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2255,7 +2255,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2267,7 +2267,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: DMA_1_InterruptHandler
+            value: DMA_1_Handler
           type: Dynamic
         type: Values
       type: String
@@ -2279,7 +2279,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: DMA_1_InterruptHandler
+            value: DMA_1_Handler
           type: Dynamic
         type: Values
       type: String
@@ -2291,7 +2291,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2303,7 +2303,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: SPI1_RX
+            value: Software Trigger
           type: Dynamic
         type: Values
       type: Combo
@@ -2315,7 +2315,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'true'
+            value: 'false'
           type: Dynamic
         type: Values
       type: Boolean
@@ -2327,7 +2327,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '1'
+            value: '-1'
           type: Dynamic
         type: Values
       type: Integer
@@ -2780,7 +2780,7 @@ data:
       children:
       - children:
         - attributes:
-            value: INT3
+            value: GPIO
           type: User
         type: Values
       type: String
@@ -2791,7 +2791,7 @@ data:
       children:
       - children:
         - attributes:
-            value: INT4
+            value: GPIO
           type: User
         type: Values
       type: String
@@ -5112,6 +5112,30 @@ data:
       attributes:
         id: APP_START_ADDRESS
         label: Application Start Address (Hex)
+      type: String
+    DCH0_CON_CHPRI_VALUE:
+      attributes:
+        id: DCH0_CON_CHPRI_VALUE
+        label: DCH0_CON_CHPRI_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: String
+    DCH1_CON_CHPRI_VALUE:
+      attributes:
+        id: DCH1_CON_CHPRI_VALUE
+        label: DCH1_CON_CHPRI_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '0'
+          type: Dynamic
+        type: Values
       type: String
   userData:
     children:

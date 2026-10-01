@@ -50,4 +50,23 @@ data:
           type: User
         type: Values
       type: Boolean
+    TCPIP_ICMP_TASK_TICK_RATE:
+      attributes:
+        id: TCPIP_ICMP_TASK_TICK_RATE
+        label: ICMP Client Task Rate (in msec)
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: '5'
+          type: User
+        type: Values
+      type: Integer
   userData: {}

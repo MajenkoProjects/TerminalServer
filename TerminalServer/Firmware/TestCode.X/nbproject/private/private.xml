@@ -3,20 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/TestCode.X/FIXES.txt</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/network.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port_commands.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/wifi.h</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/app.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command_help.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/mdns.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/network.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/uart.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/wifi.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/ESP32/wifi_bridge/main/wifi_bridge.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/uart.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/network.c</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/network_config.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_in.c</file>
             <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/config/default/configuration.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/telnet_out.c</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/command_tree.h</file>
-            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/mdns.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/src/port.h</file>
+            <file>file:/home/matt/git/TerminalServer/TerminalServer/Firmware/ESP32/wifi_bridge/main/wifi_bridge.h</file>
         </group>
     </open-files>
 </project-private>

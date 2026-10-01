@@ -45,7 +45,7 @@ struct mac {
     uint8_t address[6];
 };
 
-#define NUM_MACS 32
+#define NUM_MACS 8
 
 uint32_t activity_rx_led_ticks = 0;
 uint32_t activity_tx_led_ticks = 0;
@@ -126,7 +126,7 @@ void my_post_trans_cb(spi_slave_transaction_t *trans)
 static const spi_slave_interface_config_t slvcfg = {
     .mode = 0,
     .spics_io_num = GPIO_CS,
-    .queue_size = 1,
+    .queue_size = 2,
     .flags = 0,
     .post_setup_cb = my_post_setup_cb,
     .post_trans_cb = my_post_trans_cb
@@ -139,38 +139,34 @@ static const spi_slave_interface_config_t slvcfg = {
 // Callback signature required by ESP-IDF Wi-Fi driver
 static esp_err_t wifi_l2_rx_cb(void *buffer, uint16_t len, void *eb)
 {
-#if 0
-    //uint8_t *buf = (uint8_t *)buffer;
-
-    //for (int i = 0; i < len; i++) {
-    //    if ((i%16)==0) printf("\r\n");
-        //printf("%02x ", buf[i]);
-    //}
-    //printf("\r\n");
-
-#endif
-    bool allowed = false;
-    for (int i = 0; i < NUM_MACS; i++) {
-        if (macs[i].used == false) continue;
-        if (memcmp(macs[i].address, buffer, 6) == 0) {
-            allowed = true;
-            break;
-        }
-    }
-
-    if (!allowed) {
-        //printf("Packet rejected\r\n");
-        esp_wifi_internal_free_rx_buffer(eb);
-        return ESP_OK;        
-    }
-    
-    
-    gpio_set_level(GPIO_LED2, 1);
-    activity_rx_led_ticks = xTaskGetTickCount();
-    
-    
-    //printf("Got RX packet length %d\r\n", len);
     if (buffer && len > 0) {
+        
+        uint8_t *buf = (uint8_t *)buffer;
+        bool allowed = false;
+        for (int i = 0; i < NUM_MACS; i++) {
+            if (macs[i].used == false) continue;
+            if (    (macs[i].address[0] == buf[0]) &&
+                    (macs[i].address[1] == buf[1]) &&
+                    (macs[i].address[2] == buf[2]) &&
+                    (macs[i].address[3] == buf[3]) &&
+                    (macs[i].address[4] == buf[4]) &&
+                    (macs[i].address[5] == buf[5])) {
+                allowed = true;
+                break;
+            }
+        }
+
+        if (!allowed) {
+            //printf("Packet rejected\r\n");
+            esp_wifi_internal_free_rx_buffer(eb);
+            return ESP_OK;        
+        }
+
+        //printf("RX:%lu\r\n", xTaskGetTickCount());
+        
+        gpio_set_level(GPIO_LED2, 1);
+        activity_rx_led_ticks = xTaskGetTickCount();
+
         gpio_set_level(GPIO_INT, 0);
         l2_packet_t pkt;
         pkt.length = len;
@@ -280,6 +276,8 @@ void wifi_init_sta(void)
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_start());
 
+    esp_wifi_set_ps(WIFI_PS_NONE);
+    
     // 6. Register L2 RX callback AFTER esp_wifi_start()
     ESP_ERROR_CHECK(esp_wifi_internal_reg_rxcb(WIFI_IF_STA, wifi_l2_rx_cb));
 	return;
@@ -294,9 +292,21 @@ void app_main(void)
 	uint8_t *tx = NULL;
 	uint8_t *rx = NULL;
 
+    uint8_t *txA = NULL;
+    uint8_t *txB = NULL;
+
+    uint8_t *rxA = NULL;
+    uint8_t *rxB = NULL;
+
+    
     init_io();
-	spi_slave_transaction_t transaction = { 0 };
-	transaction.length = SPI_MAX_SIZE * 8;
+	spi_slave_transaction_t transactionA = { 0 };
+	spi_slave_transaction_t transactionB = { 0 };
+    spi_slave_transaction_t *transaction = NULL;
+    
+	transactionA.length = SPI_MAX_SIZE * 8;
+	transactionB.length = SPI_MAX_SIZE * 8;
+
 
 	spi_slave_transaction_t *result = NULL;
     wifi_to_spi_queue = xQueueCreate(32, sizeof(l2_packet_t));
@@ -338,9 +348,22 @@ void app_main(void)
 				gpio_set_pull_mode(GPIO_SCLK, GPIO_PULLUP_ONLY);
 				gpio_set_pull_mode(GPIO_CS, GPIO_PULLUP_ONLY);
 				spi_slave_initialize(RCV_HOST, &buscfg, &slvcfg, SPI_DMA_CH_AUTO);
-				transaction.tx_buffer = tx = spi_bus_dma_memory_alloc(RCV_HOST, SPI_MAX_SIZE, 0);
-				transaction.rx_buffer = rx = spi_bus_dma_memory_alloc(RCV_HOST, SPI_MAX_SIZE, 0);
+				transactionA.tx_buffer = txA = spi_bus_dma_memory_alloc(RCV_HOST, SPI_MAX_SIZE, 0);
+				transactionA.rx_buffer = rxA = spi_bus_dma_memory_alloc(RCV_HOST, SPI_MAX_SIZE, 0);
+				transactionB.tx_buffer = txB = spi_bus_dma_memory_alloc(RCV_HOST, SPI_MAX_SIZE, 0);
+				transactionB.rx_buffer = rxB = spi_bus_dma_memory_alloc(RCV_HOST, SPI_MAX_SIZE, 0);
+
+                if ((transactionA.tx_buffer == NULL) ||
+                 (transactionB.tx_buffer == NULL) ||
+                 (transactionA.rx_buffer == NULL) ||
+                 (transactionB.rx_buffer == NULL)) {
+                    printf("No memory\r\n");
+                    while(1);
+                }
 				//printf("SPI interface configured\r\n");
+                tx = txA;
+                rx = rxA;
+                transaction = &transactionA;
 				state = STATE_INIT_WIFI;
 				break;
 
@@ -351,26 +374,33 @@ void app_main(void)
 				break;
 
 			case STATE_QUEUE_XFER:
-            	transaction.length = SPI_MAX_SIZE * 8;
-                transaction.tx_buffer = tx;
-                transaction.rx_buffer = rx;
-				if (spi_slave_queue_trans(RCV_HOST, &transaction, 1) == ESP_OK) {
-					//printf("Waiting for transaction...\r\n");
-					state = STATE_WAIT_XFER;
-				}
+                //printf("Queued initial transfer\r\n");
+				spi_slave_queue_trans(RCV_HOST, transaction, 1);
+                state = STATE_WAIT_XFER;
 				break;
 
 			case STATE_WAIT_XFER:
 				if (spi_slave_get_trans_result(RCV_HOST, &result, 1) == ESP_OK) {
-					bytes = result->trans_len / 8;
-					//rintf("Got transaction 0x%02x of %d bytes.\r\n", rx[0], bytes);
+                    //printf("Got transfer.\r\n");
+                    if (result == &transactionA) {
+                        transaction = &transactionB;
+                        //printf("Transfer is A\r\n");
+                    } else {
+                        transaction = &transactionA;
+                        //printf("Transfer is B\r\n");
+                    }
+                    tx = (uint8_t *)transaction->tx_buffer;
+                    rx = (uint8_t *)result->rx_buffer;
+                    bytes = result->trans_len / 8;
 					state = STATE_GOT_XFER;
+                    //printf("Code %02x\r\n", rx[0]);
 				}
 				break;
 
 			case STATE_GOT_XFER:
 				switch (rx[0]) {
                     case REG_RESET:
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
                         memset(ssid, 0, 33);
                         memset(psk, 0, 65);
                         xQueueReset(wifi_to_spi_queue);
@@ -379,6 +409,7 @@ void app_main(void)
                         break;
                         
 					case REG_SSID:
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
 						if (bytes > 1) {
 							memset(ssid, 0, 33);
 							memcpy(ssid, &rx[1], bytes - 1);
@@ -386,6 +417,7 @@ void app_main(void)
 						}
 						break;
 					case REG_PSK:
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
 						if (bytes > 1) {
 							memset(psk, 0, 65);
 							memcpy(psk, &rx[1], bytes - 1);
@@ -403,6 +435,7 @@ void app_main(void)
                             wifi_status.nextsize = 0;
                         }
                         memcpy(tx, wifi_status.val, sizeof(wifi_status_t));
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
 						break;
 					case REG_RBSTAT:
                         tx[0] = uxQueueMessagesWaiting(wifi_to_spi_queue);
@@ -415,29 +448,27 @@ void app_main(void)
                             tx[1] = 0;
                             tx[2] = 0;
                         }
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
 						break;
 					case REG_RPACKET:
                         if (xQueueReceive(wifi_to_spi_queue, &pkt, 1) == pdTRUE) {
-                            //printf("Send packet %d\r\n", pkt.length);
                             tx[0] = pkt.length >> 8;
                             tx[1] = pkt.length;
                             memcpy(&tx[2], pkt.payload, pkt.length);
                             free(pkt.payload);
+                            //printf("XF:%lu\r\n", xTaskGetTickCount());
                         }
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
 						break;
 					case REG_WPACKET:
-                        //printf("TX L2 Frame Len=%d | Dst: %02x:%02x:%02x:%02x:%02x:%02x | Src: %02x:%02x:%02x:%02x:%02x:%02x | Type: 0x%02x%02x\n",
-                        //        bytes - 1,
-                        //        rx[1], rx[2], rx[3], rx[4], rx[5], rx[6],
-                        //        rx[7], rx[8], rx[9], rx[10], rx[11], rx[12],
-                        //        rx[13], rx[14]);
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
 
                         ESP_ERROR_CHECK(esp_wifi_internal_tx(WIFI_IF_STA, (void *)&rx[1], bytes - 1));
                         gpio_set_level(GPIO_LED3, 1);
                         activity_tx_led_ticks = xTaskGetTickCount();
-                       // vTaskDelay(pdMS_TO_TICKS(10));
                         break;
 					case REG_ADDMAC:
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
                         if (bytes == 7) {
                             if (!first_mac_set) {
                                 esp_wifi_set_mac(WIFI_IF_STA, &rx[1]);
@@ -458,16 +489,18 @@ void app_main(void)
                         }
 						break;
 					case REG_DELMAC:
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1);
 						break;
+                    default:
+                        spi_slave_queue_trans(RCV_HOST, transaction, 1)  ;                      
 				}
-				state = STATE_QUEUE_XFER;
+				state = STATE_WAIT_XFER;
 				break;
 		}
         
         switch (wifi_status.state) {
             case WIFI_IDLE:
                 if (strlen(ssid) > 0) {
-                    //printf("Attempting connection to WiFi...\r\n");
                     wifi_status.state = WIFI_CONNECT;
                 }
                 break;
@@ -491,7 +524,6 @@ void app_main(void)
                 break;
 
             case WIFI_DISCONNECTED:
-                //printf("Retrying the connection\r\n");
                 wifi_status.state = WIFI_CONNECT;
                 break;
         }
