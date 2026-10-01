@@ -40,6 +40,7 @@ Microchip or any third party.
 
 #include "tcpip/src/tcpip_private.h"
 #include "tcpip/src/ipv4_private.h"
+#include "port.h"
 
 #if defined(TCPIP_STACK_USE_IPV4)
 

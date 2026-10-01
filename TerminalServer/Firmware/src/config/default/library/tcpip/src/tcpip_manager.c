@@ -37,7 +37,7 @@ Microchip or any third party.
 
 
 
-
+#include "port.h"
 
 
 #define TCPIP_THIS_MODULE_ID    TCPIP_MODULE_MANAGER

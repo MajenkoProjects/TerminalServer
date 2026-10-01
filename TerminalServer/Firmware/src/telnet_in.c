@@ -89,7 +89,7 @@ void telnet_in_transfer_data(struct port *port) {
     // Process each byte in turn
     for (int byteno = 0; byteno < available_bytes; byteno++) {
         uint8_t this_byte = incoming_buffer[byteno];
-
+        //DBG("%02x ", incoming_buffer[byteno]);
         if (data->iac_sb) {
             switch (this_byte) {
                 case TELOPT_IAC:

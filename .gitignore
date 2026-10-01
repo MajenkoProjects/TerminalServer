@@ -17,3 +17,5 @@ license.txt
 *-table
 .history
 build
+/TerminalServer/Firmware/TerminalServer.X/dist/
+*.ctu-info

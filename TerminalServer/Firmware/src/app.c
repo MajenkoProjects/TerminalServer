@@ -1,7 +1,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdio.h>
-//#include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
 
@@ -20,9 +19,8 @@
 #include "tcp_in.h"
 #include "version.h"
 #include "mdns.h"
+#include "wifi.h"
 
-
-#include "config/default/driver/spi/drv_spi_definitions.h"
 
 struct module {
     void (*fn_boot)();
@@ -52,7 +50,7 @@ static const struct module modules[] = {
     /* Telnet Out */        { NULL,                     &telnet_out_initialize, &telnet_out_task },
     /* TCP In */            { NULL,                     &tcp_in_init,           &tcp_in_task },
                             { NULL,                     &mdns_init,             &mdns_tasks },
-                            { &spi_open,                NULL,                   &spi_tasks },
+    //                        { &wifi_open,               NULL,                   &wifi_tasks },
     /* Final boot */        { NULL,                     &final_boot_message,    NULL },
 };
 
@@ -326,118 +324,3 @@ void APP_Tasks ( void ) {
     
 }
 
-DRV_HANDLE spi;
-
-void spi_open() {
-    spi = DRV_SPI_Open(0, DRV_IO_INTENT_READWRITE);
-    if (spi == DRV_HANDLE_INVALID) {
-        port_printf(CONSOLE, "Unable to open SPI\r\n");
-        return;
-    }
-    
-    
-    DRV_SPI_TRANSFER_SETUP setup;
-
-    setup.baudRateInHz = 10000000;
-    setup.dataBits = DRV_SPI_DATA_BITS_8;
-    setup.chipSelect = SYS_PORT_PIN_RD11;
-    setup.clockPhase = DRV_SPI_CLOCK_PHASE_VALID_TRAILING_EDGE;
-    setup.clockPolarity = DRV_SPI_CLOCK_POLARITY_IDLE_HIGH;
-    setup.csPolarity = DRV_SPI_CS_POLARITY_ACTIVE_LOW;
-
-    DRV_SPI_TransferSetup ( spi, &setup );
-
-}
-
-uint32_t ts = 0;
-#define SPI_XFER_SIZE 1523
-uint8_t rx[SPI_XFER_SIZE];
-uint8_t tx[SPI_XFER_SIZE];
-
-bool active = false;
-
-enum spi_state {
-    SPI_INIT = 0,
-    SPI_WAIT,
-    SPI_SEND_SSID,
-    SPI_WAIT_SSID,
-    SPI_PAUSE,
-    SPI_SEND_PSK,
-    SPI_WAIT_PSK,
-    SPI_IDLE
-};
-
-enum registers {
-        REG_SSID = 0x80,
-        REG_PSK,
-        REG_STATUS,
-        REG_SIGNAL,
-        REG_PBSTAT,
-        REG_RPACKET,
-        REG_WPACKET,
-        REG_ADDMAC,
-        REG_DELMAC
-};
-
-
-enum spi_state spi_state = SPI_INIT;
-
-uint32_t delay_ts = 0;
-
-DRV_SPI_TRANSFER_HANDLE transfer;
-void spi_tasks() {
-
-    switch (spi_state) {
-        case SPI_INIT:
-            delay_ts = xTaskGetTickCount();
-            spi_state = SPI_WAIT;
-            break;
-            
-        case SPI_WAIT:
-            if (xTaskGetTickCount() - delay_ts > 5000) {
-                port_printf(CONSOLE, "Starting WiFi\r\n"); CONSOLE->fn_flush(CONSOLE);
-                spi_state = SPI_SEND_SSID;
-            }
-            break;
-            
-        case SPI_SEND_SSID:
-            memset(tx, 0, SPI_XFER_SIZE);
-            tx[0] = REG_SSID;
-            strcat((char *)tx, "Majenko-Test");
-            DRV_SPI_WriteTransferAdd(spi, tx, strlen((char *)tx), &transfer);
-            spi_state = SPI_WAIT_SSID;
-            break;
-            
-        case SPI_WAIT_SSID:
-            if (DRV_SPI_TransferStatusGet(transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-                spi_state = SPI_PAUSE;
-                delay_ts = xTaskGetTickCount();
-            }
-            break;
-            
-        case SPI_PAUSE:
-            if (xTaskGetTickCount() - delay_ts > 1000) {
-                spi_state = SPI_SEND_PSK;
-            }
-            break;
-
-        case SPI_SEND_PSK:
-            memset(tx, 0, SPI_XFER_SIZE);
-            tx[0] = REG_PSK;
-            strcat((char *)tx, "password");
-            DRV_SPI_WriteTransferAdd(spi, tx, strlen((char *)tx), &transfer);
-            spi_state = SPI_WAIT_PSK;
-            break;
-
-        case SPI_WAIT_PSK:
-            if (DRV_SPI_TransferStatusGet(transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-                spi_state = SPI_IDLE;
-            }
-            break;
-
-        case SPI_IDLE:
-            break;
-    }
-
-    
-}

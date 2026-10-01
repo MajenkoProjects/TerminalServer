@@ -458,11 +458,21 @@
 #define ENC_RESET_PIN                  GPIO_PIN_RA5
 
 /*** Macros for ESP_INT pin ***/
+#define ESP_INT_Set()               (LATASET = (1<<14))
+#define ESP_INT_Clear()             (LATACLR = (1<<14))
+#define ESP_INT_Toggle()            (LATAINV= (1<<14))
+#define ESP_INT_OutputEnable()      (TRISACLR = (1<<14))
+#define ESP_INT_InputEnable()       (TRISASET = (1<<14))
 #define ESP_INT_Get()               ((PORTA >> 14) & 0x1)
 #define ESP_INT_GetLatch()          ((LATA >> 14) & 0x1)
 #define ESP_INT_PIN                  GPIO_PIN_RA14
 
 /*** Macros for ENC_INT pin ***/
+#define ENC_INT_Set()               (LATASET = (1<<15))
+#define ENC_INT_Clear()             (LATACLR = (1<<15))
+#define ENC_INT_Toggle()            (LATAINV= (1<<15))
+#define ENC_INT_OutputEnable()      (TRISACLR = (1<<15))
+#define ENC_INT_InputEnable()       (TRISASET = (1<<15))
 #define ENC_INT_Get()               ((PORTA >> 15) & 0x1)
 #define ENC_INT_GetLatch()          ((LATA >> 15) & 0x1)
 #define ENC_INT_PIN                  GPIO_PIN_RA15

@@ -43,6 +43,8 @@ Microchip or any third party.
 
 #include "tcpip/src/tcpip_private.h"
 
+#include "port.h"
+
 
 #if defined(TCPIP_STACK_USE_IPV4)
 #if defined(TCPIP_STACK_USE_ICMP_SERVER) || defined(TCPIP_STACK_USE_ICMP_CLIENT)

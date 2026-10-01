@@ -37,6 +37,9 @@ Microchip or any third party.
 #include "tcpip/src/tcpip_private.h"
 
 #include "tcpip/src/dhcp_private.h"
+#include "port.h"
+
+
 #define TCPIP_THIS_MODULE_ID    TCPIP_MODULE_DHCP_CLIENT
 
 // Unique variables per interface
