@@ -26,7 +26,9 @@ const char *port_types[] = {
 const char *access_names[] = {
     "Local",
     "Remote",
-    "Dynamic"
+    "Dynamic",
+    "Modem",
+    "TU58"
 };
 
 const char *breakmode_names[] = {

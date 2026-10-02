@@ -191,6 +191,18 @@ COMMAND(port_set_access_dynamic) {
     target->mode = MODE_IDLE;
     return ERR_OK;
 }
+COMMAND(port_set_access_modem) {
+    OPT_TARGET
+    target->access = ACCESS_MODEM;
+    target->mode = MODE_IDLE;
+    return ERR_OK;
+}
+COMMAND(port_set_access_tu58) {
+    OPT_TARGET
+    target->access = ACCESS_TU58;
+    target->mode = MODE_IDLE;
+    return ERR_OK;
+}
 COMMAND(port_define_access_local) {
     OPT_TARGET
     uint8_t b = ACCESS_LOCAL;
@@ -206,6 +218,18 @@ COMMAND(port_define_access_remote) {
 COMMAND(port_define_access_dynamic) {
     OPT_TARGET
     uint8_t b = ACCESS_DYNAMIC;
+    setting_set(MODULE_PORT, SETTING_PORT_ACCESS, target->no, 1, &b);
+    return ERR_OK;
+}
+COMMAND(port_define_access_modem) {
+    OPT_TARGET
+    uint8_t b = ACCESS_MODEM;
+    setting_set(MODULE_PORT, SETTING_PORT_ACCESS, target->no, 1, &b);
+    return ERR_OK;
+}
+COMMAND(port_define_access_tu58) {
+    OPT_TARGET
+    uint8_t b = ACCESS_TU58;
     setting_set(MODULE_PORT, SETTING_PORT_ACCESS, target->no, 1, &b);
     return ERR_OK;
 }

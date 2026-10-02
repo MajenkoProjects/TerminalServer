@@ -43,11 +43,24 @@ struct todata {
     uint32_t ts;
     struct port *parent;
     struct session *session;
+    enum port_mode mode_return;
+    void (*on_connect)(struct port *);
+    void (*on_disconnect)(struct port *);
+    void (*on_try)(struct port *);
+    void (*on_fail)(struct port *);
+    void (*on_cancelled)(struct port *);
+    void (*on_notfound)(struct port *);
+    void (*on_break)(struct port *);
 };
 
 extern void telnet_out_initialize();
 extern void telnet_out_task();
 
+extern void telnet_out_show_detail(struct port *port, struct port *target);
+extern void telnet_out_close_port(struct port *port);
+extern void telnet_out_transfer_data(struct port *port);
+
 extern COMMAND(telnet);
+
 
 #endif

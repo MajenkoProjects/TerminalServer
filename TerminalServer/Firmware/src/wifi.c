@@ -92,36 +92,7 @@ enum wifi_main_state {
 };
 
 
-void decode_packet(uint8_t *data, uint16_t len) {
-    DBG("Packet size: %d\r\n", len);
-    DBG("%02x:%02x:%02x:%02x:%02x:%02x => %02x:%02x:%02x:%02x:%02x:%02x\r\n",
-            data[6], data[7], data[8], data[9], data[10], data[11],
-            data[0], data[1], data[2], data[3], data[4], data[5]);
-    int ethertype = (data[12] << 8) | data[13];
-    DBG("EtherType: %04x\r\n", ethertype);
-    
-    uint8_t *epay = &data[14];
 
-
-    if (ethertype == 0x0800) { // IPv4
-        int proto = epay[9];
-        int len = (epay[2] << 8) | epay[3];
-        
-        uint8_t *ippay = epay + ((epay[0] & 0xF) * 4);
-        
-        if (proto == 6) { // TCP
-            DBG("Proto: TCP Length: %d\r\n", len);
-        
-            int sport = (ippay[0] << 8) | ippay[1];
-            int dport = (ippay[2] << 8) | ippay[3];
-            DBG("%d.%d.%d.%d:%d => %d.%d.%d.%d:%d\r\n", 
-                data[26], data[27], data[28], data[29], sport,
-                data[30], data[31], data[32], data[33], dport);
-            
-            uint8_t *tcppay = ippay + ((ippay[12] >> 4) * 4);
-        }
-    }
-}
 
 struct wifi_data {
     TCPIP_MAC_MODULE_CTRL stackConfig;
@@ -227,7 +198,7 @@ bool wifi_set_mac_ctl(SYS_MODULE_OBJ object, const TCPIP_MAC_MODULE_CTRL * init)
     setup.csPolarity = DRV_SPI_CS_POLARITY_ACTIVE_LOW;
     DRV_SPI_TransferSetup(pDrvInst->spiBus, &setup);
 
-    DRV_SPI_TransferEventHandlerSet(pDrvInst->spiBus, spi_event_handler, NULL);
+    DRV_SPI_TransferEventHandlerSet(pDrvInst->spiBus, spi_event_handler, 0);
     
     pDrvInst->mainState = WIFI_STATE_INITIALIZE;
     
@@ -329,9 +300,7 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
     uint8_t *gather;
     TCPIP_MAC_DATA_SEGMENT *dseg;
     int len;
-    
-    DRV_SPI_TRANSFER_EVENT spi_res;
-    
+        
 //    static uint32_t dbgts = 0;    
 //    if (xTaskGetTickCount() - dbgts > 1000) {
 //        dbgts = xTaskGetTickCount();

@@ -20,6 +20,7 @@
 #include "version.h"
 #include "mdns.h"
 #include "wifi.h"
+#include "modem.h"
 
 
 struct module {
@@ -184,15 +185,25 @@ void APP_Tasks ( void ) {
                         // and in local access mode then respond to a RETURN
                         // keypress to initiate a login prompt.
                         case MODE_IDLE:
-                            if (scan->access == ACCESS_LOCAL) {
-                                if (scan->type == PORT_SERIAL) {
-                                    if (port_available(scan)) {
-                                        int c = port_read_byte(scan);
-                                        if (c == 13) {
-                                            port_set_mode(scan, MODE_GREET);
+                            switch (scan->access) {
+                                case ACCESS_LOCAL:
+                                    if (scan->type == PORT_SERIAL) {
+                                        if (port_available(scan)) {
+                                            int c = port_read_byte(scan);
+                                            if (c == 13) {
+                                                port_set_mode(scan, MODE_GREET);
+                                            }
                                         }
                                     }
-                                }
+                                    break;
+                                case ACCESS_MODEM:
+                                    port_set_mode(scan, MODE_MODEM);
+                                    break;
+                                case ACCESS_TU58:
+                                    port_set_mode(scan, MODE_TU58);
+                                    break;
+                                default:
+                                    break;
                             }
                             break;
 
@@ -218,17 +229,28 @@ void APP_Tasks ( void ) {
                         // Main Local> prompt processing mode. Deal with all commands
                         // entered.
                         case MODE_LOCAL:
-                            if (scan->access == ACCESS_LOCAL) {
-                                if (port_available(scan)) {
-                                    int c = port_read_byte(scan);
-                                    if (command_process(scan, c) == 1) {
-                                        if ((!have_prompted) && (scan->mode == MODE_LOCAL)) {
-                                            port_printf(scan, prompt(scan));
-                                            if (scan->fn_flush) scan->fn_flush(scan);
-                                            have_prompted = true;
+                            switch (scan->access) {
+                                case ACCESS_LOCAL:
+                                    if (port_available(scan)) {
+                                        int c = port_read_byte(scan);
+                                        if (command_process(scan, c) == 1) {
+                                            if ((!have_prompted) && (scan->mode == MODE_LOCAL)) {
+                                                port_printf(scan, prompt(scan));
+                                                if (scan->fn_flush) scan->fn_flush(scan);
+                                                have_prompted = true;
+                                            }
                                         }
                                     }
-                                }
+                                    break;
+                                case ACCESS_REMOTE:
+                                    break;
+                                case ACCESS_DYNAMIC:
+                                    break;
+                                case ACCESS_MODEM:
+                                    port_set_mode(scan, MODE_MODEM);
+                                    break;
+                                case ACCESS_TU58:
+                                    break;
                             }
                             break;
                             
@@ -236,9 +258,32 @@ void APP_Tasks ( void ) {
                         // and back from the target to the parent. Deal with
                         // local switch keypresses.
                         case MODE_SESSION:
+
+                            if ((scan->access == ACCESS_MODEM) && (scan->misc[62] >= 3)) {
+                                if ((xTaskGetTickCount() - scan->ticks) > 500) {
+                                    modem_response(scan, MODEM_OK);
+                                    port_set_mode(scan, MODE_MODEM);
+                                    scan->ticks = 0;
+                                    scan->misc[62] = 0;
+                                }
+                            }
+
                             if (scan->active_session && (scan->active_session->type == SESSION_DIRECT)) {
                                 if (port_available(scan) && (xStreamBufferSpacesAvailable(scan->active_session->target->write_buffer))) {
                                     int c = port_read_byte(scan);
+                                    
+                                    if (scan->access == ACCESS_MODEM) { // Handle +++ for break
+                                        if (c == '+') {
+                                            scan->misc[62]++;
+                                            if (scan->misc[62] >= 3) {
+                                                scan->ticks = xTaskGetTickCount();
+                                            }
+                                        } else {
+                                            scan->misc[62] = 0;
+                                            scan->ticks = 0;
+                                        }
+                                    }
+                                    
                                     uint16_t tmp[11];
                                     int r = fancy_read(scan, c, tmp, 10);
                                     for (int i = 0; i < r; i++) {
@@ -305,7 +350,12 @@ void APP_Tasks ( void ) {
                                 }
                             }
                             break;
- 
+                        case MODE_MODEM:
+                            if (port_available(scan)) {
+                                int c = port_read_byte(scan);
+                                modem_process(scan, c);
+                            }
+                            break;
                         default:
                             break;
                     }

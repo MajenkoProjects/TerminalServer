@@ -249,7 +249,7 @@ void uart_transfer_data(struct port *port) {
         data->rxled_ts = ts;
         data->fn_read(temp, available_bytes);
         uart_check_parity(port, temp, available_bytes);
-        if (((port->access == ACCESS_REMOTE) && in_session(port)) || (port->access == ACCESS_LOCAL)) {
+        if (((port->access == ACCESS_REMOTE) && in_session(port)) || (port->access == ACCESS_LOCAL) || (port->access == ACCESS_MODEM) || (port->access == ACCESS_TU58)) {
             for (int i = 0; i < available_bytes; i++) {
                 uint8_t b = temp[i];
                 if ((data->flow == FLOW_XONXOFF) && (b == 17)) {

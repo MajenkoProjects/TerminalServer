@@ -28,8 +28,8 @@ enum flow {
     FLOW_XONXOFF
 };
 
-#define CIRCULAR_BUFFER_SIZE 128
-#define MAX_COMMAND         80
+#define CIRCULAR_BUFFER_SIZE 64
+#define MAX_COMMAND         60
 #define NUM_HISTORY         4
 
 #define PORT_MAX_NAME       8
@@ -55,6 +55,8 @@ enum port_mode {
   //  MODE_USERNAME,
     MODE_LOCAL,
     MODE_SESSION,
+    MODE_MODEM,
+    MODE_TU58
   //  MODE_PASSWORD,
 };
 
@@ -72,7 +74,9 @@ enum port_type {
 enum access_mode {
     ACCESS_LOCAL = 0,
     ACCESS_REMOTE,
-    ACCESS_DYNAMIC
+    ACCESS_DYNAMIC,
+    ACCESS_MODEM,
+    ACCESS_TU58
 };
 
 enum break_mode {
@@ -105,6 +109,7 @@ struct port {
 //    struct circular_buffer write_buffer;       
     void *port_data;
     char commands[NUM_HISTORY][MAX_COMMAND];
+    uint8_t misc[64];
     int cmdno;
     enum command_states cstate;
     int cpos;

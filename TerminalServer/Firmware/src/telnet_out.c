@@ -202,8 +202,8 @@ void telnet_out_transfer_data(struct port *port) {
                                 data->iac_pos = 0;
                                 switch (port->breakmode) {
                                     case BREAK_LOCAL:
-                                        port_rprintf(port, "+++ OUT OF CHEESE +++\r\n\n");
-                                        port->mode = MODE_LOCAL;
+                                        if (data->on_break) data->on_break(port);
+                                        port->mode = data->mode_return;;
                                         break;
                                     case BREAK_REMOTE:
                                         if (port->active_session) {
@@ -222,7 +222,7 @@ void telnet_out_transfer_data(struct port *port) {
                                 break;
                             default:
                                 data->iac_pos = 0;
-                                port_rprintf(port, "Unexpected IAC %d\r\n", b);
+
                                 break;
                         }
                         break;
@@ -400,7 +400,7 @@ void telnet_out_task() {
                     break;
                     
                 case TO_BAD_HOST:
-                    port_rprintf(scan, "Host not found\r\n");
+                    if (data->on_notfound) data->on_notfound(scan);
                     data->state = TO_CLOSE;
                     break;
                     
@@ -413,20 +413,14 @@ void telnet_out_task() {
                             delete_session(data->session);                    
                             TCPIP_TCP_Close(data->socket);
                             delete_port(scan);
-                            par->mode = MODE_LOCAL;
+                            par->mode = data->mode_return;
                         }
                     }
 //                    close_port(scan);
                     break;
                     
                 case TO_FOUND_HOST:
-                    port_rprintf(scan, "Connecting to %d.%d.%d.%d:%d...",
-                            data->addr.v4Add.v[0],
-                            data->addr.v4Add.v[1],
-                            data->addr.v4Add.v[2],
-                            data->addr.v4Add.v[3],
-                            data->port
-                            );
+                    if (data->on_try) data->on_try(scan);
                     data->state = TO_CONNECT;
                     data->socket = TCPIP_TCP_ClientOpen(IP_ADDRESS_TYPE_IPV4, data->port, &data->addr);
                     data->state = TO_CONNECTING;
@@ -450,22 +444,24 @@ void telnet_out_task() {
                     break;
                     
                 case TO_NOCONN:
-                    port_rprintf(scan, "Unable to connect\r\n");
+                    if (data->on_fail) data->on_fail(scan);
+                    
                     data->state = TO_CLOSE;
                     break;
 
                 case TO_BREAK:
-                    port_rprintf(scan, "Cancelled\r\n");
+                    if (data->on_cancelled) data->on_cancelled(scan);
                     data->state = TO_CLOSE;
                     break;
                     
                 case TO_CONNECT:
-                    port_rprintf(scan, "Connected\r\n");
+                    if (data->on_connect) data->on_connect(scan);
                     data->state = TO_RUN;
                     break;
                     
                 case TO_RUN:
                     if (TCPIP_TCP_WasDisconnected(data->socket)) {
+                        if (data->on_disconnect) data->on_disconnect(scan);
                         data->state = TO_CLOSE;
                         break;
                     }
@@ -500,6 +496,46 @@ void telnet_out_close_port(struct port *port) {
 
 void telnet_out_show_detail(struct port *port, struct port *target) {
     
+}
+
+void telnet_out_connect(struct port *port) {
+//    struct todata *data = (struct todata *)port->port_data;
+    port_rprintf(port, "Connected\r\n");
+}
+
+void telnet_out_disconnect(struct port *port) {
+//    struct todata *data = (struct todata *)port->port_data;
+
+}
+
+void telnet_out_fail(struct port *port) {
+//    struct todata *data = (struct todata *)port->port_data;
+    port_rprintf(port, "Unable to connect\r\n");
+}
+
+void telnet_out_try(struct port *port) {
+    struct todata *data = (struct todata *)port->port_data;
+    port_rprintf(port, "Connecting to %d.%d.%d.%d:%d...",
+            data->addr.v4Add.v[0],
+            data->addr.v4Add.v[1],
+            data->addr.v4Add.v[2],
+            data->addr.v4Add.v[3],
+            data->port
+            );
+}
+
+void telnet_out_cancelled(struct port *port) {
+//    struct todata *data = (struct todata *)port->port_data;
+    port_rprintf(port, "Cancelled\r\n");
+}
+
+void telnet_out_notfound(struct port *port) {
+//    struct todata *data = (struct todata *)port->port_data;
+    port_rprintf(port, "Host not found\r\n");
+}
+
+void telnet_out_break(struct port *port) {
+    port_rprintf(port, "\r\n+++ OUT OF CHEESE ERROR +++\r\n");
 }
 
 COMMAND(telnet) {
@@ -538,6 +574,14 @@ COMMAND(telnet) {
     slave->fn_show_detail = &telnet_out_show_detail;
     slave->fn_flush = &telnet_out_transfer_data;
     slave->fn_yield = &telnet_out_transfer_data;
+    data->on_connect = &telnet_out_connect;
+    data->on_disconnect = &telnet_out_disconnect;
+    data->on_fail = &telnet_out_fail;
+    data->on_try = &telnet_out_try;
+    data->on_cancelled = &telnet_out_cancelled;
+    data->on_notfound = &telnet_out_notfound;
+    data->mode_return = MODE_LOCAL;
+    data->on_break = &telnet_out_break;
     return ERR_OK;
 }
 

@@ -25,6 +25,8 @@ extern COMMAND(port_set_access_remote);
 extern COMMAND(port_define_access_dynamic);
 extern COMMAND(port_define_access_local);
 extern COMMAND(port_define_access_remote);
+extern COMMAND(port_define_access_modem);
+extern COMMAND(port_define_access_tu58);
 extern COMMAND(port_set_break_disabled);
 extern COMMAND(port_set_break_local);
 extern COMMAND(port_set_break_remote);
