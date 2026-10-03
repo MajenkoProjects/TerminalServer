@@ -10,8 +10,15 @@
 #include "stream_buffer.h"
 #include "ttype.h"
 
-#define DBG(...) port_printf(CONSOLE, __VA_ARGS__);
+#define DBG(...)
+//port_printf(CONSOLE, __VA_ARGS__);
 //CONSOLE->fn_flush(CONSOLE);
+
+#define CIRCULAR_BUFFER_SIZE 64
+#define MAX_COMMAND         60
+#define NUM_HISTORY         4
+#define PORT_MAX_NAME       8
+#define CONSOLE ports
 
 enum parity {
     PARITY_NONE,
@@ -28,14 +35,6 @@ enum flow {
     FLOW_XONXOFF
 };
 
-#define CIRCULAR_BUFFER_SIZE 64
-#define MAX_COMMAND         60
-#define NUM_HISTORY         4
-
-#define PORT_MAX_NAME       8
-
-#define CONSOLE ports
-
 enum port_setting {
     SETTING_PORT_BREAKMODE = 1,
     SETTING_PORT_ACCESS,
@@ -46,18 +45,14 @@ enum port_setting {
     SETTING_PORT_NAME,
 };
 
-
-
 enum port_mode {
     MODE_IDLE = 0,
     MODE_PREGREET,
     MODE_GREET,
-  //  MODE_USERNAME,
     MODE_LOCAL,
     MODE_SESSION,
     MODE_MODEM,
     MODE_TU58
-  //  MODE_PASSWORD,
 };
 
 enum port_type {

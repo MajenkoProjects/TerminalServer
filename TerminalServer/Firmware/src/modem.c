@@ -372,6 +372,53 @@ static bool modem_execute(struct port *port) {
                                         break;
                                 }
                                 break;
+                            case 's':
+                                ptr++;
+                                if (isdigit(*ptr)) {
+                                    port->misc[61] = *ptr - '0';
+                                    ptr++;
+                                }
+                                if (isdigit(*ptr)) {
+                                    port->misc[61] *= 10;
+                                    port->misc[61] += *ptr - '0';
+                                    ptr++;
+                                }
+                                if (port->misc[61] > 31) {
+                                    port->misc[61] = 31;
+                                }
+                                if (*ptr == '?') {
+                                    ptr++;
+                                    if (port->misc[63] & MODEM_VERBOSE) {
+                                        port_printf(port, "\r\nS%d=%d\r\n", port->misc[61], port->misc[port->misc[61]]);
+                                    } else {
+                                        port_printf(port, "\r\n%d\r\n", port->misc[port->misc[61]]);
+                                    }
+                                    return true;
+                                } else if (*ptr == '=') {
+                                    ptr++;
+     
+                                    parameter = 0;
+
+                                    if (!*ptr || !isdigit(*ptr)) {
+                                        modem_response(port, MODEM_ERROR);
+                                        return false;
+                                    }
+                                    
+                                    while (isdigit(*ptr)) {
+                                        parameter *= 10;
+                                        parameter += *ptr - '0';
+                                        ptr++;
+                                    }
+                                    
+                                    if (parameter > 255) {
+                                        modem_response(port, MODEM_ERROR);
+                                        return false;
+                                    }
+                                    port->misc[port->misc[61]] = parameter;
+                                }
+                                
+                                break;
+                                
                             default:
                                 modem_response(port, MODEM_ERROR);
                                 return false;
