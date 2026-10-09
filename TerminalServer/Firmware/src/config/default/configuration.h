@@ -89,12 +89,71 @@ extern "C" {
 #define SYS_TIME_COMPARE_UPDATE_EXECUTION_CYCLES    (460)
 
 
+/* File System Service Configuration */
+
+#define SYS_FS_MEDIA_NUMBER               (1U)
+#define SYS_FS_VOLUME_NUMBER              (1U)
+
+#define SYS_FS_AUTOMOUNT_ENABLE           true
+#define SYS_FS_CLIENT_NUMBER              4U
+#define SYS_FS_MAX_FILES                  (6U)
+#define SYS_FS_MAX_FILE_SYSTEM_TYPE       (1U)
+#define SYS_FS_MEDIA_MAX_BLOCK_SIZE       (512U)
+#define SYS_FS_MEDIA_MANAGER_BUFFER_SIZE  (2048U)
+#define SYS_FS_USE_LFN                    (1)
+#define SYS_FS_FILE_NAME_LEN              (255U)
+#define SYS_FS_CWD_STRING_LEN             (1024)
+
+/* File System RTOS Configurations*/
+#define SYS_FS_STACK_SIZE                 1024
+#define SYS_FS_PRIORITY                   1
+
+#define SYS_FS_FAT_VERSION                "v0.15"
+#define SYS_FS_FAT_READONLY               false
+#define SYS_FS_FAT_CODE_PAGE              437
+#define SYS_FS_FAT_MAX_SS                 SYS_FS_MEDIA_MAX_BLOCK_SIZE
+
+
+
+
+
+#define SYS_FS_MEDIA_TYPE_IDX0 				SYS_FS_MEDIA_TYPE_SD_CARD
+#define SYS_FS_TYPE_IDX0 					FAT
+
+#define SYS_FS_MEDIA_IDX0_MOUNT_NAME_VOLUME_IDX0 			"/mnt/sd"
+#define SYS_FS_MEDIA_IDX0_DEVICE_NAME_VOLUME_IDX0			"/dev/mmcblka1"
+
+
+
 
 // *****************************************************************************
 // *****************************************************************************
 // Section: Driver Configuration
 // *****************************************************************************
 // *****************************************************************************
+/* SDSPI Driver Instance 0 Configuration Options */
+
+#define ETHERNET_SPI_BITRATE    20000000
+#define SDCARD_SPI_BITRATE      10000000
+#define WIFI_SPI_BITRATE        10000000
+#define SD_ENABLED
+    
+#define DRV_SDSPI_INDEX_0                       0
+#define DRV_SDSPI_CLIENTS_NUMBER_IDX0           1
+#define DRV_SDSPI_QUEUE_SIZE_IDX0               4
+#define DRV_SDSPI_CHIP_SELECT_PIN_IDX0          SYS_PORT_PIN_RB15
+#define DRV_SDSPI_SPEED_HZ_IDX0                 10000000
+#define DRV_SDSPI_POLLING_INTERVAL_MS_IDX0      1000
+
+
+
+/* SDSPI Driver Instance 0 RTOS Configurations*/
+#define DRV_SDSPI_STACK_SIZE_IDX0               256
+#define DRV_SDSPI_PRIORITY_IDX0                     1
+
+/* SDSPI Driver Common Configuration Options */
+#define DRV_SDSPI_INSTANCES_NUMBER              (1U)
+
 /* SPI Driver Common Configuration Options */
 #define DRV_SPI_INSTANCES_NUMBER              (1U)
 
@@ -115,8 +174,11 @@ extern "C" {
 
 /* SPI Driver Instance 0 Configuration Options */
 #define DRV_SPI_INDEX_0                       0
-#define DRV_SPI_CLIENTS_NUMBER_IDX0           2
-#define DRV_SPI_QUEUE_SIZE_IDX0               4
+#define DRV_SPI_CLIENTS_NUMBER_IDX0           3
+#define DRV_SPI_DMA_MODE
+#define DRV_SPI_XMIT_DMA_CH_IDX0              SYS_DMA_CHANNEL_0
+#define DRV_SPI_RCV_DMA_CH_IDX0               SYS_DMA_CHANNEL_1
+#define DRV_SPI_QUEUE_SIZE_IDX0               10
 
 
 
@@ -130,7 +192,7 @@ extern "C" {
 /*** DNS Client Configuration ***/
 #define TCPIP_STACK_USE_DNS
 #define TCPIP_DNS_CLIENT_SERVER_TMO					5
-#define TCPIP_DNS_CLIENT_TASK_PROCESS_RATE			5
+#define TCPIP_DNS_CLIENT_TASK_PROCESS_RATE			200
 #define TCPIP_DNS_CLIENT_CACHE_ENTRIES				5
 #define TCPIP_DNS_CLIENT_CACHE_ENTRY_TMO			0
 #define TCPIP_DNS_CLIENT_CACHE_PER_IPV4_ADDRESS		5
@@ -139,7 +201,7 @@ extern "C" {
 #define TCPIP_DNS_CLIENT_CACHE_DEFAULT_TTL_VAL		1200
 #define TCPIP_DNS_CLIENT_LOOKUP_RETRY_TMO			2
 #define TCPIP_DNS_CLIENT_MAX_HOSTNAME_LEN			64
-#define TCPIP_DNS_CLIENT_MAX_SELECT_INTERFACES		1
+#define TCPIP_DNS_CLIENT_MAX_SELECT_INTERFACES		4
 #define TCPIP_DNS_CLIENT_DELETE_OLD_ENTRIES			true
 #define TCPIP_DNS_CLIENT_CONSOLE_CMD              	false
 #define TCPIP_DNS_CLIENT_USER_NOTIFICATION   false
@@ -186,8 +248,8 @@ extern "C" {
 #define TCPIP_TCP_MAX_SYN_RETRIES		        	3
 #define TCPIP_TCP_AUTO_TRANSMIT_TIMEOUT_VAL			40
 #define TCPIP_TCP_WINDOW_UPDATE_TIMEOUT_VAL			200
-#define TCPIP_TCP_MAX_SOCKETS		                50
-#define TCPIP_TCP_TASK_TICK_RATE		        	1
+#define TCPIP_TCP_MAX_SOCKETS		                20
+#define TCPIP_TCP_TASK_TICK_RATE		        	10
 #define TCPIP_TCP_MSL_TIMEOUT		        	    0
 #define TCPIP_TCP_QUIET_TIME		        	    0
 #define TCPIP_TCP_COMMANDS   false
@@ -330,7 +392,7 @@ extern "C" {
 #define TCPIP_STACK_USE_TCP
 #define TCPIP_STACK_USE_UDP
 
-#define TCPIP_STACK_TICK_RATE		        		1
+#define TCPIP_STACK_TICK_RATE		        		33
 #define TCPIP_STACK_SECURE_PORT_ENTRIES             10
 #define TCPIP_STACK_LINK_RATE		        		333
 
@@ -371,6 +433,29 @@ extern "C" {
 #define TCPIP_UDP_USE_RX_CHECKSUM             			true
 #define TCPIP_UDP_COMMANDS   false
 #define TCPIP_UDP_EXTERN_PACKET_PROCESS   false
+
+
+
+/*** FTP Configuration ***/
+#define TCPIP_STACK_USE_FTP_SERVER
+#define TCPIP_FTP_USER_NAME_LEN                 10
+#define TCPIP_FTP_MAX_CONNECTIONS               1
+#define TCPIP_FTP_DATA_SKT_TX_BUFF_SIZE         0
+#define TCPIP_FTP_DATA_SKT_RX_BUFF_SIZE         0
+#define TCPIP_FTPS_TASK_TICK_RATE               33
+#define TCPIP_FTP_TIMEOUT                       180
+
+#define TCPIP_FTPS_COMMAND_LISTEN_PORT          21
+#define TCPIP_FTPS_DATA_LISTEN_PORT             20
+#define TCPIP_FTP_MOUNT_POINT                   "/mnt/sd"
+
+/***Comment this line out to disable MPFS***/
+#define TCPIP_FTP_PUT_ENABLED   
+
+#define TCPIP_FTPS_OBSOLETE_AUTHENTICATION true
+#define TCPIP_FTP_USER_NAME                     "root"
+#define TCPIP_FTP_PASSWORD                      "system"
+#define TCPIP_FTP_PASSWD_LEN                    10
 
 
 /* MPLAB Harmony Net Presentation Layer Definitions*/

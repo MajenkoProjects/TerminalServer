@@ -37,6 +37,8 @@ Microchip or any third party.
 
 #include "drv_enc28j60_spi_bus.h"
 
+#include "peripheral/gpio/plib_gpio.h"
+
 // PHY supported operations
 typedef enum
 {
@@ -109,6 +111,7 @@ static const DRV_ENC28J60_BusVTable drv_ENC28J60_spi_vtable =
     .fpPhyRd = &DRV_ENC28J60_SPI_PhyRead,
     .fpPktWr = &DRV_ENC28J60_SPI_WritePacket,
     .fpDataRdStart = &DRV_ENC28J60_SPI_ReadDataStart,
+    .fpLockBus = &DRV_ENC28J60_SPI_LockBus,
 };
 
 // helpers, conversion functions
@@ -1822,6 +1825,23 @@ uintptr_t DRV_ENC28J60_SPI_ReadDataStart(DRV_ENC28J60_DriverInfo *  pDrvInstance
     }
 
     return 0;
+}
+
+bool DRV_ENC28J60_SPI_LockBus(DRV_ENC28J60_DriverInfo *  pDrvInstance, bool lock) {
+    DRV_ENC28J60_spiBusData * pBusInfo = (DRV_ENC28J60_spiBusData *)pDrvInstance->busData;
+
+//    if (DRV_SPI_IsLocked(pBusInfo->clientHandle) == SPI_LOCK_LOCKED) return false;
+	bool b = DRV_SPI_Lock(pBusInfo->clientHandle, lock);
+//	bool r = (DRV_SPI_IsLocked(pBusInfo->clientHandle) != SPI_LOCK_UNLOCKED);
+//    GPIO1_OutputEnable();
+//    if (r) {
+//	    GPIO1_Set();
+//    } else {
+//	    GPIO1_Clear();
+//    }
+
+
+    return b;
 }
 
 

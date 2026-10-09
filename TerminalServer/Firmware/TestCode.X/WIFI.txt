@@ -1,0 +1,47 @@
+The WiFi communication protocol
+===============================
+
+
+SPI with the PIC32 as the master and the ESP32 as the slave.
+
+First byte of a transfer selects a register to access. Subsequent bytes will be
+written into that register. Bytes read will give the contents of the previous
+selected register.
+
+That is - to do a read of a register you first issue a write with no data in
+one transaction, then issue a NOP and read in the data in a second transaction.
+
+Read data is from the first byte, not the second.
+
+So to write the SSID to Majenko you would send (\_ and _/ indicate CS state):
+
+\_ W:SSID W:M W:a W:j W:e W:n W:k W:o _/
+
+(Discard anything read unless you are interested in what was in the previous
+register selected).
+
+To read the status you would:
+
+\_ W:STATUS _/ \_ W:NOP|R:STATUS _/
+
+However if you wanted to read the status and read the packet buffer status you
+could interleave them:
+
+\_ W:STATUS _/ \_ W:PBSTAT|R:STATUS _/ \_ W:NOP|R:COUNT W:NOP|R:1STLENH W:NOP|R:1STLENL _/
+
+
+List of "registers"
+
+SSID (64 bytes)
+PSK (64 bytes)
+STATUS (1 byte, r/o)
+SIGNAL (2 bytes r/o)
+PBSTAT (3 bytes - number of pending packets, size of next packet (H/L) r/o)
+RPACKET (up to 1522 bytes r/o)
+WPACKET (up to 1522 bytes w/o)
+ADDMAC (6 bytes w/o)
+DELMAC (6 bytes w/o)
+
+Note: writing to a register can only happen in the same transaction as the
+register is selected. This prevents accidental writing to one register while
+reading from another.

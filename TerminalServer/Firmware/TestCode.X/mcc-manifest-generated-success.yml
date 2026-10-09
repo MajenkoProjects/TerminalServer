@@ -2,7 +2,7 @@
 
 manifest_file_version: 1.0.0
 project: TestCode
-creation_date: 2026-10-01T22:39:29.391+01:00[Europe/London]
+creation_date: 2026-10-09T17:22:46.655+01:00[Europe/London]
 operating_system: Linux
 mcc_mode: IDE
 mcc_mode_version: v6.35
@@ -18,8 +18,8 @@ device_library: {library_class: com.microchip.mcc.harmony.Harmony3Library, name:
   version: Bundled}
 packs: {name: PIC32MX_DFP, version: 1.6.369}
 modules:
-- {name: csp, type: HARMONY, version: v3.26.0}
 - {name: core, type: HARMONY, version: v3.17.0}
+- {name: csp, type: HARMONY, version: v3.26.0}
 - {name: usb, type: HARMONY, version: v3.16.0}
 - {name: FreeRTOS-Kernel, type: HARMONY, version: V11.3.1}
 - {name: net, type: HARMONY, version: v3.14.6}

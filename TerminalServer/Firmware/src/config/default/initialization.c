@@ -93,7 +93,7 @@
 
 
 
-#if 0
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Driver Initialization Data
@@ -104,9 +104,48 @@
 /* MISRA C-2023 Rule 11.1 - Deviation record ID - H3_MISRAC_2023_R_11_1_DR_1 */
 /* MISRA C-2023 Rule 11.3 - Deviation record ID - H3_MISRAC_2023_R_11_3_DR_1 */
 /* MISRA C-2023 Rule 11.8 - Deviation record ID - H3_MISRAC_2023_R_11_8_DR_1 */
+// <editor-fold defaultstate="collapsed" desc="DRV_SDSPI Instance 0 Initialization Data">
+
+/* SDSPI Client Objects Pool */
+static DRV_SDSPI_CLIENT_OBJ drvSDSPI0ClientObjPool[DRV_SDSPI_CLIENTS_NUMBER_IDX0];
+
+/* SDSPI Transfer Objects Pool */
+static DRV_SDSPI_BUFFER_OBJ drvSDSPI0TransferObjPool[DRV_SDSPI_QUEUE_SIZE_IDX0];
+
+
+/* SDSPI Driver Initialization Data */
+static const DRV_SDSPI_INIT drvSDSPI0InitData =
+{
+    .spiDrvIndex            = 0,
+
+    /* SDSPI Number of clients */
+    .numClients             = DRV_SDSPI_CLIENTS_NUMBER_IDX0,
+
+    /* SDSPI Client Objects Pool */
+    .clientObjPool          = (uintptr_t)&drvSDSPI0ClientObjPool[0],
+
+    /* SDSPI Transfer Objects Pool */
+    .bufferObjPool          = (uintptr_t)&drvSDSPI0TransferObjPool[0],
+
+    /* SDSPI Transfer Objects Queue Size */
+    .bufferObjPoolSize      = DRV_SDSPI_QUEUE_SIZE_IDX0,
+
+    .chipSelectPin          = DRV_SDSPI_CHIP_SELECT_PIN_IDX0,
+
+    .sdcardSpeedHz          = DRV_SDSPI_SPEED_HZ_IDX0,
+
+    .pollingIntervalMs      = DRV_SDSPI_POLLING_INTERVAL_MS_IDX0,
+
+    .writeProtectPin        = SYS_PORT_PIN_NONE,
+
+    .isFsEnabled            = true,
+
+};
+// </editor-fold>
+
 
 // <editor-fold defaultstate="collapsed" desc="ENC 60 Driver Initialization Data">
-
+#if 0
 /* ENC 600 Driver Configuration */
 const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
 {
@@ -161,6 +200,10 @@ static const DRV_SPI_INTERRUPT_SOURCES drvSPI0InterruptSources =
     .intSources.multi.spiTxReadyInt      = -1,
     .intSources.multi.spiTxCompleteInt   = (int32_t)_SPI1_TX_IRQ,
     .intSources.multi.spiRxInt           = (int32_t)_SPI1_RX_IRQ,
+    /* DMA Tx interrupt line */
+    .intSources.multi.dmaTxChannelInt      = (int32_t)_DMA0_IRQ,
+    /* DMA Rx interrupt line */
+    .intSources.multi.dmaRxChannelInt      = (int32_t)_DMA1_IRQ,
 };
 
 /* SPI Driver Initialization Data */
@@ -181,6 +224,17 @@ static const DRV_SPI_INIT drvSPI0InitData =
     /* SPI Client Objects Pool */
     .clientObjPool = (uintptr_t)&drvSPI0ClientObjPool[0],
 
+    /* DMA Channel for Transmit */
+    .dmaChannelTransmit = DRV_SPI_XMIT_DMA_CH_IDX0,
+
+    /* DMA Channel for Receive */
+    .dmaChannelReceive  = DRV_SPI_RCV_DMA_CH_IDX0,
+
+    /* SPI Transmit Register */
+    .spiTransmitAddress =  (void *)&(SPI1BUF),
+
+    /* SPI Receive Register */
+    .spiReceiveAddress  = (void *)&(SPI1BUF),
 
     /* SPI Queue Size */
     .transferObjPoolSize = DRV_SPI_QUEUE_SIZE_IDX0,
@@ -314,6 +368,18 @@ const TCPIP_ICMP_MODULE_CONFIG tcpipICMPInitData =
 
 
 
+/*** FTP Server Initialization Data ***/
+const TCPIP_FTP_MODULE_CONFIG tcpipFTPInitData =
+{ 
+    .cmdPort            = TCPIP_FTPS_COMMAND_LISTEN_PORT, 
+    .dataPort           = TCPIP_FTPS_DATA_LISTEN_PORT, 
+    .nConnections       = TCPIP_FTP_MAX_CONNECTIONS,
+    .dataSktTxBuffSize  = TCPIP_FTP_DATA_SKT_TX_BUFF_SIZE,
+    .dataSktRxBuffSize  = TCPIP_FTP_DATA_SKT_RX_BUFF_SIZE,
+    .mountPath          = TCPIP_FTP_MOUNT_POINT,
+    .userName           = TCPIP_FTP_USER_NAME,
+    .password           = TCPIP_FTP_PASSWORD,
+};
 
 
 /*** DNS Client Initialization Data ***/
@@ -390,6 +456,7 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] =
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
 
+    {TCPIP_MODULE_FTP_SERVER,       &tcpipFTPInitData},             // TCPIP_MODULE_FTP
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER
 
 // MAC modules
@@ -559,6 +626,69 @@ static const NET_PRES_INIT_DATA netPresInitData =
  
 
 
+// <editor-fold defaultstate="collapsed" desc="File System Initialization Data">
+
+const SYS_FS_MEDIA_MOUNT_DATA sysfsMountTable[SYS_FS_VOLUME_NUMBER] =
+{
+    {
+        .mountName = SYS_FS_MEDIA_IDX0_MOUNT_NAME_VOLUME_IDX0,
+        .devName   = SYS_FS_MEDIA_IDX0_DEVICE_NAME_VOLUME_IDX0,
+        .mediaType = SYS_FS_MEDIA_TYPE_IDX0,
+        .fsType   = SYS_FS_TYPE_IDX0
+    },
+};
+
+
+static const SYS_FS_FUNCTIONS FatFsFunctions =
+{
+    .mount             = FATFS_mount,
+    .unmount           = FATFS_unmount,
+    .open              = FATFS_open,
+    .read_t              = FATFS_read,
+    .close             = FATFS_close,
+    .seek              = FATFS_lseek,
+    .fstat             = FATFS_stat,
+    .getlabel          = FATFS_getlabel,
+    .currWD            = FATFS_getcwd,
+    .getstrn           = FATFS_gets,
+    .openDir           = FATFS_opendir,
+    .readDir           = FATFS_readdir,
+    .closeDir          = FATFS_closedir,
+    .chdir             = FATFS_chdir,
+    .chdrive           = FATFS_chdrive,
+    .write_t             = FATFS_write,
+    .tell              = FATFS_tell,
+    .eof               = FATFS_eof,
+    .size              = FATFS_size,
+    .mkdir             = FATFS_mkdir,
+    .remove_t            = FATFS_unlink,
+    .setlabel          = FATFS_setlabel,
+    .truncate          = FATFS_truncate,
+    .chmode            = FATFS_chmod,
+    .chtime            = FATFS_utime,
+    .rename_t            = FATFS_rename,
+    .sync              = FATFS_sync,
+    .putchr            = FATFS_putc,
+    .putstrn           = FATFS_puts,
+    .formattedprint    = FATFS_printf,
+    .testerror         = FATFS_error,
+    .formatDisk        = (FORMAT_DISK)FATFS_mkfs,
+    .partitionDisk     = FATFS_fdisk,
+    .getCluster        = FATFS_getclusters
+};
+
+
+
+
+static const SYS_FS_REGISTRATION_TABLE sysFSInit [ SYS_FS_MAX_FILE_SYSTEM_TYPE ] =
+{
+    {
+        .nativeFileSystemType = FAT,
+        .nativeFileSystemFunctions = &FatFsFunctions
+    }
+};
+// </editor-fold>
+
 
 
 // *****************************************************************************
@@ -650,6 +780,7 @@ void SYS_Initialize ( void* data )
 
 	SPI1_Initialize();
 
+    DMAC_Initialize();
     I2C2_Initialize();
 
     /* MISRAC 2023 deviation block start */
@@ -657,6 +788,10 @@ void SYS_Initialize ( void* data )
     /* MISRA C-2023 Rule 11.3 - Deviation record ID - H3_MISRAC_2023_R_11_3_DR_1 */
     /* MISRA C-2023 Rule 11.8 - Deviation record ID - H3_MISRAC_2023_R_11_8_DR_1 */
 
+#ifdef SD_ENABLED
+    /* Initialize SDSPI0 Driver Instance */
+    sysObj.drvSDSPI0 = DRV_SDSPI_Initialize(DRV_SDSPI_INDEX_0, (SYS_MODULE_INIT *)&drvSDSPI0InitData);
+#endif
     /* Initialize SPI0 Driver Instance */
     sysObj.drvSPI0 = DRV_SPI_Initialize(DRV_SPI_INDEX_0, (SYS_MODULE_INIT *)&drvSPI0InitData);
 
@@ -684,6 +819,9 @@ void SYS_Initialize ( void* data )
    SYS_ASSERT(sysObj.tcpip != SYS_MODULE_OBJ_INVALID, "TCPIP_STACK_Init Failed" );
 #endif
 
+
+    /*** File System Service Initialization Code ***/
+    (void) SYS_FS_Initialize( (const void *) sysFSInit );
 
 
     /* MISRAC 2023 deviation block end */

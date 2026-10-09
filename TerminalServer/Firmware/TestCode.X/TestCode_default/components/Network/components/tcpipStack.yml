@@ -80,7 +80,7 @@ data:
       - children:
         - attributes:
             id: tcpipStack
-            value: '73'
+            value: '39'
           type: Dynamic
         type: Values
       type: Integer
@@ -144,7 +144,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '1'
+            value: '33'
           type: User
         type: Values
       type: Integer
@@ -158,6 +158,36 @@ data:
             id: tcpipStack
             value: '0'
           type: Dynamic
+        type: Values
+      type: Integer
+    TCPIP_STACK_RTOS_USE_DELAY:
+      attributes:
+        id: TCPIP_STACK_RTOS_USE_DELAY
+        label: Use Task Delay?
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    TCPIP_STACK_RTOS_DELAY:
+      attributes:
+        id: TCPIP_STACK_RTOS_DELAY
+        label: Task Delay
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: '10'
+          type: User
         type: Values
       type: Integer
   userData: {}

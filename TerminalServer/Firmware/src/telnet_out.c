@@ -376,7 +376,7 @@ void telnet_out_task() {
                         break;
                     }
                     data->dns_result = TCPIP_DNS_Resolve(data->hostname, TCPIP_DNS_TYPE_A);
-                    data->state = TO_RUN_DNS;
+                    data->state = TO_RUN_DNS2;
                     break;
 
                 case TO_RUN_DNS2:
@@ -423,16 +423,22 @@ void telnet_out_task() {
                     if (data->on_try) data->on_try(scan);
                     data->state = TO_CONNECT;
                     data->socket = TCPIP_TCP_ClientOpen(IP_ADDRESS_TYPE_IPV4, data->port, &data->addr);
+                    if (data->socket == INVALID_SOCKET) {
+                        port_printf(scan->active_session->parent, "Unable to open socket\r\n");
+                        data->state = TO_CLOSE;
+                        break;
+                    }
+                    
+                    TCPIP_TCP_Bind(data->socket, IP_ADDRESS_TYPE_IPV4, 0, 0);
+                    TCPIP_TCP_Connect(data->socket);
                     data->state = TO_CONNECTING;
                     data->ts = xTaskGetTickCount();
                     break;
                     
                 case TO_CONNECTING:
-                    if (TCPIP_TCP_ArrayGet(data->socket, (uint8_t *)scratch, 1) == 1) {
-                        if (scratch[0] == 3) {
-                            data->state = TO_BREAK;
-                            break;
-                        }
+                    if (port_read_byte(scan->active_session->parent) == 3) {
+                        data->state = TO_BREAK;
+                        break;
                     }
                     if (xTaskGetTickCount() - data->ts > 10000) {
                         data->state = TO_NOCONN;
@@ -500,7 +506,7 @@ void telnet_out_show_detail(struct port *port, struct port *target) {
 
 void telnet_out_connect(struct port *port) {
 //    struct todata *data = (struct todata *)port->port_data;
-    port_rprintf(port, "Connected\r\n");
+    port_printf(port->active_session->parent, "Connected\r\n");
 }
 
 void telnet_out_disconnect(struct port *port) {
@@ -510,12 +516,12 @@ void telnet_out_disconnect(struct port *port) {
 
 void telnet_out_fail(struct port *port) {
 //    struct todata *data = (struct todata *)port->port_data;
-    port_rprintf(port, "Unable to connect\r\n");
+    port_printf(port->active_session->parent, "Unable to connect\r\n");
 }
 
 void telnet_out_try(struct port *port) {
     struct todata *data = (struct todata *)port->port_data;
-    port_rprintf(port, "Connecting to %d.%d.%d.%d:%d...",
+    port_printf(port->active_session->parent, "Connecting to %d.%d.%d.%d:%d...",
             data->addr.v4Add.v[0],
             data->addr.v4Add.v[1],
             data->addr.v4Add.v[2],
@@ -526,16 +532,16 @@ void telnet_out_try(struct port *port) {
 
 void telnet_out_cancelled(struct port *port) {
 //    struct todata *data = (struct todata *)port->port_data;
-    port_rprintf(port, "Cancelled\r\n");
+    port_printf(port->active_session->parent, "Cancelled\r\n");
 }
 
 void telnet_out_notfound(struct port *port) {
 //    struct todata *data = (struct todata *)port->port_data;
-    port_rprintf(port, "Host not found\r\n");
+    port_printf(port->active_session->parent, "Host not found\r\n");
 }
 
 void telnet_out_break(struct port *port) {
-    port_rprintf(port, "\r\n+++ OUT OF CHEESE ERROR +++\r\n");
+    port_printf(port->active_session->parent, "\r\n+++ BREAK +++\r\n");
 }
 
 COMMAND(telnet) {
@@ -564,16 +570,20 @@ COMMAND(telnet) {
     data->parent = port;
     
     struct port *slave = add_port(PORT_TELNET_OUT, data);
+    snprintf(slave->name, 9, "Telnt%d", slave->no);
+    slave->name[8] = 0;
     slave->access = ACCESS_REMOTE;
     struct session *session = add_session(port, slave, SESSION_DIRECT);
     data->session = session;
     port->active_session = session;
     slave->active_session = session;
     port->mode = MODE_SESSION;
+
     slave->fn_close = &telnet_out_close_port;
     slave->fn_show_detail = &telnet_out_show_detail;
     slave->fn_flush = &telnet_out_transfer_data;
     slave->fn_yield = &telnet_out_transfer_data;
+    
     data->on_connect = &telnet_out_connect;
     data->on_disconnect = &telnet_out_disconnect;
     data->on_fail = &telnet_out_fail;

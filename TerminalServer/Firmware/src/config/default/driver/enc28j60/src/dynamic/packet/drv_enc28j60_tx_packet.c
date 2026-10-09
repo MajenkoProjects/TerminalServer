@@ -56,6 +56,10 @@ int32_t DRV_ENC28J60_TxPacketTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst, D
             break;
 
         case DRV_ENC28J60_TP_WRITE_TXST:
+//            if (!(*pDrvInst->busVTable->fpLockBus)(pDrvInst, true)) {
+//                    break;
+//            }
+
             reg.value = pDrvInst->encMemTxStart;
             ret = (*pDrvInst->busVTable->fpSfrWr16)(pDrvInst, DRV_ENC28J60_SFR_ETXSTL, pDrvInst->encMemTxStart, false);
             if (ret != 0)
@@ -426,6 +430,7 @@ int32_t DRV_ENC28J60_TxPacketTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst, D
                 // OK
             }
             // success; done
+//            (*pDrvInst->busVTable->fpLockBus)(pDrvInst, false);
             pkt->state = DRV_ENC28J60_TP_NO_PKT_STATE;
             break;
 
@@ -436,7 +441,8 @@ int32_t DRV_ENC28J60_TxPacketTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst, D
             break;
 
         case DRV_ENC28J60_TP_RESET_DONE:
-            pkt->state = DRV_ENC28J60_TP_NO_PKT_STATE;
+//            (*pDrvInst->busVTable->fpLockBus)(pDrvInst, false);
+	    pkt->state = DRV_ENC28J60_TP_NO_PKT_STATE;
             break;
 
         default:

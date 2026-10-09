@@ -22,8 +22,8 @@ data:
     - children:
       - attributes:
           id: drvExtMacEnc28j60
-          x: '117'
-          y: '225'
+          x: '60'
+          y: '221'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph

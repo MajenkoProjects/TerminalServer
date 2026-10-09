@@ -113,6 +113,8 @@ struct port *add_port(enum port_type type, void *data) {
             scan->columns = 80;
             scan->keybuf_pos = 0;
             set_terminal_type(scan, "ANSI");
+            xStreamBufferReset(scan->read_buffer);
+            xStreamBufferReset(scan->write_buffer);
             return scan;
         }
     }

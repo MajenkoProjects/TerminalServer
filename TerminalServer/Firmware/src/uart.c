@@ -302,7 +302,7 @@ void uart_task() {
 
         if (err == UART_ERROR_FRAMING) { // Break
             if (port->breakmode == BREAK_LOCAL) {
-                port_printf(port, "+++ OUT OF CHEESE ERROR +++\r\n");
+                port_printf(port, "+++ BREAK +++\r\n");
                 port->mode = MODE_LOCAL;
             } else if (port->breakmode == BREAK_REMOTE) {
                 if (port->active_session) {

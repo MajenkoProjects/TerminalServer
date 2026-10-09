@@ -55,6 +55,12 @@ data:
       attributes:
         id: DRV_SPI_NUM_CLIENTS
         label: Number of Clients
+      children:
+      - children:
+        - attributes:
+            value: '3'
+          type: User
+        type: Values
       type: Integer
     DRV_SPI_PLIB:
       attributes:
@@ -72,6 +78,20 @@ data:
       attributes:
         id: DRV_SPI_QUEUE_SIZE
         label: Transfer Queue Size
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: '10'
+          type: User
+        type: Values
       type: Integer
     DRV_SPI_RX_DMA_CHANNEL:
       attributes:
@@ -83,13 +103,13 @@ data:
             id: visible
           children:
           - type: Value
-            value: 'false'
+            value: 'true'
           type: Boolean
         type: Attributes
       - children:
         - attributes:
             id: drv_spi_0
-            value: '-1'
+            value: '1'
           type: Dynamic
         type: Values
       type: Integer
@@ -103,13 +123,13 @@ data:
             id: visible
           children:
           - type: Value
-            value: 'false'
+            value: 'true'
           type: Boolean
         type: Attributes
       - children:
         - attributes:
             id: drv_spi_0
-            value: '-1'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer
@@ -128,7 +148,7 @@ data:
         type: Attributes
       - children:
         - attributes:
-            value: 'false'
+            value: 'true'
           type: User
         type: Values
       type: Boolean
@@ -140,7 +160,7 @@ data:
       - children:
         - attributes:
             id: drv_spi_0
-            value: 'false'
+            value: 'true'
           type: Dynamic
         type: Values
       type: Boolean

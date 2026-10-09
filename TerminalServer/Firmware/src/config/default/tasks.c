@@ -60,6 +60,15 @@
 // Section: RTOS "Tasks" Routine
 // *****************************************************************************
 // *****************************************************************************
+static void lDRV_SDSPI_0_Tasks(  void *pvParameters  )
+{
+    while(true)
+    {
+        DRV_SDSPI_Tasks(sysObj.drvSDSPI0);
+        vTaskDelay(10U / portTICK_PERIOD_MS);
+    }
+}
+
 static void F_USB_DEVICE_Tasks(  void *pvParameters  )
 {
     while(true)
@@ -106,6 +115,17 @@ void _NET_PRES_Tasks(  void *pvParameters  )
 }
 
 
+static void lSYS_FS_Tasks(  void *pvParameters  )
+{
+    while(true)
+    {
+        SYS_FS_Tasks();
+        vTaskDelay(10U / portTICK_PERIOD_MS);
+    }
+}
+
+
+
 
 
 // *****************************************************************************
@@ -121,13 +141,34 @@ void _NET_PRES_Tasks(  void *pvParameters  )
   Remarks:
     See prototype in system/common/sys_module.h.
 */
+
+TaskHandle_t tcpTask;
+
+
 void SYS_Tasks ( void )
 {
     /* Maintain system services */
     
+    (void) xTaskCreate( lSYS_FS_Tasks,
+        "SYS_FS_TASKS",
+        SYS_FS_STACK_SIZE,
+        (void*)NULL,
+        SYS_FS_PRIORITY ,
+        (TaskHandle_t*)NULL
+    );
+
+
 
     /* Maintain Device Drivers */
-    
+        (void) xTaskCreate( lDRV_SDSPI_0_Tasks,
+        "DRV_SD_0_TASKS",
+        DRV_SDSPI_STACK_SIZE_IDX0,
+        (void*)NULL,
+        DRV_SDSPI_PRIORITY_IDX0 ,
+        (TaskHandle_t*)NULL
+    );
+
+
 
     /* Maintain Middleware & Other Libraries */
         /* Create OS Thread for USB_DEVICE_Tasks. */
@@ -146,7 +187,7 @@ void SYS_Tasks ( void )
         TCPIP_RTOS_STACK_SIZE,
         (void*)NULL,
         TCPIP_RTOS_PRIORITY,
-        (TaskHandle_t*)NULL
+        (TaskHandle_t*)&tcpTask
     );
 
 

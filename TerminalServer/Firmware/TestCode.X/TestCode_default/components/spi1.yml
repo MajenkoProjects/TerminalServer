@@ -44,8 +44,8 @@ data:
     - children:
       - attributes:
           id: spi1
-          x: '590'
-          y: '522'
+          x: '458'
+          y: '383'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph

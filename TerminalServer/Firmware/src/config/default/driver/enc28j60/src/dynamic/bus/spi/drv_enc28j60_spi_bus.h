@@ -632,6 +632,7 @@ TCPIP_MAC_RES DRV_ENC28J60_SPI_WritePacket(DRV_ENC28J60_DriverInfo *  pDrvInstan
 */
 uintptr_t DRV_ENC28J60_SPI_ReadDataStart(DRV_ENC28J60_DriverInfo*  pDrvInstance, uint8_t* buffer, uint16_t dataSize, bool autoAck);
 
+bool DRV_ENC28J60_SPI_LockBus(DRV_ENC28J60_DriverInfo *  pDrvInstance, bool lock);
 
 #endif  // H_ENC28J60_SPI_BUS_H_
 

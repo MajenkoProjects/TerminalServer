@@ -38,6 +38,7 @@
 // DOM-IGNORE-END
 #include "FreeRTOS.h"
 #include "task.h"
+#include "port.h"
 
 
 void vApplicationIdleHook( void );
@@ -68,6 +69,7 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook  function is
    called if a task stack overflow is detected.  Note the system/interrupt
    stack is not checked. */
+   DBG("Stack Overflow in %s\r\n", pcTaskName);
    taskDISABLE_INTERRUPTS();
    for( ;; )
    {
@@ -115,6 +117,7 @@ void vApplicationMallocFailedHook( void )
       to query the size of free heap space that remains (although it does not
       provide information on how the remaining heap might be fragmented). */
 
+   DBG("Malloc failed\r\n");
    taskDISABLE_INTERRUPTS();
    for( ;; )
    {
@@ -162,6 +165,8 @@ void vAssertCalled( const char * pcFile, unsigned long ulLine )
 
    ( void ) pcFile;
    ( void ) ulLine;
+
+   DBG("ASSERT %s:%d\r\n", pcFile, ulLine);
 
    taskENTER_CRITICAL();
    {

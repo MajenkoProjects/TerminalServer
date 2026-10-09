@@ -1,0 +1,92 @@
+configVersion: 1.0.0
+componentName: drv_sdspi
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: drv_sdspi
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: core
+  type: package
+  version: v3.17.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: drv_sdspi
+          x: '1011'
+          y: '75'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    DRV_SDSPI_COMMON_FS_ENABLE:
+      attributes:
+        id: DRV_SDSPI_COMMON_FS_ENABLE
+        label: Enable Common File system for SD Card Driver
+      children:
+      - children:
+        - attributes:
+            id: drv_sdspi
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DRV_SDSPI_COMMON_MODE:
+      attributes:
+        id: DRV_SDSPI_COMMON_MODE
+        label: Driver Mode
+      children:
+      - children:
+        - attributes:
+            value: Asynchronous
+          type: User
+        type: Values
+      type: Combo
+    DRV_SDSPI_COMMON_SPI_DRV_INSTANCE_CNT:
+      attributes:
+        id: DRV_SDSPI_COMMON_SPI_DRV_INSTANCE_CNT
+        label: SPI Driver Instances Counter
+      children:
+      - children:
+        - attributes:
+            id: drv_sdspi
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: Integer
+    DRV_SDSPI_FS_HEADER:
+      attributes:
+        id: DRV_SDSPI_FS_HEADER
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DRV_SDSPI_FS_SOURCE:
+      attributes:
+        id: DRV_SDSPI_FS_SOURCE
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+  userData: {}

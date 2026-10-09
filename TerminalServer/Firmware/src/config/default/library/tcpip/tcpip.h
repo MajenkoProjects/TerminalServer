@@ -798,6 +798,7 @@ typedef struct
 #include "tcpip/arp.h"
 #include "tcpip/tcp.h"
 #include "tcpip/udp.h"
+#include "tcpip/ftp.h"
 #include "tcpip/icmp.h"
 #endif  // __TCPIP_H__
 

@@ -1795,11 +1795,11 @@ void TCPIP_STACK_Task(SYS_MODULE_OBJ object)
     TCPIP_EVENT_LIST_NODE* tNode;
 #endif  // defined(TCPIP_STACK_USE_EVENT_NOTIFICATION) && (TCPIP_STACK_USER_NOTIFICATION != 0)   
 
+
     if(object != (SYS_MODULE_OBJ)&tcpip_stack_ctrl_data)
     {   // invalid handle/nothing to do
         return;
     }
-
     if((tcpip_stack_status != SYS_STATUS_BUSY) && (tcpip_stack_status != SYS_STATUS_READY))
     {   // some error state
         return;
@@ -1845,6 +1845,7 @@ void TCPIP_STACK_Task(SYS_MODULE_OBJ object)
         wasTickEvent = false;
     }
 
+    // We get all the way through this
     if( totTcpipEventsCnt != 0)
     {   // there are MAC events pending
         totTcpipEventsCnt = 0;

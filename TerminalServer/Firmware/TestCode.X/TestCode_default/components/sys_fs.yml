@@ -1,0 +1,798 @@
+configVersion: 1.0.0
+componentName: sys_fs
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: sys_fs
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: core
+  type: package
+  version: v3.17.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments:
+    children:
+    - children:
+      - attributes:
+          id: sys_fs_DRV_MEDIA_dependency
+        children:
+        - children:
+          - attributes:
+              targetAttachmentID: drv_media
+              targetComponentID: drv_sdspi_0
+            type: TargetAttachment
+          type: TargetAttachments
+        type: MultiCapability
+      type: Attachments
+    type: sys_fs
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: sys_fs
+          x: '915'
+          y: '507'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    SYS_FS_AUTO_MOUNT:
+      attributes:
+        id: SYS_FS_AUTO_MOUNT
+        label: Use File System Auto Mount Feature?
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    SYS_FS_CLIENT_NUMBER:
+      attributes:
+        id: SYS_FS_CLIENT_NUMBER
+        label: Total Number File System Clients
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: '4'
+          type: User
+        type: Values
+      type: Integer
+    SYS_FS_CWD_STRING_LEN:
+      attributes:
+        id: SYS_FS_CWD_STRING_LEN
+        label: Current working directory scratch buffer length in bytes
+      type: Integer
+    SYS_FS_FAT:
+      attributes:
+        id: SYS_FS_FAT
+        label: FAT File System
+      type: Boolean
+    SYS_FS_FAT_CODE_PAGE:
+      attributes:
+        id: SYS_FS_FAT_CODE_PAGE
+        label: OEM code page to be used
+      type: KeyValueSet
+    SYS_FS_FAT_EXFAT_ENABLE:
+      attributes:
+        id: SYS_FS_FAT_EXFAT_ENABLE
+        label: Enable exFAT File System Support
+      type: Boolean
+    SYS_FS_FAT_LBA64_ENABLE:
+      attributes:
+        id: SYS_FS_FAT_LBA64_ENABLE
+        label: Enable 64-bit LBA Support
+      type: Boolean
+    SYS_FS_FAT_READONLY:
+      attributes:
+        id: SYS_FS_FAT_READONLY
+        label: Make FAT File System Read-only
+      type: Boolean
+    SYS_FS_FAT_VERSION:
+      attributes:
+        id: SYS_FS_FAT_VERSION
+        label: FAT File System Version
+      type: String
+    SYS_FS_FILEX:
+      attributes:
+        id: SYS_FS_FILEX
+        label: FileX File System
+      type: Boolean
+    SYS_FS_FILEX_DISABLE_DIRECT_DATA_READ_CACHE:
+      attributes:
+        id: SYS_FS_FILEX_DISABLE_DIRECT_DATA_READ_CACHE
+        label: Disable direct read sector update of cache
+      type: Boolean
+    SYS_FS_FILEX_FAULT_TOLERANT_BOOT_INDEX:
+      attributes:
+        id: SYS_FS_FILEX_FAULT_TOLERANT_BOOT_INDEX
+        label: FileX fault tolerant boot index
+      type: Integer
+    SYS_FS_FILEX_FX_DIABLE_FAT_ENTRY_REFRESH:
+      attributes:
+        id: SYS_FS_FILEX_FX_DIABLE_FAT_ENTRY_REFRESH
+        label: Disable FAT entry refresh
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_BUILD_OPTIONS:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_BUILD_OPTIONS
+        label: Disable build options
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_CACHE:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_CACHE
+        label: Disable filex cache
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_CONSECUTIVE_DETECT:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_CONSECUTIVE_DETECT
+        label: Disable consecutive detect
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_ERROR_CHECKING:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_ERROR_CHECKING
+        label: Disable filex error checking
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_FAST_OPEN:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_FAST_OPEN
+        label: Disable filex fast open
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_FILE_CLOSE:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_FILE_CLOSE
+        label: Disable filex file close
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_FORCE_MEMORY_OPERATION:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_FORCE_MEMORY_OPERATION
+        label: Disable force memory operations
+      type: Boolean
+    SYS_FS_FILEX_FX_DISABLE_ONE_LINE_FUNCTION:
+      attributes:
+        id: SYS_FS_FILEX_FX_DISABLE_ONE_LINE_FUNCTION
+        label: Disable one line function
+      type: Boolean
+    SYS_FS_FILEX_FX_DONT_UPDATE_OPEN_FILES:
+      attributes:
+        id: SYS_FS_FILEX_FX_DONT_UPDATE_OPEN_FILES
+        label: FileX don't update open files
+      type: Boolean
+    SYS_FS_FILEX_FX_DRIVER_USE_64BIT_LBA:
+      attributes:
+        id: SYS_FS_FILEX_FX_DRIVER_USE_64BIT_LBA
+        label: Enable 64-bits sector address
+      type: Boolean
+    SYS_FS_FILEX_FX_ENABLE_EXFAT:
+      attributes:
+        id: SYS_FS_FILEX_FX_ENABLE_EXFAT
+        label: Enable exFAT file system
+      type: Boolean
+    SYS_FS_FILEX_FX_ENABLE_FAULT_TOLERANT:
+      attributes:
+        id: SYS_FS_FILEX_FX_ENABLE_FAULT_TOLERANT
+        label: Enable filex fault tolerant
+      type: Boolean
+    SYS_FS_FILEX_FX_EXFAT_MAX_CACHE_SIZE:
+      attributes:
+        id: SYS_FS_FILEX_FX_EXFAT_MAX_CACHE_SIZE
+        label: ExFAT bitmap cache size
+      type: Integer
+    SYS_FS_FILEX_FX_FAT_MAP_SIZE:
+      attributes:
+        id: SYS_FS_FILEX_FX_FAT_MAP_SIZE
+        label: FAT sector bit map size
+      type: Integer
+    SYS_FS_FILEX_FX_FAULT_TOLERANT:
+      attributes:
+        id: SYS_FS_FILEX_FX_FAULT_TOLERANT
+        label: System sector write requests flushed immediately
+      type: Boolean
+    SYS_FS_FILEX_FX_FAULT_TOLERANT_DATA:
+      attributes:
+        id: SYS_FS_FILEX_FX_FAULT_TOLERANT_DATA
+        label: Data sector write requests flushed immediately
+      type: Boolean
+    SYS_FS_FILEX_FX_MAX_FAT_CACHE:
+      attributes:
+        id: SYS_FS_FILEX_FX_MAX_FAT_CACHE
+        label: Number of entries in the FAT cache
+      type: Integer
+    SYS_FS_FILEX_FX_MAX_LONG_NAME_LEN:
+      attributes:
+        id: SYS_FS_FILEX_FX_MAX_LONG_NAME_LEN
+        label: Maximum size of long file name
+      type: Integer
+    SYS_FS_FILEX_FX_MAX_SECTOR_CACHE:
+      attributes:
+        id: SYS_FS_FILEX_FX_MAX_SECTOR_CACHE
+        label: Maximum logical sector cache
+      type: Integer
+    SYS_FS_FILEX_FX_MEDIA_DISABLE_SEARCH_CACHE:
+      attributes:
+        id: SYS_FS_FILEX_FX_MEDIA_DISABLE_SEARCH_CACHE
+        label: Disable file search cache optimization
+      type: Boolean
+    SYS_FS_FILEX_FX_MEDIA_STATISTICS_DISABLE:
+      attributes:
+        id: SYS_FS_FILEX_FX_MEDIA_STATISTICS_DISABLE
+        label: Disable media statistics
+      type: Boolean
+    SYS_FS_FILEX_FX_NO_LOCAL_PATH:
+      attributes:
+        id: SYS_FS_FILEX_FX_NO_LOCAL_PATH
+        label: Disable local path logic
+      type: Boolean
+    SYS_FS_FILEX_FX_NO_TIMER:
+      attributes:
+        id: SYS_FS_FILEX_FX_NO_TIMER
+        label: FileX without timer
+      type: Boolean
+    SYS_FS_FILEX_FX_RENAME_PATH_INHERIT:
+      attributes:
+        id: SYS_FS_FILEX_FX_RENAME_PATH_INHERIT
+        label: Renaming inherits path information
+      type: Boolean
+    SYS_FS_FILEX_FX_SINGLE_OPEN_LEGACY:
+      attributes:
+        id: SYS_FS_FILEX_FX_SINGLE_OPEN_LEGACY
+        label: Enable single open file legacy logic
+      type: Boolean
+    SYS_FS_FILEX_FX_SINGLE_THREAD:
+      attributes:
+        id: SYS_FS_FILEX_FX_SINGLE_THREAD
+        label: Enable filex single Thread
+      type: Boolean
+    SYS_FS_FILEX_FX_STANDALONE_ENABLE:
+      attributes:
+        id: SYS_FS_FILEX_FX_STANDALONE_ENABLE
+        label: Enable filex standalone mode
+      type: Boolean
+    SYS_FS_FILEX_FX_UPDATE_RATE_IN_SECONDS:
+      attributes:
+        id: SYS_FS_FILEX_FX_UPDATE_RATE_IN_SECONDS
+        label: FileX update rate in seconds
+      type: Integer
+    SYS_FS_FILEX_FX_UPDATE_RATE_IN_TICKS:
+      attributes:
+        id: SYS_FS_FILEX_FX_UPDATE_RATE_IN_TICKS
+        label: FileX update rate in ticks
+      type: Integer
+    SYS_FS_FILEX_READONLY:
+      attributes:
+        id: SYS_FS_FILEX_READONLY
+        label: Make FileX File System Read-only
+      type: Boolean
+    SYS_FS_FILE_NAME_LEN:
+      attributes:
+        id: SYS_FS_FILE_NAME_LEN
+        label: File name length in bytes
+      type: Integer
+    SYS_FS_IDX0:
+      attributes:
+        id: SYS_FS_IDX0
+        label: Media0
+      type: Boolean
+    SYS_FS_IDX1:
+      attributes:
+        id: SYS_FS_IDX1
+        label: Media1
+      type: Boolean
+    SYS_FS_IDX2:
+      attributes:
+        id: SYS_FS_IDX2
+        label: Media2
+      type: Boolean
+    SYS_FS_IDX3:
+      attributes:
+        id: SYS_FS_IDX3
+        label: Media3
+      type: Boolean
+    SYS_FS_INSTANCES_NUMBER:
+      attributes:
+        id: SYS_FS_INSTANCES_NUMBER
+        label: Total Number Of Media
+      type: Integer
+    SYS_FS_LFN_ENABLE:
+      attributes:
+        id: SYS_FS_LFN_ENABLE
+        label: Enable Long File Name Support
+      type: Boolean
+    SYS_FS_LFS:
+      attributes:
+        id: SYS_FS_LFS
+        label: LittleFS File System
+      type: Boolean
+    SYS_FS_LFS_BLOCK_SIZE:
+      attributes:
+        id: SYS_FS_LFS_BLOCK_SIZE
+        label: LFS Block Size
+      type: Integer
+    SYS_FS_LFS_READONLY:
+      attributes:
+        id: SYS_FS_LFS_READONLY
+        label: Make LittleFS File System Read-only
+      type: Boolean
+    SYS_FS_LFS_SIZE:
+      attributes:
+        id: SYS_FS_LFS_SIZE
+        label: Size Of LFS image (in KB)
+      type: Integer
+    SYS_FS_MAX_FILES:
+      attributes:
+        id: SYS_FS_MAX_FILES
+        label: Maximum Simultaneous File Access
+      children:
+      - children:
+        - attributes:
+            value: '6'
+          type: User
+        type: Values
+      type: Integer
+    SYS_FS_MAX_FILE_SYSTEM_TYPE:
+      attributes:
+        id: SYS_FS_MAX_FILE_SYSTEM_TYPE
+        label: File System Types
+      type: Integer
+    SYS_FS_MEDIA_DEVICE_1_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_1_NAME_IDX0
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_1_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_1_NAME_IDX1
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_1_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_1_NAME_IDX2
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_1_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_1_NAME_IDX3
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_2_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_2_NAME_IDX0
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_2_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_2_NAME_IDX1
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_2_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_2_NAME_IDX2
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_2_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_2_NAME_IDX3
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_3_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_3_NAME_IDX0
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_3_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_3_NAME_IDX1
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_3_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_3_NAME_IDX2
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_3_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_3_NAME_IDX3
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_4_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_4_NAME_IDX0
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_4_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_4_NAME_IDX1
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_4_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_4_NAME_IDX2
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_DEVICE_4_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_DEVICE_4_NAME_IDX3
+        label: Device Name
+      type: String
+    SYS_FS_MEDIA_MANAGER_BUFFER_SIZE:
+      attributes:
+        id: SYS_FS_MEDIA_MANAGER_BUFFER_SIZE
+        label: Size Of Media Manager Buffer
+      type: Integer
+    SYS_FS_MEDIA_MAX_BLOCK_SIZE:
+      attributes:
+        id: SYS_FS_MEDIA_MAX_BLOCK_SIZE
+        label: Size Of Block
+      type: Integer
+    SYS_FS_MEDIA_MOUNT_1_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_1_NAME_IDX0
+        label: Media Mount Name
+      children:
+      - children:
+        - attributes:
+            value: /mnt/sd
+          type: User
+        type: Values
+      type: String
+    SYS_FS_MEDIA_MOUNT_1_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_1_NAME_IDX1
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_1_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_1_NAME_IDX2
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_1_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_1_NAME_IDX3
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_2_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_2_NAME_IDX0
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_2_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_2_NAME_IDX1
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_2_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_2_NAME_IDX2
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_2_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_2_NAME_IDX3
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_3_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_3_NAME_IDX0
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_3_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_3_NAME_IDX1
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_3_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_3_NAME_IDX2
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_3_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_3_NAME_IDX3
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_4_NAME_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_4_NAME_IDX0
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_4_NAME_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_4_NAME_IDX1
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_4_NAME_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_4_NAME_IDX2
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_MOUNT_4_NAME_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_MOUNT_4_NAME_IDX3
+        label: Media Mount Name
+      type: String
+    SYS_FS_MEDIA_TYPE_DEFINE_IDX0:
+      attributes:
+        id: SYS_FS_MEDIA_TYPE_DEFINE_IDX0
+        label: Media Type
+      type: Combo
+    SYS_FS_MEDIA_TYPE_DEFINE_IDX1:
+      attributes:
+        id: SYS_FS_MEDIA_TYPE_DEFINE_IDX1
+        label: Media Type
+      type: Combo
+    SYS_FS_MEDIA_TYPE_DEFINE_IDX2:
+      attributes:
+        id: SYS_FS_MEDIA_TYPE_DEFINE_IDX2
+        label: Media Type
+      type: Combo
+    SYS_FS_MEDIA_TYPE_DEFINE_IDX3:
+      attributes:
+        id: SYS_FS_MEDIA_TYPE_DEFINE_IDX3
+        label: Media Type
+      type: Combo
+    SYS_FS_MPFS:
+      attributes:
+        id: SYS_FS_MPFS
+        label: Microchip File System
+      type: Boolean
+    SYS_FS_RTOS:
+      attributes:
+        id: SYS_FS_RTOS
+        label: Run Library Tasks As
+      type: Combo
+    SYS_FS_RTOS_DELAY:
+      attributes:
+        id: SYS_FS_RTOS_DELAY
+        label: Task Delay
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: Integer
+    SYS_FS_RTOS_STACK_SIZE:
+      attributes:
+        id: SYS_FS_RTOS_STACK_SIZE
+        label: Stack Size (in bytes)
+      type: Integer
+    SYS_FS_RTOS_TASK_MSG_QTY:
+      attributes:
+        id: SYS_FS_RTOS_TASK_MSG_QTY
+        label: Maximum Message Queue Size
+      type: Integer
+    SYS_FS_RTOS_TASK_OPT_NONE:
+      attributes:
+        id: SYS_FS_RTOS_TASK_OPT_NONE
+        label: Task Specific Options
+      type: Boolean
+    SYS_FS_RTOS_TASK_OPT_NO_TLS:
+      attributes:
+        id: SYS_FS_RTOS_TASK_OPT_NO_TLS
+        label: TLS (Thread Local Storage) support needed for the task
+      type: Boolean
+    SYS_FS_RTOS_TASK_OPT_SAVE_FP:
+      attributes:
+        id: SYS_FS_RTOS_TASK_OPT_SAVE_FP
+        label: Floating-point registers needs to be saved
+      type: Boolean
+    SYS_FS_RTOS_TASK_OPT_STK_CHK:
+      attributes:
+        id: SYS_FS_RTOS_TASK_OPT_STK_CHK
+        label: Stack checking is allowed for the task
+      type: Boolean
+    SYS_FS_RTOS_TASK_OPT_STK_CLR:
+      attributes:
+        id: SYS_FS_RTOS_TASK_OPT_STK_CLR
+        label: Stack needs to be cleared
+      type: Boolean
+    SYS_FS_RTOS_TASK_PRIORITY:
+      attributes:
+        id: SYS_FS_RTOS_TASK_PRIORITY
+        label: Task Priority
+      type: Integer
+    SYS_FS_RTOS_TASK_TIME_QUANTA:
+      attributes:
+        id: SYS_FS_RTOS_TASK_TIME_QUANTA
+        label: Task Time Quanta
+      type: Integer
+    SYS_FS_RTOS_USE_DELAY:
+      attributes:
+        id: SYS_FS_RTOS_USE_DELAY
+        label: Use Task Delay?
+      type: Boolean
+    SYS_FS_TOTAL_VOLUMES:
+      attributes:
+        id: SYS_FS_TOTAL_VOLUMES
+        label: SYS_FS_TOTAL_VOLUMES
+      children:
+      - children:
+        - attributes:
+            id: sys_fs
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: Integer
+    SYS_FS_TYPE_DEFINE_IDX0:
+      attributes:
+        id: SYS_FS_TYPE_DEFINE_IDX0
+        label: File System Type
+      type: Combo
+    SYS_FS_TYPE_DEFINE_IDX1:
+      attributes:
+        id: SYS_FS_TYPE_DEFINE_IDX1
+        label: File System Type
+      type: Combo
+    SYS_FS_TYPE_DEFINE_IDX2:
+      attributes:
+        id: SYS_FS_TYPE_DEFINE_IDX2
+        label: File System Type
+      type: Combo
+    SYS_FS_TYPE_DEFINE_IDX3:
+      attributes:
+        id: SYS_FS_TYPE_DEFINE_IDX3
+        label: File System Type
+      type: Combo
+    SYS_FS_USE_NVM_MBR0:
+      attributes:
+        id: SYS_FS_USE_NVM_MBR0
+        label: Create FAT12 in NVM
+      type: Boolean
+    SYS_FS_USE_NVM_MBR1:
+      attributes:
+        id: SYS_FS_USE_NVM_MBR1
+        label: Create FAT12 in NVM
+      type: Boolean
+    SYS_FS_USE_NVM_MBR2:
+      attributes:
+        id: SYS_FS_USE_NVM_MBR2
+        label: Create FAT12 in NVM
+      type: Boolean
+    SYS_FS_USE_NVM_MBR3:
+      attributes:
+        id: SYS_FS_USE_NVM_MBR3
+        label: Create FAT12 in NVM
+      type: Boolean
+    SYS_FS_USE_SRAM_MBR0:
+      attributes:
+        id: SYS_FS_USE_SRAM_MBR0
+        label: Create FAT12 in SRAM
+      type: Boolean
+    SYS_FS_USE_SRAM_MBR1:
+      attributes:
+        id: SYS_FS_USE_SRAM_MBR1
+        label: Create FAT12 in SRAM
+      type: Boolean
+    SYS_FS_USE_SRAM_MBR2:
+      attributes:
+        id: SYS_FS_USE_SRAM_MBR2
+        label: Create FAT12 in SRAM
+      type: Boolean
+    SYS_FS_USE_SRAM_MBR3:
+      attributes:
+        id: SYS_FS_USE_SRAM_MBR3
+        label: Create FAT12 in SRAM
+      type: Boolean
+    SYS_FS_VOLUME_INSTANCES_NUMBER_IDX0:
+      attributes:
+        id: SYS_FS_VOLUME_INSTANCES_NUMBER_IDX0
+        label: Number Of Volumes
+      type: Integer
+    SYS_FS_VOLUME_INSTANCES_NUMBER_IDX1:
+      attributes:
+        id: SYS_FS_VOLUME_INSTANCES_NUMBER_IDX1
+        label: Number Of Volumes
+      type: Integer
+    SYS_FS_VOLUME_INSTANCES_NUMBER_IDX2:
+      attributes:
+        id: SYS_FS_VOLUME_INSTANCES_NUMBER_IDX2
+        label: Number Of Volumes
+      type: Integer
+    SYS_FS_VOLUME_INSTANCES_NUMBER_IDX3:
+      attributes:
+        id: SYS_FS_VOLUME_INSTANCES_NUMBER_IDX3
+        label: Number Of Volumes
+      type: Integer
+    SYS_FS_VOLUME_NUMBER:
+      attributes:
+        id: SYS_FS_VOLUME_NUMBER
+        label: Total Number Of Volumes
+      type: Integer
+    SYS_FS_VOL_1_IDX0:
+      attributes:
+        id: SYS_FS_VOL_1_IDX0
+        label: Volume0
+      type: Boolean
+    SYS_FS_VOL_1_IDX1:
+      attributes:
+        id: SYS_FS_VOL_1_IDX1
+        label: Volume0
+      type: Boolean
+    SYS_FS_VOL_1_IDX2:
+      attributes:
+        id: SYS_FS_VOL_1_IDX2
+        label: Volume0
+      type: Boolean
+    SYS_FS_VOL_1_IDX3:
+      attributes:
+        id: SYS_FS_VOL_1_IDX3
+        label: Volume0
+      type: Boolean
+    SYS_FS_VOL_2_IDX0:
+      attributes:
+        id: SYS_FS_VOL_2_IDX0
+        label: Volume1
+      type: Boolean
+    SYS_FS_VOL_2_IDX1:
+      attributes:
+        id: SYS_FS_VOL_2_IDX1
+        label: Volume1
+      type: Boolean
+    SYS_FS_VOL_2_IDX2:
+      attributes:
+        id: SYS_FS_VOL_2_IDX2
+        label: Volume1
+      type: Boolean
+    SYS_FS_VOL_2_IDX3:
+      attributes:
+        id: SYS_FS_VOL_2_IDX3
+        label: Volume1
+      type: Boolean
+    SYS_FS_VOL_3_IDX0:
+      attributes:
+        id: SYS_FS_VOL_3_IDX0
+        label: Volume2
+      type: Boolean
+    SYS_FS_VOL_3_IDX1:
+      attributes:
+        id: SYS_FS_VOL_3_IDX1
+        label: Volume2
+      type: Boolean
+    SYS_FS_VOL_3_IDX2:
+      attributes:
+        id: SYS_FS_VOL_3_IDX2
+        label: Volume2
+      type: Boolean
+    SYS_FS_VOL_3_IDX3:
+      attributes:
+        id: SYS_FS_VOL_3_IDX3
+        label: Volume2
+      type: Boolean
+    SYS_FS_VOL_4_IDX0:
+      attributes:
+        id: SYS_FS_VOL_4_IDX0
+        label: Volume3
+      type: Boolean
+    SYS_FS_VOL_4_IDX1:
+      attributes:
+        id: SYS_FS_VOL_4_IDX1
+        label: Volume3
+      type: Boolean
+    SYS_FS_VOL_4_IDX2:
+      attributes:
+        id: SYS_FS_VOL_4_IDX2
+        label: Volume3
+      type: Boolean
+    SYS_FS_VOL_4_IDX3:
+      attributes:
+        id: SYS_FS_VOL_4_IDX3
+        label: Volume3
+      type: Boolean
+  userData: {}

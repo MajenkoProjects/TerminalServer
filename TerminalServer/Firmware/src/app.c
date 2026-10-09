@@ -288,7 +288,7 @@ void APP_Tasks ( void ) {
                                     int r = fancy_read(scan, c, tmp, 10);
                                     for (int i = 0; i < r; i++) {
                                         if (tmp[i] == scan->local_switch) {
-                                            port_printf(scan, "+++ OUT OF CHEESE ERROR +++\r\n");
+                                            port_printf(scan, "+++ BREAK +++\r\n");
                                             port_set_mode(scan, MODE_LOCAL);
                                         } else if (tmp[i] == scan->forward_switch) {
                                             struct session *first = NULL;

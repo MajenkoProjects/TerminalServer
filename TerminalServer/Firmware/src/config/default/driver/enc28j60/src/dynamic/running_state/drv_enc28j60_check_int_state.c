@@ -39,6 +39,7 @@ Microchip or any third party.
 #include "../drv_enc28j60_utils.h"
 #include "drv_enc28j60_running_state.h"
 #include "peripheral/gpio/plib_gpio.h"
+#include "port.h"
 
 
 int32_t DRV_ENC28J60_ChkIntStateTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst)
@@ -52,7 +53,9 @@ int32_t DRV_ENC28J60_ChkIntStateTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst
     {
         case DRV_ENC28J60_CI_WAIT:
 		if (GPIO_PinRead(pDrvInst->drvCfg.intPin) == 0) {
-			curSt->state = DRV_ENC28J60_CI_READ_EIR;
+			if (pDrvInst->rxPacketPending == false) {
+				curSt->state = DRV_ENC28J60_CI_READ_EIR;
+			}
 		}
 		break;
         case DRV_ENC28J60_CI_READ_EIR:

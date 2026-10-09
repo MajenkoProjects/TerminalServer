@@ -27,5 +27,35 @@ data:
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
-  symbols: {}
+  symbols:
+    NET_PRES_RTOS_USE_DELAY:
+      attributes:
+        id: NET_PRES_RTOS_USE_DELAY
+        label: Use Task Delay?
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    NET_PRES_RTOS_DELAY:
+      attributes:
+        id: NET_PRES_RTOS_DELAY
+        label: Task Delay
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: '10'
+          type: User
+        type: Values
+      type: Integer
   userData: {}

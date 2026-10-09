@@ -136,6 +136,13 @@ typedef uintptr_t DRV_SPI_TRANSFER_HANDLE;
     DRV_SPI_TransferStatusGet function.
 */
 
+typedef enum {
+	SPI_LOCK_UNLOCKED = 0,
+	SPI_LOCK_LOCKED,
+	SPI_LOCK_OWNED,
+	SPI_LOCK_ERROR = 255
+} SPI_LOCK_STATE;
+
 typedef enum
 {
     /* Transfer request is pending */
@@ -1259,6 +1266,7 @@ bool DRV_SPI_WriteReadTransfer(
     - This API must not be called from an interrupt handler as it may block on a RTOS mutex
 */
 bool DRV_SPI_Lock( const DRV_HANDLE handle, bool lock );
+SPI_LOCK_STATE DRV_SPI_IsLocked(const DRV_HANDLE handle);
 
 /* MISRAC 2012 deviation block end */
 //DOM-IGNORE-BEGIN

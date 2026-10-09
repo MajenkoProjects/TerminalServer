@@ -160,7 +160,7 @@ void telnet_in_transfer_data(struct port *port) {
                             data->iac_pos = 0;
                             switch (port->breakmode) {
                                 case BREAK_LOCAL:
-                                    port_printf(port, "+++ OUT OF CHEESE +++\r\n\n");
+                                    port_printf(port, "+++ BREAK +++\r\n\n");
                                     port->mode = MODE_LOCAL;
                                     break;
                                 case BREAK_REMOTE:

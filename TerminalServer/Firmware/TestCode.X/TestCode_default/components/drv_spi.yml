@@ -22,8 +22,8 @@ data:
     - children:
       - attributes:
           id: drv_spi
-          x: '812'
-          y: '317'
+          x: '696'
+          y: '244'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
@@ -35,8 +35,17 @@ data:
       children:
       - children:
         - attributes:
+            id: readOnly
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            id: drv_spi
             value: Asynchronous
-          type: User
+          type: Dynamic
         type: Values
       type: Combo
     DRV_SPI_ASYNC_SOURCE:
@@ -99,7 +108,7 @@ data:
       - children:
         - attributes:
             id: drv_spi
-            value: '0'
+            value: '1'
           type: Dynamic
         type: Values
       type: Integer
@@ -111,7 +120,7 @@ data:
       - children:
         - attributes:
             id: drv_spi
-            value: 'false'
+            value: 'true'
           type: Dynamic
         type: Values
       type: Boolean
@@ -123,7 +132,7 @@ data:
       - children:
         - attributes:
             id: drv_spi
-            value: 'false'
+            value: 'true'
           type: Dynamic
         type: Values
       type: Boolean

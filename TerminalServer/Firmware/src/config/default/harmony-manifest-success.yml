@@ -4,7 +4,7 @@
 
 
 project: TestCode
-creation_date: 2026-10-01T22:39:29.414+01:00[Europe/London]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2026-10-09T17:22:46.688+01:00[Europe/London]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Linux
 mcc_mode: IDE            # [IDE|Standalone|Headless]
 mcc_version: v5.7.0
@@ -14,8 +14,8 @@ harmony_version: 1.7.0
 compiler: XC32 5.00
 
 modules:
-    - {name: "csp", version: "v3.26.0"}
     - {name: "core", version: "v3.17.0"}
+    - {name: "csp", version: "v3.26.0"}
     - {name: "usb", version: "v3.16.0"}
     - {name: "FreeRTOS-Kernel", version: "V11.3.1"}
     - {name: "net", version: "v3.14.6"}

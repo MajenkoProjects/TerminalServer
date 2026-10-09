@@ -44,11 +44,10 @@ data:
       attributes:
         id: TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE
         label: Default TX Buffer Size
-      children:
-      - children:
-        - attributes:
-            value: '512'
-          type: User
-        type: Values
+      type: Integer
+    TCPIP_UDP_MAX_SOCKETS:
+      attributes:
+        id: TCPIP_UDP_MAX_SOCKETS
+        label: Maximum number of Sockets
       type: Integer
   userData: {}

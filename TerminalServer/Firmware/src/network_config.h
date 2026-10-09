@@ -15,7 +15,7 @@ const DRV_ENC28J60_Configuration drvEnc28j60InitData[] = {
         .rxDescBufferSize =     DRV_ENC28J60_MAX_RX_BUFFER_IDX0,
         .rxBufferSize =         DRV_ENC28J60_RX_BUFFER_SIZE_IDX0,
         .maxFrameSize =         DRV_ENC28J60_MAX_FRAME_SIZE_IDX0,
-        .spiSetup.baudRateInHz = 20000000,
+        .spiSetup.baudRateInHz = ETHERNET_SPI_BITRATE,
         .spiSetup.clockPolarity = DRV_SPI_CLOCK_POLARITY_IDLE_LOW,
         .spiSetup.clockPhase = DRV_SPI_CLOCK_PHASE_VALID_TRAILING_EDGE,
         .spiSetup.dataBits =    DRV_SPI_DATA_BITS_8,
@@ -60,6 +60,20 @@ TCPIP_NETWORK_CONFIG TCPIP_HOSTS_CONFIGURATION[] = {
 #endif    
 };
 
+
+
+/*** FTP Server Initialization Data ***/
+const TCPIP_FTP_MODULE_CONFIG tcpipFTPInitData =
+{ 
+    .cmdPort            = TCPIP_FTPS_COMMAND_LISTEN_PORT, 
+    .dataPort           = TCPIP_FTPS_DATA_LISTEN_PORT, 
+    .nConnections       = TCPIP_FTP_MAX_CONNECTIONS,
+    .dataSktTxBuffSize  = TCPIP_FTP_DATA_SKT_TX_BUFF_SIZE,
+    .dataSktRxBuffSize  = TCPIP_FTP_DATA_SKT_RX_BUFF_SIZE,
+    .mountPath          = TCPIP_FTP_MOUNT_POINT,
+    .userName           = TCPIP_FTP_USER_NAME,
+    .password           = TCPIP_FTP_PASSWORD,
+};
 
 const TCPIP_ARP_MODULE_CONFIG tcpipARPInitData = { 
     .cacheEntries       = TCPIP_ARP_CACHE_ENTRIES,     
@@ -124,9 +138,13 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] = {
     {TCPIP_MODULE_TCP,              &tcpipTCPInitData},             // TCPIP_MODULE_TCP
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
+    {TCPIP_MODULE_FTP_SERVER,       &tcpipFTPInitData},             // TCPIP_MODULE_FTP
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER
 #ifdef ETHERNET_ENABLED
     {TCPIP_MODULE_MAC_ENCJ60,       &drvEnc28j60InitData},          // TCPIP_MODULE_MAC_ENCJ60
+#endif
+#ifdef WIFI_ENABLED
+    {TCPIP_MODULE_MAC_EXTERNAL,     0},
 #endif
 };
 

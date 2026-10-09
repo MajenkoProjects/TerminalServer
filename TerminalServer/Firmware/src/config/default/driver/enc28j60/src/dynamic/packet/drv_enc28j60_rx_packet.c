@@ -72,6 +72,7 @@ int32_t DRV_ENC28J60_RxPacketTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst, D
         case DRV_ENC28J60_RX_EMPTY_PACKET:
             break;
 
+
         case DRV_ENC28J60_RX_SET_ERDPTR:
             if (pkt->retry >= 3)
             {
@@ -80,6 +81,7 @@ int32_t DRV_ENC28J60_RxPacketTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst, D
                 pkt->state = DRV_ENC28J60_RX_EMPTY_PACKET;
                 pDrvInst->rxPtrVal = pDrvInst->encMemRxStart;
                 TCPIP_Helper_ProtSglListTailAdd(&pDrvInst->rxFreePackets, FC_MacPkt2Node(pkt->macPkt));
+//		(*pDrvInst->busVTable->fpLockBus)(pDrvInst, false);
                 break;
 
             }
@@ -88,6 +90,10 @@ int32_t DRV_ENC28J60_RxPacketTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst, D
             {   
                 break;
             }
+
+//            if (!(*pDrvInst->busVTable->fpLockBus)(pDrvInst, true)) {
+//		    break;
+//	    }
 
             ret = (*pDrvInst->busVTable->fpSfrWr16)(pDrvInst, DRV_ENC28J60_SFR_ERDPTL, pDrvInst->rxPtrVal, false);
             if(ret != 0)
@@ -276,6 +282,7 @@ int32_t DRV_ENC28J60_RxPacketTask(struct S_DRV_ENC28J60_DriverInfo * pDrvInst, D
             {
                 // OK
             }
+//	    (*pDrvInst->busVTable->fpLockBus)(pDrvInst, false);
 
             // success; mark the packet as available
             if ((pkt->rsv.rxMultcast) && (pkt->rsv.rxBcast))

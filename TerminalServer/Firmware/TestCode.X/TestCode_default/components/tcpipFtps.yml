@@ -1,0 +1,145 @@
+configVersion: 1.0.0
+componentName: tcpipFtps
+coreVersion: 5.9.0
+device: PIC32MX795F512L
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: tcpipFtps
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition: {}
+  symbols:
+    TCPIP_FTPS_AUTHENTICATION_CONN_INFO:
+      attributes:
+        id: TCPIP_FTPS_AUTHENTICATION_CONN_INFO
+        label: 'Connection Info Used for Authentication '
+      type: Boolean
+    TCPIP_FTPS_AUTH_CONFIG:
+      attributes:
+        id: TCPIP_FTPS_AUTH_CONFIG
+        label: Select FTP Authentication
+      children:
+      - children:
+        - attributes:
+            value: (OBSOLETE) Init Time Authentication
+          type: User
+        type: Values
+      type: Combo
+    TCPIP_FTPS_COMMAND_LISTEN_PORT:
+      attributes:
+        id: TCPIP_FTPS_COMMAND_LISTEN_PORT
+        label: Command Listening Port
+      type: Integer
+    TCPIP_FTPS_DATA_LISTEN_PORT:
+      attributes:
+        id: TCPIP_FTPS_DATA_LISTEN_PORT
+        label: Data Listening Port
+      type: Integer
+    TCPIP_FTPS_HEAP_SIZE:
+      attributes:
+        id: TCPIP_FTPS_HEAP_SIZE
+        label: FTP Server Heap Size (bytes)
+      type: Integer
+    TCPIP_FTPS_TASK_TICK_RATE:
+      attributes:
+        id: TCPIP_FTPS_TASK_TICK_RATE
+        label: FTP Server Task Rate (in msec)
+      type: Integer
+    TCPIP_FTP_DATA_SKT_RX_BUFF_SIZE:
+      attributes:
+        id: TCPIP_FTP_DATA_SKT_RX_BUFF_SIZE
+        label: FTP Data Socket RX Buffer Size
+      type: Integer
+    TCPIP_FTP_DATA_SKT_TX_BUFF_SIZE:
+      attributes:
+        id: TCPIP_FTP_DATA_SKT_TX_BUFF_SIZE
+        label: FTP Data Socket TX Buffer Size
+      type: Integer
+    TCPIP_FTP_MAX_CONNECTIONS:
+      attributes:
+        id: TCPIP_FTP_MAX_CONNECTIONS
+        label: Maximum Number of FTP Connections Allowed per Interface
+      type: Integer
+    TCPIP_FTP_MOUNT_POINT:
+      attributes:
+        id: TCPIP_FTP_MOUNT_POINT
+        label: FTP Server Root Directory Path
+      children:
+      - children:
+        - attributes:
+            value: /mnt/sd
+          type: User
+        type: Values
+      type: String
+    TCPIP_FTP_PASSWD_LEN:
+      attributes:
+        id: TCPIP_FTP_PASSWD_LEN
+        label: Maximum Length of FTP Login Password
+      type: Integer
+    TCPIP_FTP_PASSWORD:
+      attributes:
+        id: TCPIP_FTP_PASSWORD
+        label: FTP Login Password
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: system
+          type: User
+        type: Values
+      type: String
+    TCPIP_FTP_PUT_ENABLED:
+      attributes:
+        id: TCPIP_FTP_PUT_ENABLED
+        label: FTP File PUT Command
+      type: Boolean
+    TCPIP_FTP_TIMEOUT:
+      attributes:
+        id: TCPIP_FTP_TIMEOUT
+        label: FTP Server timeout (in sec)
+      type: Integer
+    TCPIP_FTP_USER_NAME:
+      attributes:
+        id: TCPIP_FTP_USER_NAME
+        label: FTP Login User Name
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: root
+          type: User
+        type: Values
+      type: String
+    TCPIP_FTP_USER_NAME_LEN:
+      attributes:
+        id: TCPIP_FTP_USER_NAME_LEN
+        label: Maximum Length for User Name
+      type: Integer
+    TCPIP_USE_FTP_MODULE:
+      attributes:
+        id: TCPIP_USE_FTP_MODULE
+        label: Use FTP Module
+      type: Boolean
+  userData: {}

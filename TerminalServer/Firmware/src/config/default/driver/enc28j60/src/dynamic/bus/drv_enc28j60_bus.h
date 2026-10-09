@@ -707,6 +707,8 @@ typedef TCPIP_MAC_RES (*DRV_ENC28J60_WritePacket)(struct S_DRV_ENC28J60_DriverIn
 */
 typedef uintptr_t (*DRV_ENC28J60_ReadDataStart)(struct S_DRV_ENC28J60_DriverInfo *  pDrvInstance, uint8_t *  buffer, uint16_t  dataSize, bool autoAck);
 
+typedef bool (*DRV_ENC28J60_LockBus)(struct S_DRV_ENC28J60_DriverInfo * pDrvInstance, bool lock);
+
 typedef struct
 {
     DRV_ENC28J60_OpenInterface fpOpenIf;
@@ -736,6 +738,7 @@ typedef struct
     DRV_ENC28J60_PhyRead fpPhyRd;
     DRV_ENC28J60_WritePacket fpPktWr;
     DRV_ENC28J60_ReadDataStart fpDataRdStart;
+    DRV_ENC28J60_LockBus fpLockBus;
 }DRV_ENC28J60_BusVTable;
 
 

@@ -19,21 +19,21 @@ struct mac_request {
 };
 
 enum spi_state {
-    SPI_INIT = 0,
-    SPI_HW_RESET_START,
-    SPI_HW_RESET_WAIT,
-    SPI_HW_RESET_END,
-    SPI_SEND_RESET,
-    SPI_SEND_MAC,
-    SPI_SEND_SSID,
-    SPI_SEND_PSK,
-    SPI_ASK_STATUS,
-    SPI_GET_STATUS,
-    SPI_IDLE,
-    SPI_GET_PLEN,
-    SPI_RX_PLEN,
-    SPI_ASK_PACKET,
-    SPI_GET_PACKET,
+    SPI_INIT                    = 0,
+    SPI_HW_RESET_START          = 1,
+    SPI_HW_RESET_WAIT           = 2,
+    SPI_HW_RESET_END            = 3,
+    SPI_SEND_RESET              = 4,
+    SPI_SEND_MAC                = 5,
+    SPI_SEND_SSID               = 6,
+    SPI_SEND_PSK                = 7,
+    SPI_ASK_STATUS              = 8,
+    SPI_GET_STATUS              = 9,
+    SPI_IDLE                    = 10,
+    SPI_GET_PLEN                = 11,
+    SPI_RX_PLEN                 = 12,
+    SPI_ASK_PACKET              = 13,
+    SPI_GET_PACKET              = 14,
 };
 
 
@@ -54,40 +54,38 @@ enum wifi_command_mode {
 };
 
 
-#define WIFI_MAX_RX_BUFFERS 2
+#define WIFI_MAX_RX_BUFFERS 4
 #define WIFI_RX_BUFFER_SIZE SPI_MAX_SIZE
 
 enum wifi_main_state {
-    WIFI_STATE_INITIALIZE = 0,
-    WIFI_STATE_RESET_WAIT,
-    WIFI_STATE_RESET_DONE,
-    WIFI_STATE_SEND_MAC,
-    WIFI_STATE_WAIT_MAC,
-    WIFI_STATE_SEND_SSID,
-    WIFI_STATE_WAIT_SSID,
-    WIFI_STATE_SEND_PSK,
-    WIFI_STATE_WAIT_PSK,
-    WIFI_STATE_RUN,
+    WIFI_STATE_INITIALIZE   = 0,
+    WIFI_STATE_RESET_WAIT   = 1,
+    WIFI_STATE_RESET_DONE   = 2,
+    WIFI_STATE_SEND_MAC     = 3,
+    WIFI_STATE_WAIT_MAC     = 4,
+    WIFI_STATE_SEND_SSID    = 5,
+    WIFI_STATE_WAIT_SSID    = 6,
+    WIFI_STATE_SEND_PSK     = 7,
+    WIFI_STATE_WAIT_PSK     = 8,
+    WIFI_STATE_RUN          = 9,
     
-    WIFI_STATE_SEND_STATUS,
-    WIFI_STATE_WAIT_STATUS,
-    WIFI_STATE_GET_STATUS,
-    WIFI_STATE_HAVE_STATUS,
+    WIFI_STATE_SEND_STATUS  = 10,
+    WIFI_STATE_WAIT_STATUS  = 11,
+    WIFI_STATE_GET_STATUS   = 12,
+    WIFI_STATE_HAVE_STATUS  = 13,
     
 
-    WIFI_STATE_SEND_RBSTAT,
-    WIFI_STATE_WAIT_RBSTAT,
-    WIFI_STATE_GET_SIZE,
-    WIFI_STATE_HAVE_SIZE,
-    WIFI_STATE_SEND_READ,
-    WIFI_STATE_WAIT_READ,
-    WIFI_STATE_GET_READ,
-    WIFI_STATE_HAVE_READ,
+    WIFI_STATE_START_READ   = 14,
+    WIFI_STATE_SEND_READ    = 15,
+    WIFI_STATE_WAIT_READ    = 16,
+    WIFI_STATE_GET_READ     = 17,
+    WIFI_STATE_HAVE_READ    = 18,
     
-    WIFI_STATE_QUEUE_READ,
+    WIFI_STATE_QUEUE_READ   = 19,
     
-    WIFI_STATE_SEND_WRITE,
-    WIFI_STATE_WAIT_WRITE
+    WIFI_STATE_START_WRITE  = 20,
+    WIFI_STATE_SEND_WRITE   = 21,
+    WIFI_STATE_WAIT_WRITE   = 22
     
 };
 
@@ -109,12 +107,13 @@ struct wifi_data {
     DRV_HANDLE spiBus;
     
     enum wifi_main_state mainState;
-    
+    enum wifi_main_state afterStatus;
     bool stackConfigReady;
     
     DRV_SPI_TRANSFER_HANDLE transfer;
     uint8_t spibuf[SPI_MAX_SIZE];
-    
+    int transferSize;
+
     struct {
         uint32_t stateDelay;
         uint32_t queryStatus;
@@ -136,7 +135,6 @@ struct wifi_data {
 
 struct wifi_data wifi_data;
 
-
 void wifi_set_event(struct wifi_data *data, TCPIP_MAC_EVENT events) {
     data->currentEvents |= events;
     data->stackConfig.eventF(events, data->stackConfig.eventParam);
@@ -145,31 +143,6 @@ void wifi_set_event(struct wifi_data *data, TCPIP_MAC_EVENT events) {
 void wifi_rx_packet_ack(TCPIP_MAC_PACKET* pkt,  const void* param) {
     struct wifi_data *data = (struct wifi_data *)param;
     TCPIP_Helper_ProtSglListTailAdd(&data->rxFreePackets, (SGL_LIST_NODE *)pkt);
-}
-
-volatile bool spi_transfer_complete = false;
-
-void spi_event_handler( DRV_SPI_TRANSFER_EVENT event, DRV_SPI_TRANSFER_HANDLE transferHandle, uintptr_t context ) {
-    
-    switch (event) {
-        case DRV_SPI_TRANSFER_EVENT_PENDING:
-//            DBG("P");
-            break;
-        case DRV_SPI_TRANSFER_EVENT_COMPLETE:
-//            DBG("C");
-            spi_transfer_complete = true;
-            break;
-        case DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED:
-//            DBG("X");
-            break;
-        case DRV_SPI_TRANSFER_EVENT_ERROR:
-//            DBG("E");
-            break;
-        case DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID:
-//            DBG("I");
-            break;
-    }
-    
 }
 
 
@@ -190,15 +163,13 @@ bool wifi_set_mac_ctl(SYS_MODULE_OBJ object, const TCPIP_MAC_MODULE_CTRL * init)
 
     DRV_SPI_TRANSFER_SETUP setup;
 
-    setup.baudRateInHz = 10000000;
+    setup.baudRateInHz = WIFI_SPI_BITRATE;
     setup.dataBits = DRV_SPI_DATA_BITS_8;
     setup.chipSelect = SYS_PORT_PIN_RD11;
     setup.clockPhase = DRV_SPI_CLOCK_PHASE_VALID_TRAILING_EDGE;
     setup.clockPolarity = DRV_SPI_CLOCK_POLARITY_IDLE_HIGH;
     setup.csPolarity = DRV_SPI_CS_POLARITY_ACTIVE_LOW;
     DRV_SPI_TransferSetup(pDrvInst->spiBus, &setup);
-
-    DRV_SPI_TransferEventHandlerSet(pDrvInst->spiBus, spi_event_handler, 0);
     
     pDrvInst->mainState = WIFI_STATE_INITIALIZE;
     
@@ -269,15 +240,13 @@ SYS_STATUS wifi_status(SYS_MODULE_OBJ object) {
         case WIFI_STATE_WAIT_STATUS:
         case WIFI_STATE_GET_STATUS:
         case WIFI_STATE_HAVE_STATUS:
-        case WIFI_STATE_SEND_RBSTAT:
-        case WIFI_STATE_WAIT_RBSTAT:
+        case WIFI_STATE_START_READ:
         case WIFI_STATE_SEND_READ:
         case WIFI_STATE_WAIT_READ:
-        case WIFI_STATE_GET_SIZE:
-        case WIFI_STATE_HAVE_SIZE:
         case WIFI_STATE_GET_READ:
         case WIFI_STATE_HAVE_READ:
         case WIFI_STATE_QUEUE_READ:     
+        case WIFI_STATE_START_WRITE:
         case WIFI_STATE_SEND_WRITE:
         case WIFI_STATE_WAIT_WRITE:
             return SYS_STATUS_READY;
@@ -286,12 +255,33 @@ SYS_STATUS wifi_status(SYS_MODULE_OBJ object) {
     return SYS_STATUS_ERROR;
 }
 
-bool spi_complete() {
-    if (spi_transfer_complete) {
-        spi_transfer_complete = false;
-        return true;
+enum spi_status {
+    SPI_STATUS_ERROR,
+    SPI_STATUS_COMPLETE,
+    SPI_STATUS_PENDING
+};
+
+
+enum spi_status get_spi_state(struct wifi_data *data, const char *place) {
+    DRV_SPI_TRANSFER_EVENT spi_res = DRV_SPI_TransferStatusGet(data->transfer);
+    switch (spi_res) {
+        case DRV_SPI_TRANSFER_EVENT_ERROR:
+            DBG("%s DRV_SPI_TRANSFER_EVENT_ERROR\r\n", place);
+            return SPI_STATUS_ERROR;
+        case DRV_SPI_TRANSFER_EVENT_COMPLETE:
+            return SPI_STATUS_COMPLETE;
+        case DRV_SPI_TRANSFER_EVENT_PENDING:
+            return SPI_STATUS_PENDING;
+            break;
+        case DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED:
+            DBG("%s DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED\r\n", place);
+            return SPI_STATUS_ERROR;
+        case DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID:
+            DBG("%s DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID\r\n", place);
+            return SPI_STATUS_ERROR;
     }
-    return false;
+    DBG("%s UNKNOWN %d\r\n", place, spi_res);
+    return SPI_STATUS_ERROR;
 }
 
 void wifi_tasks(SYS_MODULE_OBJ object) {
@@ -299,14 +289,17 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
     uint32_t now;
     uint8_t *gather;
     TCPIP_MAC_DATA_SEGMENT *dseg;
-    int len;
+    int len = 0;
         
+    
+    enum spi_status spi_res;
+    
 //    static uint32_t dbgts = 0;    
 //    if (xTaskGetTickCount() - dbgts > 1000) {
 //        dbgts = xTaskGetTickCount();
 //        DBG("[%d]\r\n", data->mainState);
 //    }
-    
+//    
     
     switch (data->mainState) {
         case WIFI_STATE_INITIALIZE:
@@ -333,18 +326,19 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
         case WIFI_STATE_SEND_MAC:
             data->spibuf[0] = REG_ADDMAC;
             memcpy(&data->spibuf[1], data->stackParameters.ifPhyAddress.v, sizeof(TCPIP_MAC_ADDR));
-            //DBG("W");
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, sizeof(TCPIP_MAC_ADDR) + 1, &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_WAIT_MAC;
             break;
             
         case WIFI_STATE_WAIT_MAC:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_SEND_MAC;
-//                break;
-//            }
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
+            spi_res = get_spi_state(data, "WIFI_STATE_WAIT_MAC");
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_SEND_MAC;
+                break;
+            }
+            if (spi_res == SPI_STATUS_COMPLETE) {
                 data->timers.stateDelay = xTaskGetTickCount();
                 data->mainState = WIFI_STATE_SEND_SSID;
             }
@@ -355,39 +349,42 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             data->spibuf[0] = REG_SSID;
             len = strlen(wifi_settings.ssid);
             memcpy(&data->spibuf[1], wifi_settings.ssid, len);
-            //DBG("W");
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, len + 1, &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_WAIT_SSID;
             break;
             
         case WIFI_STATE_WAIT_SSID:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_SEND_SSID;
-//                break;
-//            }
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
+            spi_res = get_spi_state(data, "WIFI_STATE_WAIT_SSID");
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_SEND_SSID;
+                break;
+            }
+            if (spi_res == SPI_STATUS_COMPLETE) {
                 data->timers.stateDelay = xTaskGetTickCount();
                 data->mainState = WIFI_STATE_SEND_PSK;
             }
+            break;
             
         case WIFI_STATE_SEND_PSK:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_SHORT_DELAY) break;
             data->spibuf[0] = REG_PSK;
             len = strlen(wifi_settings.psk);
             memcpy(&data->spibuf[1], wifi_settings.psk, len);
-            //DBG("W");
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, len + 1, &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_WAIT_PSK;
             break;
             
         case WIFI_STATE_WAIT_PSK:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_SEND_PSK;
-//                break;
-//            }
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
+            spi_res = get_spi_state(data, "WIFI_STATE_WAIT_PSK");
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_SEND_PSK;
+                break;
+            }
+            if (spi_res == SPI_STATUS_COMPLETE) {
                 data->mainState = WIFI_STATE_RUN;
                 data->stackParameters.processFlags = TCPIP_MAC_PROCESS_FLAG_NONE;
                 data->stackParameters.macType = TCPIP_MAC_TYPE_ETH;
@@ -405,25 +402,24 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
         case WIFI_STATE_RUN:
             now = xTaskGetTickCount();
             
-            if ((now - data->timers.queryStatus) >= 10000) {
+            if ((now - data->timers.queryStatus) >= 1000) {
                 data->timers.queryStatus = now;
+                data->afterStatus = WIFI_STATE_RUN;
                 data->mainState = WIFI_STATE_SEND_STATUS;
                 break;
             }
 
             if (ESP_INT_Get() == 0) {
                 data->stats.rtTime = data->stats.rxTime = xTaskGetTickCount();
-              //  DBG("R:%u\r\n", data->stats.rxTime);
                 data->timers.stateDelay = xTaskGetTickCount();
-                data->mainState = WIFI_STATE_SEND_RBSTAT;
+                data->mainState = WIFI_STATE_START_READ;
                 break;
             }
 
 
             if (!TCPIP_Helper_ProtSglListIsEmpty(&data->txPendingPackets)) {
                 data->stats.txTime = xTaskGetTickCount();
-//                DBG("W:%u\r\n", data->stats.txTime);
-                data->mainState = WIFI_STATE_SEND_WRITE;
+                data->mainState = WIFI_STATE_START_WRITE;
                 break;
             }
 
@@ -439,20 +435,20 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             
             
         case WIFI_STATE_SEND_STATUS:
-
             data->spibuf[0] = REG_STATUS;            
-            //DBG("W");
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, 1, &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_WAIT_STATUS;
             break;
             
         case WIFI_STATE_WAIT_STATUS:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_SEND_STATUS;
-//                break;
-//            }
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
+            spi_res = get_spi_state(data, "WIFI_STATE_WAIT_STATUS");
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_SEND_STATUS;
+                break;
+            }
+            if (spi_res == SPI_STATUS_COMPLETE) {
                 data->timers.stateDelay = xTaskGetTickCount();
                 data->mainState = WIFI_STATE_GET_STATUS;
             }
@@ -460,22 +456,22 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             
         case WIFI_STATE_GET_STATUS:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_SHORT_DELAY) break;
-            //DBG("R");
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_ReadTransferAdd(data->spiBus, data->phyStatus.val, sizeof(wifi_status_t), &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_HAVE_STATUS;
             break;
 
         case WIFI_STATE_HAVE_STATUS:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_GET_STATUS;
-//                break;
-//            }
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
+            spi_res = get_spi_state(data, "WIFI_STATE_HAVE_STATUS");
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_GET_STATUS;
+                break;
+            }
+            if (spi_res == SPI_STATUS_COMPLETE) {
                 data->phyStatus.nextsize = TCPIP_Helper_ntohs(data->phyStatus.nextsize);
                 data->phyStatus.rssi = TCPIP_Helper_ntohl(data->phyStatus.rssi);
-                data->mainState = WIFI_STATE_RUN;
-
+                data->mainState = data->afterStatus;
             }
             break;
 
@@ -487,64 +483,32 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             
             
             
-        case WIFI_STATE_SEND_RBSTAT:
+        case WIFI_STATE_START_READ:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_SHORT_DELAY) break;
-            data->spibuf[0] = REG_RPACKET;
-            //DBG("W");
-            DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, 1, &data->transfer);
-            data->mainState = WIFI_STATE_WAIT_RBSTAT;
+            data->mainState = WIFI_STATE_SEND_STATUS;
+            data->afterStatus = WIFI_STATE_SEND_READ;
             break;
 
-        case WIFI_STATE_WAIT_RBSTAT:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_SEND_READ;
-//                break;
-//            }
-//
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
-                data->timers.stateDelay = xTaskGetTickCount();
-                data->mainState = WIFI_STATE_GET_SIZE;
-            }
-            break;
-        case WIFI_STATE_GET_SIZE:
-            if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_LONG_DELAY) break;
-            //DBG("R");
-            DRV_SPI_ReadTransferAdd(data->spiBus, data->spibuf, 2, &data->transfer);
-            data->mainState = WIFI_STATE_HAVE_SIZE;
-            break;
-        case WIFI_STATE_HAVE_SIZE:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_GET_SIZE;
-//                break;
-//            }
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
-                data->phyStatus.nextsize = (data->spibuf[0] << 8) | data->spibuf[1];
-                //DBG("S:%u\r\n", data->phyStatus.nextsize);
-                data->timers.stateDelay = xTaskGetTickCount();
-                data->mainState = WIFI_STATE_SEND_READ;
-            }
-            break;
 
             
             
         case WIFI_STATE_SEND_READ:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_SHORT_DELAY) break;
             data->spibuf[0] = REG_RPACKET;
-            //DBG("W");
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, 1, &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_WAIT_READ;
             break;
 
         case WIFI_STATE_WAIT_READ:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_SEND_READ;
-//                break;
-//            }
-//
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
+            spi_res = get_spi_state(data, "WIFI_STATE_WAIT_READ");
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_SEND_READ;
+                break;
+            }
+
+            if (spi_res == SPI_STATUS_COMPLETE) {
                 data->timers.stateDelay = xTaskGetTickCount();
                 data->mainState = WIFI_STATE_GET_READ;
             }
@@ -552,20 +516,27 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             
         case WIFI_STATE_GET_READ:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_LONG_DELAY) break;
-            //DBG("R");
+            if ((data->phyStatus.nextsize + 2) > WIFI_RX_BUFFER_SIZE) {
+                DBG("Bad size: %d\r\n", data->phyStatus.nextsize);
+                data->mainState = WIFI_STATE_RUN;
+                break;
+            } 
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_ReadTransferAdd(data->spiBus, data->spibuf, data->phyStatus.nextsize + 2, &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_HAVE_READ;
             break;
             
         case WIFI_STATE_HAVE_READ:
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_ERROR) {
-//                data->mainState = WIFI_STATE_GET_READ;
-//                break;
-//            }
-//            if (DRV_SPI_TransferStatusGet(data->transfer) == DRV_SPI_TRANSFER_EVENT_COMPLETE) {
-            if (spi_complete()) {
+            spi_res = get_spi_state(data, "WIFI_STATE_HAVE_READ");
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_GET_READ;
+                break;
+            }
+            if (spi_res == SPI_STATUS_COMPLETE) {
                 int l = (data->spibuf[0] << 8) | data->spibuf[1];
                 if (l != data->phyStatus.nextsize) {
+                    DBG("X");
                     data->mainState = WIFI_STATE_RUN;
                     break;
                 }
@@ -575,10 +546,24 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             
         case WIFI_STATE_QUEUE_READ:
             if (TCPIP_Helper_ProtSglListIsEmpty(&data->rxFreePackets)) {
+                DBG("F");
                 break;
             }
             data->pkt = (TCPIP_MAC_PACKET *)TCPIP_Helper_ProtSglListHeadRemove(&data->rxFreePackets);
-            memcpy(data->pkt->pDSeg->segLoad, &data->spibuf[2], data->phyStatus.nextsize);
+            
+            len = data->phyStatus.nextsize;
+            gather = &data->spibuf[2];
+            dseg = data->pkt->pDSeg;
+            
+            while ((len > 0) && (dseg != NULL)) {
+                int space = dseg->segSize;
+                if (space > len) space = len;
+                memcpy(dseg->segLoad, gather, space);
+                dseg->segLen = space;
+                len -= space;
+                gather += space;
+                dseg = dseg->next;
+            }
             data->pkt->pDSeg->segLen = data->phyStatus.nextsize;
             if (
                     (data->spibuf[2] == 0xFF) &&
@@ -597,7 +582,6 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             wifi_set_event(data, TCPIP_MAC_EV_RX_DONE);
             data->stats.rxPackets++;
             data->mainState = WIFI_STATE_RUN;
-//            DBG("r:%u (%u) = %u\r\n", xTaskGetTickCount(), xTaskGetTickCount() - data->stats.rxTime, xTaskGetTickCount() - data->stats.rtTime);
             break;
             
             
@@ -607,58 +591,51 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             
             
             
-        case WIFI_STATE_SEND_WRITE:
+            
+            
+
+        case WIFI_STATE_START_WRITE:            
             data->pkt = (TCPIP_MAC_PACKET *)TCPIP_Helper_ProtSglListHeadRemove(&data->txPendingPackets);
             data->spibuf[0] = REG_WPACKET;
             gather = data->spibuf + 1;
             dseg = data->pkt->pDSeg;
-            len = 0;
-            while (dseg) {
+            data->transferSize = 0;
+            while ((data->transferSize < SPI_MAX_SIZE) && (dseg != NULL)) {
                 memcpy(gather, dseg->segLoad, dseg->segLen);
                 gather += dseg->segLen;
-                len += dseg->segLen;
+                data->transferSize += dseg->segLen;
                 dseg = dseg->next;
             }
-//            DBG("PKTLEN:%d\r\n", len+1);
-            DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, len+1, &data->transfer);
+            data->mainState = WIFI_STATE_SEND_WRITE;
+            break;
+            
+        case WIFI_STATE_SEND_WRITE:
+
+            data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
+            DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, data->transferSize+1, &data->transfer);
+            if (data->transfer == DRV_SPI_TRANSFER_HANDLE_INVALID) break;
             data->mainState = WIFI_STATE_WAIT_WRITE;
             break;
             
-        case WIFI_STATE_WAIT_WRITE:
-            if (spi_complete()) {
+        case WIFI_STATE_WAIT_WRITE:           
+            spi_res = get_spi_state(data, "WIFI_STATE_WAIT_WRITE");
 
-            //            
-//            
-//            spi_res = DRV_SPI_TransferStatusGet(data->transfer);
-//            
-//            switch (spi_res) {
-//                case DRV_SPI_TRANSFER_EVENT_ERROR:
-//                    DBG("DRV_SPI_TRANSFER_EVENT_ERROR\r\n");
-//                    data->mainState = WIFI_STATE_RUN;
-//                    break;
-//                case DRV_SPI_TRANSFER_EVENT_COMPLETE:
-                    data->currentEvents |= TCPIP_MAC_EV_TX_DONE;
-                    if (!data->phyStatus.link) {
-                        data->pkt->ackRes = (int8_t)TCPIP_MAC_PKT_ACK_LINK_DOWN;
-                    } else {
-                        data->pkt->ackRes = (int8_t)TCPIP_MAC_PKT_ACK_TX_OK;
-                    }
+            if (spi_res == SPI_STATUS_ERROR) {
+                data->mainState = WIFI_STATE_RUN;
+                break;
+            }
 
-                    data->pkt->pktFlags &= ~TCPIP_MAC_PKT_FLAG_QUEUED;
-                    data->stackConfig.pktAckF(data->pkt, TCPIP_MAC_PKT_ACK_TX_OK, TCPIP_MODULE_MAC_EXTERNAL);
-                    data->mainState = WIFI_STATE_RUN;
-//                    DBG("w:%u (%u)\r\n", xTaskGetTickCount(), xTaskGetTickCount() - data->stats.txTime);
-//                    break;
-//                case DRV_SPI_TRANSFER_EVENT_PENDING:
-//                    break;
-//                case DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED:
-//                    DBG("DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED\r\n");
-//                    data->mainState = WIFI_STATE_RUN;
-//                    break;
-//                case DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID:
-//                    DBG("DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID\r\n");
-//                    data->mainState = WIFI_STATE_RUN;
-//                    break;
+            if (spi_res == SPI_STATUS_COMPLETE) {
+                data->currentEvents |= TCPIP_MAC_EV_TX_DONE;
+                if (!data->phyStatus.link) {
+                    data->pkt->ackRes = (int8_t)TCPIP_MAC_PKT_ACK_LINK_DOWN;
+                } else {
+                    data->pkt->ackRes = (int8_t)TCPIP_MAC_PKT_ACK_TX_OK;
+                }
+
+                data->pkt->pktFlags &= ~TCPIP_MAC_PKT_FLAG_QUEUED;
+                data->stackConfig.pktAckF(data->pkt, TCPIP_MAC_PKT_ACK_TX_OK, TCPIP_MODULE_MAC_EXTERNAL);
+                data->mainState = WIFI_STATE_RUN;
             }
             break;
     }

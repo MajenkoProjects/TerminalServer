@@ -93,4 +93,26 @@ data:
           type: User
         type: Values
       type: Combo
+    FREERTOS_USE_TRACE_FACILITY:
+      attributes:
+        id: FREERTOS_USE_TRACE_FACILITY
+        label: Use trace facility
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    FREERTOS_GENERATE_RUN_TIME_STATS:
+      attributes:
+        id: FREERTOS_GENERATE_RUN_TIME_STATS
+        label: Generate runtime statistics
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
   userData: {}

@@ -10,12 +10,11 @@
 #include "stream_buffer.h"
 #include "ttype.h"
 
-#define DBG(...)
-//port_printf(CONSOLE, __VA_ARGS__);
+#define DBG(...) port_printf(CONSOLE, __VA_ARGS__); 
 //CONSOLE->fn_flush(CONSOLE);
 
-#define CIRCULAR_BUFFER_SIZE 64
-#define MAX_COMMAND         60
+#define CIRCULAR_BUFFER_SIZE 32
+#define MAX_COMMAND         40
 #define NUM_HISTORY         4
 #define PORT_MAX_NAME       8
 #define CONSOLE ports

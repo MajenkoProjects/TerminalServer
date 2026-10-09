@@ -14,12 +14,47 @@
 #include "ttype.h"
 #include "telnet_out.h"
 #include "port_commands.h"
+#include "third_party/rtos/FreeRTOS/Source/include/task.h"
 
+COMMAND(show_tasks) {
 
+    uint32_t num_tasks = uxTaskGetNumberOfTasks();
+    port_printf(port, "%d tasks:\r\n", num_tasks);
+    TaskStatus_t *status = alloca(sizeof(TaskStatus_t) * num_tasks);
+    uxTaskGetSystemState(status, num_tasks, NULL);
+    for (int i = 0; i < num_tasks; i++) {
+        port_printf(port, "%-15s %s %u\r\n",
+                status[i].pcTaskName,
+                status[i].eCurrentState == eRunning ? "R" : 
+                    status[i].eCurrentState == eReady ? "P" :
+                        status[i].eCurrentState == eBlocked ? "B" :
+                            status[i].eCurrentState == eSuspended ? "S" : "I",
+                status[i].ulRunTimeCounter
+                );
+    }
+    
+    return ERR_OK;
+}
+
+COMMAND(show_all_files) {
+
+    SYS_FS_FSTAT stat;
+
+    SYS_FS_HANDLE sd = SYS_FS_DirOpen("/mnt/sd");
+    if (!sd) return ERR_NOTFOUND;
+    while (SYS_FS_DirRead(sd, &stat) == SYS_FS_RES_SUCCESS) {
+        if (stat.fname[0] == 0) break;
+        port_printf(port, "%10d %s\r\n", stat.fsize, stat.fname);
+    }
+    
+    SYS_FS_DirClose(sd);
+    return ERR_OK;
+}
 
 #include "command_tree.h"
 
  
+
 COMMAND(logout) {
     port_printf(port, "Exiting the Majenko Technologies Terminal Server\r\n\n");
     close_port(port);

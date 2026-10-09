@@ -5,6 +5,9 @@
 #define FREERTOS_CONFIG_H
 
 
+//#define traceTASK_SWITCHED_IN()  if (pxCurrentTCB && strcmp(pxCurrentTCB->pcTaskName, "TCPIP_STACK_Task") == 0) { __builtin_software_breakpoint(); }
+//#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
+
 /*
  * FreeRTOS Kernel V11.1.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -333,22 +336,25 @@
  * See https://www.freertos.org/Stacks-and-stack-overflow-checking.html  Defaults
  * to 0 if left undefined. */
 #define configCHECK_FOR_STACK_OVERFLOW          2
-
-/******************************************************************************/
+/*******************************/
 /* Run time and task stats gathering related definitions. *********************/
 /******************************************************************************/
+
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() {}
+
+#define portGET_RUN_TIME_COUNTER_VALUE() ((configRUN_TIME_COUNTER_TYPE) __builtin_mfc0(9, 0) / 80000)
 
 /* Set configGENERATE_RUN_TIME_STATS to 1 to have FreeRTOS collect data on the
  * processing time used by each task.  Set to 0 to not collect the data.  The
  * application writer needs to provide a clock source if set to 1.  Defaults to 0
  * if left undefined.  See https://www.freertos.org/rtos-run-time-stats.html. */
-#define configGENERATE_RUN_TIME_STATS           0
+#define configGENERATE_RUN_TIME_STATS           1
 
 /* Set configUSE_TRACE_FACILITY to include additional task structure members
  * are used by trace and visualisation functions and tools.  Set to 0 to exclude
  * the additional information from the structures. Defaults to 0 if left
  * undefined. */
-#define configUSE_TRACE_FACILITY                0
+#define configUSE_TRACE_FACILITY                1
 
 /* Set to 1 to include the vTaskList() and vTaskGetRunTimeStats() functions in
  * the build.  Set to 0 to exclude these functions from the build.  These two

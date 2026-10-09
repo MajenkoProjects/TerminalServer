@@ -71,7 +71,7 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
             break;
 
         case USB_DEVICE_CDC_EVENT_WRITE_COMPLETE:
-            xSemaphoreTakeFromISR(usb_data[index].write_running, NULL);
+            xSemaphoreTake(usb_data[index].write_running, NULL);
             // If anything is in output CB then queue it here
             break;
 

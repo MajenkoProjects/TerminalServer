@@ -14,6 +14,7 @@ static const struct command show_port_sub[] = {
 
 static const struct command show_all_sub[] = {
     {"COMMANDS",        &show_command_tree,             0,              NULL,                               HELP_SHOW_ALL_COMMANDS},
+    {"FILES",           &show_all_files,                0,              NULL,                               NULL},
     {"PORTS",           &list_ports,                    0,              NULL,                               HELP_SHOW_ALL_PORTS},
     END_OF_LIST
 };
@@ -23,6 +24,7 @@ static const struct command show_sub[] = {
     {"PORT",            &show_port_characteristics,     CMD_TARGET,     show_port_sub,                      HELP_SHOW_PORT_CHARACTERISTICS},
     {"SERVER",          &show_server,                   0,              NULL,                               HELP_SHOW_SERVER},
     {"SESSIONS",        &show_sessions,                 CMD_TARGET,     NULL,                               HELP_SHOW_SESSIONS},
+    {"TASKS",           &show_tasks,                    0 ,             NULL,                               NULL},
     END_OF_LIST
 };
 
@@ -253,7 +255,7 @@ static const struct command commands[] = {
     {"RESUME",          &resume_session,                CMD_SESSION,    NULL,                               HELP_RESUME},
     {"SEND",            NULL,                           0,              send_sub,                           NULL},
     {"SET",             NULL,                           0,              set_sub,                            NULL},
-    {"SHOW",            NULL,                           0,              show_sub,                           NULL},
+    {"SHOW",            NULL,                           0,              show_sub,                            NULL},
     END_OF_LIST
 };
 

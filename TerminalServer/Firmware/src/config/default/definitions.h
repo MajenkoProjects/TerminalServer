@@ -50,6 +50,7 @@
 #include <stdbool.h>
 #include "usb/usb_chapter_9.h"
 #include "usb/usb_device.h"
+#include "driver/sdspi/drv_sdspi.h"
 #include "peripheral/uart/plib_uart5.h"
 #include "system/time/sys_time.h"
 #include "peripheral/uart/plib_uart6.h"
@@ -76,11 +77,18 @@
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
+#include "peripheral/dmac/plib_dmac.h"
 #include "peripheral/i2c/master/plib_i2c2_master.h"
 #include "net_pres/pres/net_pres.h"
 #include "net_pres/pres/net_pres_encryptionproviderapi.h"
 #include "net_pres/pres/net_pres_transportapi.h"
 #include "net_pres/pres/net_pres_socketapi.h"
+#include "system/fs/sys_fs.h"
+#include "system/fs/sys_fs_media_manager.h"
+#include "system/fs/sys_fs_fat_interface.h"
+#include "system/fs/fat_fs/file_system/ff.h"
+#include "system/fs/fat_fs/file_system/ffconf.h"
+#include "system/fs/fat_fs/hardware_access/diskio.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "app.h"
@@ -214,6 +222,9 @@ Remarks:
 
 typedef struct
 {
+    /* SDSPI0 Driver Object */
+    SYS_MODULE_OBJ drvSDSPI0;
+
     SYS_MODULE_OBJ  usbDevObject0;
 
     SYS_MODULE_OBJ  sysTime;

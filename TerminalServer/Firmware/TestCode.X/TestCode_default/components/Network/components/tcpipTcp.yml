@@ -74,7 +74,7 @@ data:
       - children:
         - attributes:
             id: tcpipTcp
-            value: '57800'
+            value: '23120'
           type: Dynamic
         type: Values
       type: Integer
@@ -85,7 +85,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '50'
+            value: '20'
           type: User
         type: Values
       type: Integer
@@ -93,23 +93,11 @@ data:
       attributes:
         id: TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE
         label: Default TX Buffer Size
-      children:
-      - children:
-        - attributes:
-            value: '512'
-          type: User
-        type: Values
       type: Integer
     TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE:
       attributes:
         id: TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE
         label: Default RX Buffer Size
-      children:
-      - children:
-        - attributes:
-            value: '512'
-          type: User
-        type: Values
       type: Integer
     TCPIP_TCP_TASK_TICK_RATE:
       attributes:
@@ -118,7 +106,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '1'
+            value: '10'
           type: User
         type: Values
       type: Integer
