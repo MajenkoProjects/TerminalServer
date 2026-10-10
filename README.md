@@ -14,9 +14,10 @@ Current status:
 * **Serial Ports:** Done
 * **USB Ports:** Done
 * **Ethernet:** Done
-* **WiFi:** In progress
+* **WiFi:** Done
 * **Telnet in:** Done
 * **Telnet out:** Done
 * **TCP in:** Done
-* **TU58 Emulation:** Planned
+* **TU58 Emulation:** In Progress
+* **TCP out:** Planned
 * **PPP/SLIP:** Planned
