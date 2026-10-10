@@ -42,9 +42,8 @@ struct command_state {
     bool echo;
 };
 
-extern int command_process(struct port *port, char c);
+extern void command_process(struct port *port);
 extern void command_execute(struct port *port);
-extern const char *prompt(struct port *);
 
 extern COMMAND(show_server);
 extern COMMAND(logout);

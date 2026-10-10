@@ -31,6 +31,6 @@ enum modem_response {
 
 
 
-extern void modem_process(struct port *port, int c);
+extern void modem_process(struct port *port);
 extern bool modem_response(struct port *port, enum modem_response r);
 #endif

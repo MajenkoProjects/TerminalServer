@@ -510,7 +510,7 @@ void mdns_process_incoming() {
                     if (strcasecmp(tmp, "_serial._tcp.local.") == 0) {
                         for (struct port *port = ports; port; port = port->next) {
                             if ((port->type == PORT_SERIAL) || (port->type == PORT_CDC)) {
-                                if ((port->access == ACCESS_REMOTE) || (port->access == ACCESS_DYNAMIC)) {
+                                if (port->access == ACCESS_REMOTE) {
                                     mdns_queue_rr_ptr("_serial", "_tcp", port->name);
                                 }
                             }
@@ -525,7 +525,7 @@ void mdns_process_incoming() {
                 case RR_TXT:
                     for (struct port *port = ports; port; port = port->next) {
                         if ((port->type == PORT_SERIAL) || (port->type == PORT_CDC)) {
-                            if ((port->access == ACCESS_REMOTE) || (port->access == ACCESS_DYNAMIC)) {                                              
+                            if (port->access == ACCESS_REMOTE) {                                              
                                 strcpy(fqdn, port->name);
                                 strcat(fqdn, "._serial._tcp.local.");
                                 if (strcasecmp(fqdn, tmp) == 0) {
@@ -544,7 +544,7 @@ void mdns_process_incoming() {
                 case RR_SRV:
                     for (struct port *port = ports; port; port = port->next) {
                         if ((port->type == PORT_SERIAL) || (port->type == PORT_CDC)) {
-                            if ((port->access == ACCESS_REMOTE) || (port->access == ACCESS_DYNAMIC)) {                  
+                            if (port->access == ACCESS_REMOTE) {                  
                                 strcpy(fqdn, port->name);
                                 strcat(fqdn, "._serial._tcp.local.");
                                 if (strcasecmp(fqdn, tmp) == 0) {

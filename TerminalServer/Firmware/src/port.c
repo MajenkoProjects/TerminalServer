@@ -8,6 +8,8 @@
 #include "util.h"
 #include "version.h"
 #include "usb.h"
+#include "modem.h"
+#include "tu58.h"
 
 struct port *ports = NULL;
 
@@ -26,7 +28,6 @@ const char *port_types[] = {
 const char *access_names[] = {
     "Local",
     "Remote",
-    "Dynamic",
     "Modem",
     "TU58"
 };
@@ -37,6 +38,27 @@ const char *breakmode_names[] = {
     "Remote"
 };
 
+const struct port_access_functions port_access_functions[] = {
+    {   // LOCAL
+        .process = &command_process,
+        .init = NULL
+    },
+    {   // REMOTE
+        .process = NULL,
+        .init = NULL
+    },
+    {   // MODEM
+        .init = NULL,
+        .process = &modem_process
+    },
+    {   // TU58
+        .init = &tu58_init,   
+        .process = &tu58_process,   
+        .mount = &tu58_mount,   
+        .dismount = &tu58_dismount,
+        .show_info = &tu58_show_info
+    },
+};
 
 // Write a block of data to the port. Returns the actual number
 // of bytes written to the port.
@@ -325,6 +347,7 @@ void port_load_setting(uint8_t module, uint8_t parameter, uint8_t index, uint8_t
             break;
         case SETTING_PORT_ACCESS:
             port->access = *(uint8_t *)data;
+            if (port->access == 4) port->access = 3;
             break;
         case SETTING_PORT_TERMINAL_TYPE:
             if (length > 16) length = 16;

@@ -82,7 +82,7 @@ void tcp_in_task() {
                 }
 
                 if (target) {
-                    if ((target->access == ACCESS_REMOTE) || (target->access == ACCESS_DYNAMIC)) {
+                    if (target->access == ACCESS_REMOTE) {
                         socket->socket = TCPIP_TCP_ServerOpen(IP_ADDRESS_TYPE_IPV4, socket->port_no, 0);
                         socket->state = TCP_IN_LISTEN;
                     }

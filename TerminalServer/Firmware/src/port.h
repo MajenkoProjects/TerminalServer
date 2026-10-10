@@ -68,7 +68,6 @@ enum port_type {
 enum access_mode {
     ACCESS_LOCAL = 0,
     ACCESS_REMOTE,
-    ACCESS_DYNAMIC,
     ACCESS_MODEM,
     ACCESS_TU58
 };
@@ -99,8 +98,6 @@ struct port {
     enum port_mode previous_mode;
     StreamBufferHandle_t read_buffer;
     StreamBufferHandle_t write_buffer;
-//    struct circular_buffer read_buffer;
-//    struct circular_buffer write_buffer;       
     void *port_data;
     char commands[NUM_HISTORY][MAX_COMMAND];
     uint8_t misc[64];
@@ -129,6 +126,7 @@ struct port {
     uint8_t keybuf_pos;
     struct session *active_session;
     bool priv;
+    bool have_prompted;
     struct port_setting_functions set;
     struct port_setting_functions define;
     void (*fn_stop)(struct port *);
@@ -140,6 +138,19 @@ struct port {
     void (*fn_yield)(struct port *);
     error_t (*fn_status)(struct port *, struct port *);
 };
+
+
+struct port_access_functions {
+    void (*init)(struct port *);
+    void (*process)(struct port *);
+    void (*show_info)(struct port *, struct port *);
+    bool (*mount)(const char *filename, struct port *port, int unit);
+    bool (*dismount)(struct port *port, int unit);
+};
+
+
+extern const struct port_access_functions port_access_functions[];
+
 
 extern struct port *ports;
 extern const char *port_types[];

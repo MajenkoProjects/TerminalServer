@@ -58,6 +58,12 @@ static const struct module modules[] = {
 
 #define NUM_MODULES (sizeof(modules) / sizeof(struct module))
 
+
+
+
+
+
+
 extern      ssize_t write(int fildes, const void *buf, size_t nbyte);
 extern      int close(int fildes);
 
@@ -121,10 +127,12 @@ void yield() {
 
 
 
+
 void APP_Tasks ( void ) {    
     static uint32_t reset_ts = 0;
     static bool reset_state = true;
     static int modno = 0;
+    static struct port *port;
     
     if (GPIO_PinRead(FRES_PIN) != reset_state) {
         reset_state = GPIO_PinRead(FRES_PIN);
@@ -162,214 +170,174 @@ void APP_Tasks ( void ) {
             modno++;
             if (modno >= NUM_MODULES) {
                 modno = 0;
+                state = APP_STATE_INIT_PORTS;
+                port = ports;
+            }
+            break;
+            
+        case APP_STATE_INIT_PORTS:
+            if (port_access_functions[port->access].init != NULL) {
+                port_access_functions[port->access].init(port);
+            }
+            port = port->next;            
+            if (!port) {
                 state = APP_STATE_SERVICE_TASKS;
+                port = ports;
+                break;
             }
             break;
             
         case APP_STATE_SERVICE_TASKS: 
 
-            for (struct port *scan = ports; scan; scan = scan->next) {
-                if (scan->type != PORT_NONE) {
-                    bool have_prompted = false;
-                    if (scan->mode != scan->previous_mode) {
-                        scan->previous_mode = scan->mode;
-                        if (scan->mode == MODE_LOCAL) {
-                            port_printf(scan, prompt(scan));
-                            if (scan->fn_flush) scan->fn_flush(scan);
-                            have_prompted = true;
+            switch (port->mode) {
+                // A port is sitting doing nothing. If it's a serial port
+                // and in local access mode then respond to a RETURN
+                // keypress to initiate a login prompt.
+                case MODE_IDLE:
+                    if (port->access == ACCESS_LOCAL) {
+                        if (port->type == PORT_SERIAL) {
+                            if (port_available(port)) {
+                                int c = port_read_byte(port);
+                                if (c == 13) {
+                                    port_set_mode(port, MODE_GREET);
+                                }
+                            }
                         }
                     }
-                    
-                    switch (scan->mode) {
-                        
-                        // A port is sitting doing nothing. If it's a serial port
-                        // and in local access mode then respond to a RETURN
-                        // keypress to initiate a login prompt.
-                        case MODE_IDLE:
-                            switch (scan->access) {
-                                case ACCESS_LOCAL:
-                                    if (scan->type == PORT_SERIAL) {
-                                        if (port_available(scan)) {
-                                            int c = port_read_byte(scan);
-                                            if (c == 13) {
-                                                port_set_mode(scan, MODE_GREET);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case ACCESS_MODEM:
-                                    port_set_mode(scan, MODE_MODEM);
-                                    break;
-                                case ACCESS_TU58:
-                                    port_set_mode(scan, MODE_TU58);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
+                    break;
 
-                        // A short delay before presenting the greeting and
-                        // login prompt. Really only for telnet-in.
-                        case MODE_PREGREET: 
-                            if (scan->ticks == 0) {
-                                scan->ticks = xTaskGetTickCount();
-                            } else if (xTaskGetTickCount() - scan->ticks > 500) {
-                                scan->ticks = 0;
-                                port_set_mode(scan, MODE_GREET);
-                            }
-                            break;
-
-                        // The main greeting and login prompt display.
-                        case MODE_GREET:
-                            if (scan->access == ACCESS_LOCAL) {
-                                greet(scan);
-                            }
-                            break;
-
-
-                        // Main Local> prompt processing mode. Deal with all commands
-                        // entered.
-                        case MODE_LOCAL:
-                            switch (scan->access) {
-                                case ACCESS_LOCAL:
-                                    if (port_available(scan)) {
-                                        int c = port_read_byte(scan);
-                                        if (command_process(scan, c) == 1) {
-                                            if ((!have_prompted) && (scan->mode == MODE_LOCAL)) {
-                                                port_printf(scan, prompt(scan));
-                                                if (scan->fn_flush) scan->fn_flush(scan);
-                                                have_prompted = true;
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case ACCESS_REMOTE:
-                                    break;
-                                case ACCESS_DYNAMIC:
-                                    break;
-                                case ACCESS_MODEM:
-                                    port_set_mode(scan, MODE_MODEM);
-                                    break;
-                                case ACCESS_TU58:
-                                    port_set_mode(scan, MODE_TU58);
-                                    break;
-                            }
-                            break;
-                            
-                        // Session mode - pass data from the parent to the target
-                        // and back from the target to the parent. Deal with
-                        // local switch keypresses.
-                        case MODE_SESSION:
-
-                            if ((scan->access == ACCESS_MODEM) && (scan->misc[62] >= 3)) {
-                                if ((xTaskGetTickCount() - scan->ticks) > 500) {
-                                    modem_response(scan, MODEM_OK);
-                                    port_set_mode(scan, MODE_MODEM);
-                                    scan->ticks = 0;
-                                    scan->misc[62] = 0;
-                                }
-                            }
-
-                            if (scan->active_session && (scan->active_session->type == SESSION_DIRECT)) {
-                                if (port_available(scan) && (xStreamBufferSpacesAvailable(scan->active_session->target->write_buffer))) {
-                                    int c = port_read_byte(scan);
-                                    
-                                    if (scan->access == ACCESS_MODEM) { // Handle +++ for break
-                                        if (c == '+') {
-                                            scan->misc[62]++;
-                                            if (scan->misc[62] >= 3) {
-                                                scan->ticks = xTaskGetTickCount();
-                                            }
-                                        } else {
-                                            scan->misc[62] = 0;
-                                            scan->ticks = 0;
-                                        }
-                                    }
-                                    
-                                    uint16_t tmp[11];
-                                    int r = fancy_read(scan, c, tmp, 10);
-                                    for (int i = 0; i < r; i++) {
-                                        if (tmp[i] == scan->local_switch) {
-                                            port_printf(scan, "+++ BREAK +++\r\n");
-                                            port_set_mode(scan, MODE_LOCAL);
-                                        } else if (tmp[i] == scan->forward_switch) {
-                                            struct session *first = NULL;
-                                            struct session *curr = NULL;
-                                            struct session *next = NULL;
-                                            for (struct session *sess = sessions; sess; sess = sess->next) {
-                                                if (sess->type == SESSION_DELETED) continue;
-                                                if (sess->parent == scan) {
-                                                    if (first == NULL) first = sess;
-                                                    if (sess == scan->active_session) {
-                                                        curr = sess;
-                                                        continue;
-                                                    }
-        
-                                                    if ((next == NULL) && (curr != NULL)) {
-                                                        next = sess;
-                                                        continue;
-                                                    }
-                                                }
-                                            }
-                                            if (next == NULL) next = first;
-                                            port_set_active_session(scan, next);
-                                        } else if (tmp[i] == scan->backward_switch) {
-                                            struct session *prev = NULL;
-                                            struct session *curr = NULL;
-                                            struct session *last = NULL;
-                                            for (struct session *sess = sessions; sess; sess = sess->next) {
-                                                if (sess->type == SESSION_DELETED) continue;
-                                                if (sess->parent == scan) {
-                                                    last = sess;
-                                                    if (sess == scan->active_session) {
-                                                        curr = sess;
-                                                        continue;
-                                                    }
-                                                    if ((curr == NULL)) {
-                                                        prev = sess;
-                                                        continue;
-                                                    }
-                                                }
-                                            }
-                                            if (prev == NULL) prev = last;
-                                            port_set_active_session(scan, prev);
-                                            
-                                        } else {
-                                            if (IS_SPECIAL(tmp[i])) {
-                                                const char *key = scan->tinfo->keys[tmp[i] & 0xFF];
-                                                for (int j = 0; j < strlen(key); j++) {
-                                                    port_write_byte(scan->active_session->target, key[j]);                                                    
-                                                }
-                                            } else {
-                                                port_write_byte(scan->active_session->target, tmp[i]);
-                                            }
-                                        }
-                                    }
-                                }
-                                if (port_available(scan->active_session->target) && xStreamBufferSpacesAvailable(scan->write_buffer)) {
-                                    int c = port_read_byte(scan->active_session->target);
-                                    port_write_byte(scan, c);               
-                                }
-                            }
-                            break;
-                        case MODE_MODEM:
-                            if (port_available(scan)) {
-                                int c = port_read_byte(scan);
-                                modem_process(scan, c);
-                            }
-                            break;
-                        case MODE_TU58:
-                            if (port_available(scan)) {
-                                int c = port_read_byte(scan);
-                                tu58_process(scan, c);
-                            }
-                            break;
-                        default:
-                            break;
+                // A short delay before presenting the greeting and
+                // login prompt. Really only for telnet-in.
+                case MODE_PREGREET: 
+                    if (port->ticks == 0) {
+                        port->ticks = xTaskGetTickCount();
+                    } else if (xTaskGetTickCount() - port->ticks > 500) {
+                        port->ticks = 0;
+                        port_set_mode(port, MODE_GREET);
                     }
-                }
+                    break;
+
+                // The main greeting and login prompt display.
+                case MODE_GREET:
+                    if (port->access == ACCESS_LOCAL) {
+                        greet(port);
+                    }
+
+                    break;
+
+
+                // Main Local> prompt processing mode. Deal with all commands
+                // entered.
+                case MODE_LOCAL:
+                    if (port_access_functions[port->access].process) {
+                        port_access_functions[port->access].process(port);
+                    }
+                    break;
+
+                // Session mode - pass data from the parent to the target
+                // and back from the target to the parent. Deal with
+                // local switch keypresses.
+                case MODE_SESSION:
+
+                    if ((port->access == ACCESS_MODEM) && (port->misc[62] >= 3)) {
+                        if ((xTaskGetTickCount() - port->ticks) > 500) {
+                            modem_response(port, MODEM_OK);
+                            port_set_mode(port, MODE_MODEM);
+                            port->ticks = 0;
+                            port->misc[62] = 0;
+                        }
+                    }
+
+                    if (port->active_session && (port->active_session->type == SESSION_DIRECT)) {
+                        if (port_available(port) && (xStreamBufferSpacesAvailable(port->active_session->target->write_buffer))) {
+                            int c = port_read_byte(port);
+
+                            if (port->access == ACCESS_MODEM) { // Handle +++ for break
+                                if (c == '+') {
+                                    port->misc[62]++;
+                                    if (port->misc[62] >= 3) {
+                                        port->ticks = xTaskGetTickCount();
+                                    }
+                                } else {
+                                    port->misc[62] = 0;
+                                    port->ticks = 0;
+                                }
+                            }
+
+                            uint16_t tmp[11];
+                            int r = fancy_read(port, c, tmp, 10);
+                            for (int i = 0; i < r; i++) {
+                                if (tmp[i] == port->local_switch) {
+                                    port_printf(port, "+++ BREAK +++\r\n");
+                                    port_set_mode(port, MODE_LOCAL);
+                                } else if (tmp[i] == port->forward_switch) {
+                                    struct session *first = NULL;
+                                    struct session *curr = NULL;
+                                    struct session *next = NULL;
+                                    for (struct session *sess = sessions; sess; sess = sess->next) {
+                                        if (sess->type == SESSION_DELETED) continue;
+                                        if (sess->parent == port) {
+                                            if (first == NULL) first = sess;
+                                            if (sess == port->active_session) {
+                                                curr = sess;
+                                                continue;
+                                            }
+
+                                            if ((next == NULL) && (curr != NULL)) {
+                                                next = sess;
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    if (next == NULL) next = first;
+                                    port_set_active_session(port, next);
+                                } else if (tmp[i] == port->backward_switch) {
+                                    struct session *prev = NULL;
+                                    struct session *curr = NULL;
+                                    struct session *last = NULL;
+                                    for (struct session *sess = sessions; sess; sess = sess->next) {
+                                        if (sess->type == SESSION_DELETED) continue;
+                                        if (sess->parent == port) {
+                                            last = sess;
+                                            if (sess == port->active_session) {
+                                                curr = sess;
+                                                continue;
+                                            }
+                                            if ((curr == NULL)) {
+                                                prev = sess;
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    if (prev == NULL) prev = last;
+                                    port_set_active_session(port, prev);
+
+                                } else {
+                                    if (IS_SPECIAL(tmp[i])) {
+                                        const char *key = port->tinfo->keys[tmp[i] & 0xFF];
+                                        for (int j = 0; j < strlen(key); j++) {
+                                            port_write_byte(port->active_session->target, key[j]);                                                    
+                                        }
+                                    } else {
+                                        port_write_byte(port->active_session->target, tmp[i]);
+                                    }
+                                }
+                            }
+                        }
+                        if (port_available(port->active_session->target) && xStreamBufferSpacesAvailable(port->write_buffer)) {
+                            int c = port_read_byte(port->active_session->target);
+                            port_write_byte(port, c);               
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
             }
             
+            
+            port = port->next;
+            if (!port) port = ports;
             break;
        
         default:
@@ -382,3 +350,23 @@ void APP_Tasks ( void ) {
     
 }
 
+
+void EMERG_PUTSTR(const char *str) {
+    while (*str) {
+        while (U6STAbits.UTXBF);
+        U6TXREG = *str;        
+        str++;
+    }
+}
+
+void __attribute__((noreturn)) _general_exception_handler ( void ) {
+    uint32_t exception_code = ((_CP0_GET_CAUSE() & 0x0000007CU) >> 2U);
+    uint32_t exception_address = _CP0_GET_EPC();
+    
+    char tmp[128];
+    sprintf(tmp, "\r\n\r\nGuru Meditation %08x.%08x\r\n", exception_code, exception_address);
+    EMERG_PUTSTR(tmp);
+
+    __builtin_software_breakpoint();//    DBG("\r\n\r\nGuru Meditation %08x.%08x\r\n", exception_code, exception_address);
+    while (1);
+}

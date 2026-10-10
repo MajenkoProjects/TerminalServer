@@ -69,6 +69,13 @@ COMMAND(show_port_characteristics) {
     );
 
     port_printf(port, "\n");
+    
+    if (port_access_functions[target->access].show_info) {
+        port_access_functions[target->access].show_info(port, target);
+    }
+
+    port_printf(port, "\n");
+    
     return ERR_OK;
 }
 COMMAND(show_port_status) {
@@ -185,12 +192,7 @@ COMMAND(port_set_access_remote) {
     target->mode = MODE_IDLE;
     return ERR_OK;
 }
-COMMAND(port_set_access_dynamic) {
-    OPT_TARGET
-    target->access = ACCESS_DYNAMIC;
-    target->mode = MODE_IDLE;
-    return ERR_OK;
-}
+
 COMMAND(port_set_access_modem) {
     OPT_TARGET
     target->access = ACCESS_MODEM;
@@ -215,12 +217,7 @@ COMMAND(port_define_access_remote) {
     setting_set(MODULE_PORT, SETTING_PORT_ACCESS, target->no, 1, &b);
     return ERR_OK;
 }
-COMMAND(port_define_access_dynamic) {
-    OPT_TARGET
-    uint8_t b = ACCESS_DYNAMIC;
-    setting_set(MODULE_PORT, SETTING_PORT_ACCESS, target->no, 1, &b);
-    return ERR_OK;
-}
+
 COMMAND(port_define_access_modem) {
     OPT_TARGET
     uint8_t b = ACCESS_MODEM;

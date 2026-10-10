@@ -50,7 +50,7 @@
 "CONNECT LOCAL <port>\r\n" \
 "\n" \
 "Connect to a local port, either by name or by number. The port you are trying\r\n" \
-"to connect to must be in either REMOTE or DYNAMIC access mode (see SET PORT\r\n" \
+"to connect to must be in REMOTE access mode (see SET PORT\r\n" \
 "ACCESS) for this command to work. Can be used on either Serial or USB ports.\r\n"
 
 #define HELP_DEFINE_SERVER_NAMESERVER \
@@ -172,15 +172,6 @@
 "SHOW COMMAND TREE\r\n" \
 "\n" \
 "Show a tree view of every command available on the system.\r\n"
-
-#define HELP_DEFINE_PORT_ACCESS_DYNAMIC \
-"DEFINE PORT [<port>] ACCESS DYNAMIC\r\n" \
-"\n" \
-"Sets a port to operate in Dynamic access mode. In Dynamic access mode a port\r\n" \
-"is both Remote and Local at the same time. Under normal operation a Local>\r\n" \
-"prompt is presented on the port for interaction by a user, but the option to\r\n" \
-"connect to the port from another port or session remains available. Takes\r\n" \
-"after the next reboot.\r\n"
 
 #define HELP_DEFINE_PORT_ACCESS_LOCAL \
 "DEFINE PORT [<port>] ACCESS LOCAL\r\n" \

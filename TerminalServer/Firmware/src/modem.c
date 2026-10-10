@@ -437,21 +437,25 @@ static bool modem_execute(struct port *port) {
     return modem_response(port, 0);
 }
 
-void modem_process(struct port *port, int c) {
-    int l;
-    if (port->misc[63] & MODEM_ECHO) port_write_byte(port, c);
-    switch (c) {
-        case '\r':
-            modem_execute(port);
-            memset(port->commands[0], 0, MAX_COMMAND);
-            port->commands[0][0] = 0;
-            break;
-        default:
-            l = strlen(port->commands[0]);
-            if (l < (MAX_COMMAND-1)) {
-                port->commands[0][l++] = c;
-                port->commands[0][l] = 0;
-            }
-            break;            
+void modem_process(struct port *port) {
+    
+    if (port_available(port)) {
+        int c = port_read_byte(port);
+        int l;
+        if (port->misc[63] & MODEM_ECHO) port_write_byte(port, c);
+        switch (c) {
+            case '\r':
+                modem_execute(port);
+                memset(port->commands[0], 0, MAX_COMMAND);
+                port->commands[0][0] = 0;
+                break;
+            default:
+                l = strlen(port->commands[0]);
+                if (l < (MAX_COMMAND-1)) {
+                    port->commands[0][l++] = c;
+                    port->commands[0][l] = 0;
+                }
+                break;            
+        }
     }
 }

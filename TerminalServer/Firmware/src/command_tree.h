@@ -99,7 +99,6 @@ static const struct command define_port_flow_sub[] = {
 };
 
 static const struct command define_port_access_sub[] = {
-    {"DYNAMIC",         &port_define_access_dynamic,    CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_ACCESS_DYNAMIC},
     {"LOCAL",           &port_define_access_local,      CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_ACCESS_LOCAL},
     {"MODEM",           &port_define_access_modem,      CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_ACCESS_REMOTE},
     {"REMOTE",          &port_define_access_remote,     CMD_PRIV,       NULL,                               HELP_DEFINE_PORT_ACCESS_REMOTE},
