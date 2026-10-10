@@ -15,6 +15,8 @@ typedef enum error {
     ERR_INVALID,
     ERR_PRIV,
     ERR_TIMEOUT,
+    ERR_FILENOTFOUND,
+    ERR_MOUNTFAIL,        
     ERR_LAST_ERROR
 } error_t;
 

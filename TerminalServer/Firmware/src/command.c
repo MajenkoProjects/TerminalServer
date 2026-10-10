@@ -15,6 +15,8 @@
 #include "telnet_out.h"
 #include "port_commands.h"
 #include "third_party/rtos/FreeRTOS/Source/include/task.h"
+#include "tapes.h"
+
 
 COMMAND(show_tasks) {
 

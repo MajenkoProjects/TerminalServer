@@ -266,7 +266,7 @@ enum spi_status get_spi_state(struct wifi_data *data, const char *place) {
     DRV_SPI_TRANSFER_EVENT spi_res = DRV_SPI_TransferStatusGet(data->transfer);
     switch (spi_res) {
         case DRV_SPI_TRANSFER_EVENT_ERROR:
-            DBG("%s DRV_SPI_TRANSFER_EVENT_ERROR\r\n", place);
+            //DBG("%s DRV_SPI_TRANSFER_EVENT_ERROR\r\n", place);
             return SPI_STATUS_ERROR;
         case DRV_SPI_TRANSFER_EVENT_COMPLETE:
             return SPI_STATUS_COMPLETE;
@@ -274,13 +274,13 @@ enum spi_status get_spi_state(struct wifi_data *data, const char *place) {
             return SPI_STATUS_PENDING;
             break;
         case DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED:
-            DBG("%s DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED\r\n", place);
+            //DBG("%s DRV_SPI_TRANSFER_EVENT_HANDLE_EXPIRED\r\n", place);
             return SPI_STATUS_ERROR;
         case DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID:
-            DBG("%s DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID\r\n", place);
+            //DBG("%s DRV_SPI_TRANSFER_EVENT_HANDLE_INVALID\r\n", place);
             return SPI_STATUS_ERROR;
     }
-    DBG("%s UNKNOWN %d\r\n", place, spi_res);
+    //DBG("%s UNKNOWN %d\r\n", place, spi_res);
     return SPI_STATUS_ERROR;
 }
 
@@ -517,7 +517,7 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
         case WIFI_STATE_GET_READ:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_LONG_DELAY) break;
             if ((data->phyStatus.nextsize + 2) > WIFI_RX_BUFFER_SIZE) {
-                DBG("Bad size: %d\r\n", data->phyStatus.nextsize);
+                //DBG("Bad size: %d\r\n", data->phyStatus.nextsize);
                 data->mainState = WIFI_STATE_RUN;
                 break;
             } 
@@ -536,7 +536,7 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             if (spi_res == SPI_STATUS_COMPLETE) {
                 int l = (data->spibuf[0] << 8) | data->spibuf[1];
                 if (l != data->phyStatus.nextsize) {
-                    DBG("X");
+                    //DBG("X");
                     data->mainState = WIFI_STATE_RUN;
                     break;
                 }
@@ -546,7 +546,7 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
             
         case WIFI_STATE_QUEUE_READ:
             if (TCPIP_Helper_ProtSglListIsEmpty(&data->rxFreePackets)) {
-                DBG("F");
+                //DBG("F");
                 break;
             }
             data->pkt = (TCPIP_MAC_PACKET *)TCPIP_Helper_ProtSglListHeadRemove(&data->rxFreePackets);

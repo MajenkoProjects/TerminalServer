@@ -21,6 +21,7 @@
 #include "mdns.h"
 #include "wifi.h"
 #include "modem.h"
+#include "tu58.h"
 
 
 struct module {
@@ -250,6 +251,7 @@ void APP_Tasks ( void ) {
                                     port_set_mode(scan, MODE_MODEM);
                                     break;
                                 case ACCESS_TU58:
+                                    port_set_mode(scan, MODE_TU58);
                                     break;
                             }
                             break;
@@ -354,6 +356,12 @@ void APP_Tasks ( void ) {
                             if (port_available(scan)) {
                                 int c = port_read_byte(scan);
                                 modem_process(scan, c);
+                            }
+                            break;
+                        case MODE_TU58:
+                            if (port_available(scan)) {
+                                int c = port_read_byte(scan);
+                                tu58_process(scan, c);
                             }
                             break;
                         default:

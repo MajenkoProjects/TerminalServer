@@ -59,7 +59,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/FreeRTOSConfig.h
   hash: 7273e630b7d60ec973d9090d594ff13bddff3041ca1a0d3a549dd0b18844e10b
 - file: ../src/config/default/configuration.h
-  hash: 2057d997047308eca29e591e60e8188e57cdcfbb5e8e3f7250b4e5e3482aa295
+  hash: 1902db97766b48af110d08d4a39351ca94cecfac68934b60b266f18e8a521cb7
 - file: ../src/config/default/definitions.h
   hash: e04f030d8a9aa1f2acd180a96acfc17f405b0e10eb563143fec767b546ee9f26
 - file: ../src/config/default/device.h
@@ -861,7 +861,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/system_definitions.h
   hash: 612bd2e1561e9222079ce81f842ab47e962671dfce335e26dd1e53d71602e9e5
 - file: ../src/config/default/tasks.c
-  hash: c5c2838668d1c59b30d8cd32f960f967074b3f9250dd4b325590fb9ecef53b61
+  hash: 2dca0ba9e9d05d80e444d9150036ac7a2364e95889eea819a9c0d63f4d394df9
 - file: ../src/config/default/toolchain_specifics.h
   hash: f6f3282ecb4ad8b5ba3487b7d7b8f6cfa3f977240726af07eaab058caf904381
 - file: ../src/config/default/usb/src/usb_device.c

@@ -519,6 +519,8 @@
       <itemPath>../src/wifi.h</itemPath>
       <itemPath>../src/network_config.h</itemPath>
       <itemPath>../src/modem.h</itemPath>
+      <itemPath>../src/tu58.h</itemPath>
+      <itemPath>../src/tapes.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -834,6 +836,8 @@
       <itemPath>../src/mdns.c</itemPath>
       <itemPath>../src/wifi.c</itemPath>
       <itemPath>../src/modem.c</itemPath>
+      <itemPath>../src/tu58.c</itemPath>
+      <itemPath>../src/tapes.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

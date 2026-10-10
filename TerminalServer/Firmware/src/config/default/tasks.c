@@ -100,7 +100,6 @@ void _TCPIP_STACK_Task(  void *pvParameters  )
     while(1)
     {
         TCPIP_STACK_Task(sysObj.tcpip);
-        vTaskDelay(1 / portTICK_PERIOD_MS);
     }
 }
 
@@ -110,7 +109,6 @@ void _NET_PRES_Tasks(  void *pvParameters  )
     while(1)
     {
         NET_PRES_Tasks(sysObj.netPres);
-        vTaskDelay(1 / portTICK_PERIOD_MS);
     }
 }
 
@@ -141,10 +139,6 @@ static void lSYS_FS_Tasks(  void *pvParameters  )
   Remarks:
     See prototype in system/common/sys_module.h.
 */
-
-TaskHandle_t tcpTask;
-
-
 void SYS_Tasks ( void )
 {
     /* Maintain system services */
@@ -187,7 +181,7 @@ void SYS_Tasks ( void )
         TCPIP_RTOS_STACK_SIZE,
         (void*)NULL,
         TCPIP_RTOS_PRIORITY,
-        (TaskHandle_t*)&tcpTask
+        (TaskHandle_t*)NULL
     );
 
 

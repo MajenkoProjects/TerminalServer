@@ -35,7 +35,7 @@ data:
       children:
       - children:
         - attributes:
-            value: 'true'
+            value: 'false'
           type: User
         type: Values
       type: Boolean
@@ -52,6 +52,17 @@ data:
             value: 'true'
           type: Boolean
         type: Attributes
+      - children:
+        - attributes:
+            value: '5'
+          type: User
+        type: Values
+      type: Integer
+    NET_PRES_SOCKETS:
+      attributes:
+        id: NET_PRES_SOCKETS
+        label: Number of Presentation Sockets
+      children:
       - children:
         - attributes:
             value: '10'

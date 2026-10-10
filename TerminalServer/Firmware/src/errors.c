@@ -13,5 +13,7 @@ const char *error_strings[ERR_LAST_ERROR] = {
     "Option too long",
     "Invalid argument",
     "Command is privileged",
-    "Timeout"
+    "Timeout",
+    "File not found",
+    "Mount failed",
 };

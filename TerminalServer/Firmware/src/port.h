@@ -14,7 +14,7 @@
 //CONSOLE->fn_flush(CONSOLE);
 
 #define CIRCULAR_BUFFER_SIZE 32
-#define MAX_COMMAND         40
+#define MAX_COMMAND         80
 #define NUM_HISTORY         4
 #define PORT_MAX_NAME       8
 #define CONSOLE ports

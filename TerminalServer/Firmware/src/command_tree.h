@@ -251,11 +251,12 @@ static const struct command commands[] = {
     {"HELP",            &help,                          0,              NULL,                               HELP_HELP},
     {"INITIALIZE",      NULL,                           0,              initialize_sub,                     NULL},
     {"LOGOUT",          &logout,                        0,              NULL,                               HELP_LOGOUT},
+    {"MOUNT",           &tapes_mount,                   CMD_PRIV,       NULL,                               NULL},
     {"OPEN",            &telnet,                        0,              NULL,                               HELP_CONNECT_TELNET},
     {"RESUME",          &resume_session,                CMD_SESSION,    NULL,                               HELP_RESUME},
     {"SEND",            NULL,                           0,              send_sub,                           NULL},
     {"SET",             NULL,                           0,              set_sub,                            NULL},
-    {"SHOW",            NULL,                           0,              show_sub,                            NULL},
+    {"SHOW",            NULL,                           0,              show_sub,                           NULL},
     END_OF_LIST
 };
 
