@@ -18,6 +18,6 @@ Current status:
 * **Telnet in:** Done
 * **Telnet out:** Done
 * **TCP in:** Done
-* **TU58 Emulation:** In Progress
+* **TU58 Emulation:** Read/write done
 * **TCP out:** Planned
 * **PPP/SLIP:** Planned
