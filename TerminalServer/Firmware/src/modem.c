@@ -6,9 +6,11 @@
 #include "uart.h"
 #include "telnet_out.h"
 #include "session.h"
+#include "util.h"
 
 bool modem_response(struct port *port, enum modem_response code) {
-    if (port->misc[63] & MODEM_VERBOSE) {
+    struct modem_data *data = (struct modem_data *)port->access_data;
+    if (data->flags & MODEM_VERBOSE) {
         switch (code) {
             case MODEM_OK:
                 port_printf(port, "\r\nOK\r\n");
@@ -241,6 +243,7 @@ static void modem_dial_port(struct port *port, char *name) {
 }
 
 static bool modem_execute(struct port *port) {
+    struct modem_data *data = (struct modem_data *)port->access_data;
     if (!port->commands[0][0]) return false;
     if (tolower(port->commands[0][0] != 'a')) return modem_response(port, MODEM_ERROR);
     if (tolower(port->commands[0][1] != 't')) return modem_response(port, MODEM_ERROR);
@@ -296,9 +299,9 @@ static bool modem_execute(struct port *port) {
                                 break;
                             case 'e':
                                 ptr++;
-                                port->misc[63] &= ~MODEM_ECHO;
+                                data->flags &= ~MODEM_ECHO;
                                 if (*ptr == '1') {
-                                    port->misc[63] |= MODEM_ECHO;
+                                    data->flags |= MODEM_ECHO;
                                 }
                                 if (isdigit(*ptr)) {
                                     ptr++;
@@ -315,9 +318,9 @@ static bool modem_execute(struct port *port) {
                                 break;
                             case 'v':
                                 ptr++;
-                                port->misc[63] &= ~MODEM_VERBOSE;
+                                data->flags &= ~MODEM_VERBOSE;
                                 if (*ptr == '1') {
-                                    port->misc[63] |= MODEM_VERBOSE;
+                                    data->flags |= MODEM_VERBOSE;
                                 }
                                 if (isdigit(*ptr)) {
                                     ptr++;
@@ -375,23 +378,23 @@ static bool modem_execute(struct port *port) {
                             case 's':
                                 ptr++;
                                 if (isdigit(*ptr)) {
-                                    port->misc[61] = *ptr - '0';
+                                    data->sel = *ptr - '0';
                                     ptr++;
                                 }
                                 if (isdigit(*ptr)) {
-                                    port->misc[61] *= 10;
-                                    port->misc[61] += *ptr - '0';
+                                    data->sel *= 10;
+                                    data->sel += *ptr - '0';
                                     ptr++;
                                 }
-                                if (port->misc[61] > 31) {
-                                    port->misc[61] = 31;
+                                if (data->sel > 31) {
+                                    data->sel = 31;
                                 }
                                 if (*ptr == '?') {
                                     ptr++;
-                                    if (port->misc[63] & MODEM_VERBOSE) {
-                                        port_printf(port, "\r\nS%d=%d\r\n", port->misc[61], port->misc[port->misc[61]]);
+                                    if (data->flags & MODEM_VERBOSE) {
+                                        port_printf(port, "\r\nS%d=%d\r\n", data->sel, data->registers[data->sel]);
                                     } else {
-                                        port_printf(port, "\r\n%d\r\n", port->misc[port->misc[61]]);
+                                        port_printf(port, "\r\n%d\r\n", data->registers[data->sel]);
                                     }
                                     return true;
                                 } else if (*ptr == '=') {
@@ -414,7 +417,7 @@ static bool modem_execute(struct port *port) {
                                         modem_response(port, MODEM_ERROR);
                                         return false;
                                     }
-                                    port->misc[port->misc[61]] = parameter;
+                                    data->registers[data->sel] = parameter;
                                 }
                                 
                                 break;
@@ -438,11 +441,11 @@ static bool modem_execute(struct port *port) {
 }
 
 void modem_process(struct port *port) {
-    
+    struct modem_data *data = (struct modem_data *)port->access_data;
     if (port_available(port)) {
         int c = port_read_byte(port);
         int l;
-        if (port->misc[63] & MODEM_ECHO) port_write_byte(port, c);
+        if (data->flags & MODEM_ECHO) port_write_byte(port, c);
         switch (c) {
             case '\r':
                 modem_execute(port);
@@ -450,7 +453,7 @@ void modem_process(struct port *port) {
                 port->commands[0][0] = 0;
                 break;
             default:
-                l = strlen(port->commands[0]);
+                l = safe_strlen(port->commands[0], __FILE__, __LINE__);
                 if (l < (MAX_COMMAND-1)) {
                     port->commands[0][l++] = c;
                     port->commands[0][l] = 0;
@@ -458,4 +461,11 @@ void modem_process(struct port *port) {
                 break;            
         }
     }
+}
+
+void modem_init(struct port *port) {
+    struct modem_data *md = malloc(sizeof(struct modem_data));
+    port->access_data = md;
+    
+    md->flags = MODEM_ECHO | MODEM_VERBOSE;
 }

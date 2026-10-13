@@ -35,7 +35,7 @@ data:
       children:
       - children:
         - attributes:
-            value: 'false'
+            value: 'true'
           type: User
         type: Values
       type: Boolean
@@ -54,7 +54,7 @@ data:
         type: Attributes
       - children:
         - attributes:
-            value: '5'
+            value: '1'
           type: User
         type: Values
       type: Integer

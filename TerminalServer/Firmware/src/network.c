@@ -246,7 +246,7 @@ COMMAND(ethernet_define_ip) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_IP, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_IP, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK;
 }
 COMMAND(ethernet_define_subnet) {
@@ -255,7 +255,7 @@ COMMAND(ethernet_define_subnet) {
     char *ip = argv[0];
     if (!validate_netmask(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_NETMASK, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_NETMASK, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK;
 }
 COMMAND(ethernet_define_gateway) {
@@ -264,7 +264,7 @@ COMMAND(ethernet_define_gateway) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_GATEWAY, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_GATEWAY, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK; 
 }
 COMMAND(ethernet_define_pridns) {
@@ -273,7 +273,7 @@ COMMAND(ethernet_define_pridns) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_PRIDNS, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_PRIDNS, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK; 
 }
 COMMAND(ethernet_define_secdns) {
@@ -282,7 +282,7 @@ COMMAND(ethernet_define_secdns) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_SECDNS, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_ETHERNET_SECDNS, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK; 
 }
 COMMAND(ethernet_define_dhcp_enabled) {
@@ -313,7 +313,7 @@ COMMAND(wifi_define_ip) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_IP, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_IP, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK;
 }
 COMMAND(wifi_define_subnet) {
@@ -322,7 +322,7 @@ COMMAND(wifi_define_subnet) {
     char *ip = argv[0];
     if (!validate_netmask(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_NETMASK, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_NETMASK, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK;
 }
 COMMAND(wifi_define_gateway) {
@@ -331,7 +331,7 @@ COMMAND(wifi_define_gateway) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_GATEWAY, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_GATEWAY, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK; 
 }
 COMMAND(wifi_define_pridns) {
@@ -340,7 +340,7 @@ COMMAND(wifi_define_pridns) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_PRIDNS, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_PRIDNS, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK; 
 }
 COMMAND(wifi_define_secdns) {
@@ -349,7 +349,7 @@ COMMAND(wifi_define_secdns) {
     char *ip = argv[0];
     if (!validate_ip(ip)) return ERR_INVALID;
     
-    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_SECDNS, 0, strlen(ip), (uint8_t *)ip);    
+    setting_set(MODULE_ETHERNET, SETTINGS_WIFI_SECDNS, 0, safe_strlen(ip, __FILE__, __LINE__), (uint8_t *)ip);    
     return ERR_OK; 
 }
 COMMAND(wifi_define_dhcp_enabled) {
@@ -364,7 +364,7 @@ COMMAND(wifi_define_dhcp_disabled) {
 }
 COMMAND(wifi_define_ssid) {
     if (argc != 1) return ERR_INCOMPLETE;
-    int length = strlen(argv[0]);
+    int length = safe_strlen(argv[0], __FILE__, __LINE__);
     if (length > 32) length = 32;
 
     if (strcasecmp(argv[0], "none") == 0) {
@@ -376,7 +376,7 @@ COMMAND(wifi_define_ssid) {
 }
 COMMAND(wifi_define_psk) {
     if (argc != 1) return ERR_INCOMPLETE;
-    int length = strlen(argv[0]);
+    int length = safe_strlen(argv[0], __FILE__, __LINE__);
     if (length > 63) length = 63;
     if (strcasecmp(argv[0], "none") == 0) {
         setting_set(MODULE_ETHERNET, SETTINGS_WIFI_SSID, 0, 0, NULL);

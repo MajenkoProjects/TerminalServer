@@ -92,11 +92,11 @@ void input_username(struct port *port) {
     if (!username) {        
         return;
     }
-    if (strlen(username) == 0) {
+    if (safe_strlen(username, __FILE__, __LINE__) == 0) {
         return;        
     }
     memset(port->username, 0, 9);
-    int l = strlen(port->commands[port->cmdno]);
+    int l = safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__);
     if (l > 8) l = 8;
     memcpy(port->username, port->commands[port->cmdno], l);
     port->cstate = CMD_LOCAL;
@@ -133,7 +133,85 @@ void APP_Tasks ( void ) {
     static bool reset_state = true;
     static int modno = 0;
     static struct port *port;
+#if 0
+
+    GPIO_PinOutputEnable(U6TXLED_PIN);
+    GPIO_PinSet(U6TXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U6TXLED_PIN);
+    vTaskDelay(500);
+
+        GPIO_PinOutputEnable(U3TXLED_PIN);
+        GPIO_PinSet(U3TXLED_PIN);
+        vTaskDelay(500);
+        GPIO_PinClear(U3TXLED_PIN);
+        vTaskDelay(500);
+
+    GPIO_PinOutputEnable(U5TXLED_PIN);
+    GPIO_PinSet(U5TXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U5TXLED_PIN);
+    vTaskDelay(500);
+
+    GPIO_PinOutputEnable(U4TXLED_PIN);
+    GPIO_PinSet(U4TXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U4TXLED_PIN);
+    vTaskDelay(500);
+
+    GPIO_PinOutputEnable(U2TXLED_PIN);
+    GPIO_PinSet(U2TXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U2TXLED_PIN);
+    vTaskDelay(500);
+
+    GPIO_PinOutputEnable(U1TXLED_PIN);
+    GPIO_PinSet(U1TXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U1TXLED_PIN);
+    vTaskDelay(500);
+
+
     
+    
+    GPIO_PinOutputEnable(U6RXLED_PIN);
+    GPIO_PinSet(U6RXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U6RXLED_PIN);
+    vTaskDelay(500);
+
+        GPIO_PinOutputEnable(U3RXLED_PIN);
+        GPIO_PinSet(U3RXLED_PIN);
+        vTaskDelay(500);
+        GPIO_PinClear(U3RXLED_PIN);
+        vTaskDelay(500);
+
+        GPIO_PinOutputEnable(U5RXLED_PIN);
+        GPIO_PinSet(U5RXLED_PIN);
+        vTaskDelay(500);
+        GPIO_PinClear(U5RXLED_PIN);
+        vTaskDelay(500);
+
+    GPIO_PinOutputEnable(U4RXLED_PIN);
+    GPIO_PinSet(U4RXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U4RXLED_PIN);
+    vTaskDelay(500);
+
+    GPIO_PinOutputEnable(U2RXLED_PIN);
+    GPIO_PinSet(U2RXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U2RXLED_PIN);
+    vTaskDelay(500);
+
+    GPIO_PinOutputEnable(U1RXLED_PIN);
+    GPIO_PinSet(U1RXLED_PIN);
+    vTaskDelay(500);
+    GPIO_PinClear(U1RXLED_PIN);
+    vTaskDelay(500);
+
+    return;
+#endif
     if (GPIO_PinRead(FRES_PIN) != reset_state) {
         reset_state = GPIO_PinRead(FRES_PIN);
         
@@ -203,7 +281,16 @@ void APP_Tasks ( void ) {
                                 }
                             }
                         }
-                    }
+                    } else if (port->access == ACCESS_TU58) {
+                        if (port->type == PORT_SERIAL) {                            
+                            if (port_available(port)) {
+                                int c = port_read_byte(port);
+                                if (c == 0x04) {
+                                    port_set_mode(port, MODE_LOCAL);
+                                }
+                            }
+                        }
+                    } 
                     break;
 
                 // A short delay before presenting the greeting and
@@ -238,28 +325,35 @@ void APP_Tasks ( void ) {
                 // and back from the target to the parent. Deal with
                 // local switch keypresses.
                 case MODE_SESSION:
+                    struct modem_data *md = (struct modem_data *)port->access_data;
 
-                    if ((port->access == ACCESS_MODEM) && (port->misc[62] >= 3)) {
+                    if ((port->access == ACCESS_MODEM) && (md->plus >= 3)) {
                         if ((xTaskGetTickCount() - port->ticks) > 500) {
                             modem_response(port, MODEM_OK);
                             port_set_mode(port, MODE_MODEM);
                             port->ticks = 0;
-                            port->misc[62] = 0;
+                            md->plus = 0;
                         }
                     }
 
                     if (port->active_session && (port->active_session->type == SESSION_DIRECT)) {
                         if (port_available(port) && (xStreamBufferSpacesAvailable(port->active_session->target->write_buffer))) {
                             int c = port_read_byte(port);
+                            
+                            if (port->flags & PORT_RAW) {
+                                port_write_byte(port->active_session->target, c);
+                                break;
+                            }
+                            
 
                             if (port->access == ACCESS_MODEM) { // Handle +++ for break
-                                if (c == '+') {
-                                    port->misc[62]++;
-                                    if (port->misc[62] >= 3) {
+                                struct modem_data *md = (struct modem_data *)port->access_data;                                if (c == '+') {
+                                    md->plus++;
+                                    if (md->plus >= 3) {
                                         port->ticks = xTaskGetTickCount();
                                     }
                                 } else {
-                                    port->misc[62] = 0;
+                                    md->plus = 0;
                                     port->ticks = 0;
                                 }
                             }
@@ -315,8 +409,12 @@ void APP_Tasks ( void ) {
                                 } else {
                                     if (IS_SPECIAL(tmp[i])) {
                                         const char *key = port->tinfo->keys[tmp[i] & 0xFF];
-                                        for (int j = 0; j < strlen(key); j++) {
-                                            port_write_byte(port->active_session->target, key[j]);                                                    
+                                        if (key) {
+                                            for (int j = 0; j < safe_strlen(key, __FILE__, __LINE__); j++) {
+                                                port_write_byte(port->active_session->target, key[j]);                                                    
+                                            }
+                                        } else {
+                                            DBG("BAD KEY\r\n");
                                         }
                                     } else {
                                         port_write_byte(port->active_session->target, tmp[i]);

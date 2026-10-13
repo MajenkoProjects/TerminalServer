@@ -10,6 +10,8 @@
 #include "config/default/library/tcpip/tcpip_mac.h"
 #include "config/default/library/tcpip/tcpip_mac_object.h"
 #include "config/default/library/tcpip/src/link_list.h"
+#include "util.h"
+
 #define MAC_SHORT_DELAY 2
 #define MAC_LONG_DELAY 2
 
@@ -233,9 +235,8 @@ SYS_STATUS wifi_status(SYS_MODULE_OBJ object) {
         case WIFI_STATE_SEND_PSK:
         case WIFI_STATE_WAIT_PSK:
             return SYS_STATUS_UNINITIALIZED;
-        case WIFI_STATE_RUN:
-            return SYS_STATUS_READY;
             
+        case WIFI_STATE_RUN:
         case WIFI_STATE_SEND_STATUS:
         case WIFI_STATE_WAIT_STATUS:
         case WIFI_STATE_GET_STATUS:
@@ -250,7 +251,6 @@ SYS_STATUS wifi_status(SYS_MODULE_OBJ object) {
         case WIFI_STATE_SEND_WRITE:
         case WIFI_STATE_WAIT_WRITE:
             return SYS_STATUS_READY;
-//            return SYS_STATUS_BUSY;
     }
     return SYS_STATUS_ERROR;
 }
@@ -347,7 +347,7 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
         case WIFI_STATE_SEND_SSID:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_SHORT_DELAY) break;
             data->spibuf[0] = REG_SSID;
-            len = strlen(wifi_settings.ssid);
+            len = safe_strlen(wifi_settings.ssid, __FILE__, __LINE__);
             memcpy(&data->spibuf[1], wifi_settings.ssid, len);
             data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, len + 1, &data->transfer);
@@ -370,7 +370,7 @@ void wifi_tasks(SYS_MODULE_OBJ object) {
         case WIFI_STATE_SEND_PSK:
             if ((xTaskGetTickCount() - data->timers.stateDelay) < MAC_SHORT_DELAY) break;
             data->spibuf[0] = REG_PSK;
-            len = strlen(wifi_settings.psk);
+            len = safe_strlen(wifi_settings.psk, __FILE__, __LINE__);
             memcpy(&data->spibuf[1], wifi_settings.psk, len);
             data->transfer = DRV_SPI_TRANSFER_HANDLE_INVALID;
             DRV_SPI_WriteTransferAdd(data->spiBus, data->spibuf, len + 1, &data->transfer);

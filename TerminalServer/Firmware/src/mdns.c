@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "definitions.h"
 #include "FreeRTOS.h"
@@ -13,6 +14,68 @@
 #include "util.h"
 
 UDP_SOCKET mdns_socket;
+
+struct mdns_host *hosts = NULL;
+struct mdns_service *services = NULL;
+
+
+uint32_t service_request_tick = 0;
+
+struct mdns_host *mdns_add_host(const char *hostname, IPV4_ADDR address) {
+    for (struct mdns_host *scan = hosts; scan; scan = scan->next) {
+        if (strcasecmp(scan->hostname, hostname) == 0) {
+            if (address.Val != 0xFFFFFFFF) {
+                scan->address.Val = address.Val;
+            }
+            scan->last_seen = xTaskGetTickCount();
+            return scan;
+        }
+    }
+    
+    struct mdns_host *new_host = malloc(sizeof(struct mdns_host));
+    if (!new_host) return NULL;
+    
+    new_host->hostname = strdup(hostname);
+    new_host->address.Val = address.Val;
+    new_host->last_seen = xTaskGetTickCount();
+    new_host->next = hosts;
+    hosts = new_host;
+    return new_host;
+}
+
+
+
+static void mdns_add_service(const char *name, const char *hostname, uint16_t port, enum mdns_service_type type) {
+
+    // If we already have the service then just update the "last seen" time
+    // and the IP address
+    
+    IPV4_ADDR none;
+    none.Val = 0xFFFFFFFF;
+    for (struct mdns_service *scan = services; scan; scan = scan->next) {
+        if (strcasecmp(scan->name, name) == 0) {
+            scan->last_seen = xTaskGetTickCount();
+            scan->host = mdns_add_host(hostname, none);
+            scan->port = port;
+            scan->type = type;
+            return;
+        }
+    }
+    
+    struct mdns_service *new_service = (struct mdns_service *)malloc(sizeof(struct mdns_service));
+    if (!new_service) return;
+    new_service->name = strdup(name);
+    for (char *n = new_service->name; *n; n++) {
+        *n = toupper(*n);
+    }
+    new_service->host = mdns_add_host(hostname, none);
+    new_service->port = port;
+    new_service->last_seen = xTaskGetTickCount();
+    new_service->type = type;
+    new_service->next = services;
+    services = new_service;
+}
+
 
 static void mdns_rebind() {
     IP_MULTI_ADDRESS ip;
@@ -34,8 +97,6 @@ static void mdns_rebind() {
 }
 
 void mdns_init() {
-
-
     
 
     mdns_socket = TCPIP_UDP_ServerOpen(IP_ADDRESS_TYPE_IPV4, 5353, NULL);
@@ -237,7 +298,7 @@ bool mdns_put_word(const char *str) {
 
     mdns_add_word(str, TCPIP_UDP_TxOffsetGet(mdns_socket));
     */
-    int l = strlen(str);
+    int l = safe_strlen(str, __FILE__, __LINE__);
     TCPIP_UDP_Put(mdns_socket, l);
     TCPIP_UDP_ArrayPut(mdns_socket, (uint8_t *)str, l);
     return false;
@@ -434,8 +495,60 @@ int mdns_expand_name(uint8_t *buf, int offset, char *out, int maxlen) {
     return offset+1;
 }
 
+
+
+static void mdns_request_service(const char *name) {
+    mdns_rebind();
+    (void)TCPIP_UDP_PutIsReady(mdns_socket);
+    TCPIP_UDP_Discard(mdns_socket);
+
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x01);
+
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+
+
+
+    char *tmp = strdup(name);
+    char *ptr = NULL;
+    char *chunk = strtok_r(tmp, ".", &ptr);
+    while (chunk) {
+        mdns_put_word(chunk);
+        chunk = strtok_r(NULL, ".", &ptr);
+    }
+    free(tmp);
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x0C);
+    TCPIP_UDP_Put(mdns_socket, 0x00);
+    TCPIP_UDP_Put(mdns_socket, 0x01);
+    TCPIP_UDP_Flush(mdns_socket);
+}
+
+
+
 void mdns_process_incoming() {
     UDP_SOCKET_INFO info;
+    char *instance;
+    char *service;
+    char *protocol;
+    char *ptr = NULL;
+    uint16_t port;
+    IPV4_ADDR address;
 
     const TCPIP_NET_HANDLE *eth0 = TCPIP_STACK_NetHandleGet("eth0");
 //    const TCPIP_NET_HANDLE *wlan0 = TCPIP_STACK_NetHandleGet("wlan0");
@@ -563,6 +676,79 @@ void mdns_process_incoming() {
         }
 
         mdns_finish_rr();
+       
+
+        for (int i = 0; i < header.answer_rrs; i++) {
+            char tmp[256] = {0};
+            char fqdn[256] = {0};
+
+            offset = mdns_expand_name(buf, offset, tmp, 256);            
+            struct mdns_answer answer;
+            struct mdns_answer *a;
+            a = (struct mdns_answer *)&buf[offset];
+            
+            offset += sizeof(struct mdns_answer);
+            answer.query_class = TCPIP_Helper_ntohs(a->query_class);
+            answer.type = TCPIP_Helper_ntohs(a->type);    
+            answer.ttl = TCPIP_Helper_ntohl(a->ttl);
+            answer.data_length = TCPIP_Helper_ntohs(a->data_length);
+            //DBG("Data length: %d\r\n", answer.data_length);
+#if 1            
+            switch (answer.type) {
+                case RR_PTR:
+                    offset += answer.data_length;
+                    break;
+                case RR_TXT:
+                    offset += answer.data_length;
+                    break;
+                case RR_SRV:
+                    ptr = NULL;
+                    instance = strtok_r(tmp, ".", &ptr);
+                    service = strtok_r(NULL, ".", &ptr);
+                    protocol = strtok_r(NULL, ".", &ptr);
+                    
+                    if (protocol == NULL) {
+                        offset += answer.data_length;
+                        break;
+                    }
+                    // Skip the priority, we don't care
+                    offset++;
+                    offset++;
+
+                    // Skip the weight, we don't care
+                    offset++;
+                    offset++;
+                    
+                    port = buf[offset++] << 8;
+                    port |= buf[offset++];
+
+                    offset = mdns_expand_name(buf, offset, fqdn, 256);                           
+                    
+                    if (strcasecmp(protocol, "_tcp") == 0) {
+                        if (strcasecmp(service, "_telnet") == 0) {
+                            char *getname = strdup(fqdn);
+                            char *hostname = strtok(getname, ".");
+                            mdns_add_service(hostname, fqdn, port, MDNS_TELNET);
+                            free(getname);
+// We want to take the hostname as the service name
+                        } else if (strcasecmp(service, "_serial") == 0) {
+                            mdns_add_service(instance, fqdn, port, MDNS_SERIAL);
+// The service name is the instance name
+                        }
+                    }
+                    break;
+                case RR_A:
+                    address.v[0] = buf[offset++];
+                    address.v[1] = buf[offset++];
+                    address.v[2] = buf[offset++];
+                    address.v[3] = buf[offset++];
+                    mdns_add_host(tmp, address);
+                    break;
+            }
+#endif
+        }
+
+        
         
         TCPIP_UDP_Discard(mdns_socket);
     
@@ -574,6 +760,30 @@ void mdns_tasks() {
         mdns_process_incoming();
     }
     
-    
-    
+    if ((xTaskGetTickCount() - service_request_tick) > 10000) {
+        service_request_tick = xTaskGetTickCount();
+        mdns_request_service("_serial._tcp.local");
+        mdns_request_service("_telnet._tcp.local");
+    }
+}
+
+uint32_t mdns_get_service(const char *name, uint16_t *port) {
+    for (struct mdns_service *scan = services; scan; scan = scan->next) {
+        if (strcasecmp(name, scan->name) == 0) {
+            if (port != NULL) {
+                *port = scan->port;
+                return scan->host->address.Val;
+            }
+        }
+    }
+    return 0xFFFFFFFF;
+}
+
+COMMAND(show_discovered_services) {
+    char tmp[18];
+    for (struct mdns_service *scan = services; scan; scan = scan->next) {
+        port_printf(port, "%-16s ", scan->name);
+        port_printf(port, "%-15s %d\r\n", ip2str(scan->host->address.Val, tmp), scan->port);
+    }
+    return ERR_OK;
 }

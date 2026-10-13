@@ -4,6 +4,7 @@
 #include "app.h"
 #include "usb.h"
 #include "port.h"
+#include "util.h"
 
 struct port *usb_ports[USB_DEVICE_CDC_INSTANCES_NUMBER];
 struct usb_port_data usb_data[USB_DEVICE_CDC_INSTANCES_NUMBER];
@@ -71,7 +72,7 @@ USB_DEVICE_CDC_EVENT_RESPONSE APP_USBDeviceCDCEventHandler(USB_DEVICE_CDC_INDEX 
             break;
 
         case USB_DEVICE_CDC_EVENT_WRITE_COMPLETE:
-            xSemaphoreTake(usb_data[index].write_running, NULL);
+            xSemaphoreTake(usb_data[index].write_running, 0);
             // If anything is in output CB then queue it here
             break;
 
@@ -238,7 +239,7 @@ void test_write() {
     sprintf((char *)usb_data[0].write_buffer, "%d AH AH AH!\r\n", count);
     taskENTER_CRITICAL();
     if (USB_DEVICE_CDC_Write(
-            0, &usb_data[0].writeTransferHandle, usb_data[0].write_buffer, strlen((char *)usb_data[0].write_buffer), USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE) == USB_DEVICE_CDC_RESULT_OK) {
+            0, &usb_data[0].writeTransferHandle, usb_data[0].write_buffer, safe_strlen((char *)usb_data[0].write_buffer, __FILE__, __LINE__), USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE) == USB_DEVICE_CDC_RESULT_OK) {
         //usb_data[0].write_running = true;
     } else {
     }

@@ -1276,7 +1276,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '28672'
+            value: '28675'
           type: Dynamic
         type: Values
       type: Hex
@@ -4186,7 +4186,7 @@ data:
       children:
       - children:
         - attributes:
-            value: ''
+            value: Out
           type: User
         type: Values
       type: String
@@ -5160,6 +5160,17 @@ data:
           type: User
         type: Values
       type: Combo
+    BSP_PIN_89_DIR:
+      attributes:
+        id: BSP_PIN_89_DIR
+        label: Direction
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
+        type: Values
+      type: String
   userData:
     children:
     - attributes:

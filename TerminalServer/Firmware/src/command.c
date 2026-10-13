@@ -16,7 +16,7 @@
 #include "port_commands.h"
 #include "third_party/rtos/FreeRTOS/Source/include/task.h"
 #include "tapes.h"
-
+#include "mdns.h"
 
 COMMAND(show_tasks) {
 
@@ -219,8 +219,8 @@ error_t command_run(const struct command *tree, struct port *port, void *opt, in
         const struct command *matched = NULL;
         const struct command *exact = NULL;
         for (const struct command *scan = tree; scan->command != 0; scan++) {
-            if (strncasecmp(scan->command, cmd, strlen(cmd)) == 0) {
-                if (strlen(scan->command) == strlen(cmd)) {
+            if (strncasecmp(scan->command, cmd, safe_strlen(cmd, __FILE__, __LINE__)) == 0) {
+                if (safe_strlen(scan->command, __FILE__, __LINE__) == safe_strlen(cmd, __FILE__, __LINE__)) {
                     exact = scan;
                 }
                 matched = scan;
@@ -291,7 +291,7 @@ error_t command_run(const struct command *tree, struct port *port, void *opt, in
         bool deeper = false;
         if (matched->sub_commands) {
             for (const struct command *scan = matched->sub_commands; scan->command != 0; scan++) {
-                if (strncasecmp(scan->command, argv[0], strlen(argv[0])) == 0) {
+                if (strncasecmp(scan->command, argv[0], safe_strlen(argv[0], __FILE__, __LINE__)) == 0) {
                     deeper = true;
                 }
             }
@@ -376,7 +376,7 @@ void command_process(struct port *port) {
                 case SPECIAL_KEY | KEY_RETURN:
                     port_printf(port, "\r\n");
 
-                    if (strlen(port->commands[port->cmdno]) > 0) {
+                    if (safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__) > 0) {
                         if (port->mode == MODE_LOCAL) {
                             if (port->cmdno == 0) {
                                 for (int i = NUM_HISTORY-1; i > 0; i--) {
@@ -396,7 +396,7 @@ void command_process(struct port *port) {
                     if (port->cpos > 0) {
                         port->cpos--;
 
-                        for (int i = port->cpos; i <= strlen(port->commands[port->cmdno]); i++) {
+                        for (int i = port->cpos; i <= safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__); i++) {
                             port->commands[port->cmdno][i] = port->commands[port->cmdno][i+1];
                         }
 
@@ -421,7 +421,7 @@ void command_process(struct port *port) {
                         port_printf(port, "\r\n%s%s", prompt(port), port->commands[port->cmdno]);
                     }                    
 
-                    port->cpos = strlen(port->commands[port->cmdno]);
+                    port->cpos = safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__);
                     break;
                 case SPECIAL_KEY | KEY_DOWN:
                     if (port->mode != MODE_LOCAL) break;
@@ -433,7 +433,7 @@ void command_process(struct port *port) {
                     } else {
                         port_printf(port, "\r\n%s%s", prompt(port), port->commands[port->cmdno]);
                     }                    
-                    port->cpos = strlen(port->commands[port->cmdno]);
+                    port->cpos = safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__);
                     break;
                 case SPECIAL_KEY | KEY_LEFT:
                     if (port->cpos > 0) {
@@ -442,15 +442,15 @@ void command_process(struct port *port) {
                     }
                     break;
                 case SPECIAL_KEY | KEY_RIGHT:
-                    if (port->cpos < strlen(port->commands[port->cmdno])) {
+                    if (port->cpos < safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__)) {
                         port->cpos++;
                         port_printf(port, port->tinfo->cright);
                     }
                     break;
                 default:
                     if (!IS_SPECIAL(buf[i]) && (buf[i] >= ' ')) {
-                        if (strlen(port->commands[port->cmdno]) < MAX_COMMAND-1) {
-                            for (int i = strlen(port->commands[port->cmdno])+1; i > port->cpos; i--) {
+                        if (safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__) < MAX_COMMAND-1) {
+                            for (int i = safe_strlen(port->commands[port->cmdno], __FILE__, __LINE__)+1; i > port->cpos; i--) {
                                 port->commands[port->cmdno][i] = port->commands[port->cmdno][i-1];
                             }
                             port->commands[port->cmdno][port->cpos++] = buf[i];

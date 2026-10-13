@@ -29,8 +29,14 @@ enum modem_response {
 #define MODEM_VERBOSE           0x01
 #define MODEM_ECHO              0x02
 
+struct modem_data {
+    uint8_t registers[32];
+    uint8_t flags;
+    uint8_t sel;
+    uint8_t plus;
+};
 
-
+extern void modem_init(struct port *port);
 extern void modem_process(struct port *port);
 extern bool modem_response(struct port *port, enum modem_response r);
 #endif

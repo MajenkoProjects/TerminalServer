@@ -37,7 +37,7 @@ char *format_local_switch(int sw, char *buf, int len) {
 
 
 int parse_local_switch(const char *sw) {
-    switch (strlen(sw)) {
+    switch (safe_strlen(sw, __FILE__, __LINE__)) {
         case 0:
             return LOCAL_SWITCH_ERROR;
         case 1:
@@ -104,7 +104,7 @@ char *ip2str(uint32_t ip, char *str) {
 
 // Check a MAC address for validity and sanitise it.
 bool validate_mac(char *mac) {
-    if (strlen(mac) != 17) return false;
+    if (safe_strlen(mac, __FILE__, __LINE__) != 17) return false;
     
     for (int i = 0; i < 18; i++) {
         mac[i] = toupper(mac[i]);
@@ -138,7 +138,7 @@ bool validate_mac(char *mac) {
 }
 
 bool validate_ip(char *ip) {
-    int len = strlen(ip);
+    int len = safe_strlen(ip, __FILE__, __LINE__);
     if (len < 7) return false;
     if (len > 15) return false;
     
@@ -169,7 +169,7 @@ bool validate_ip(char *ip) {
 }
 #define TOPBIT (1 << 31)
 bool validate_netmask(char *ip) {
-    int len = strlen(ip);
+    int len = safe_strlen(ip, __FILE__, __LINE__);
     if (len < 7) return false;
     if (len > 15) return false;
     
@@ -224,6 +224,10 @@ bool validate_netmask(char *ip) {
 }
 
 int fancy_read(struct port *port, char c, uint16_t *buf, int len) {
+    if (port->flags & PORT_RAW) {
+        buf[0] = c;
+        return 1;
+    }
     //port_printf(CONSOLE, "[%d]", c);
     port->keybuf[port->keybuf_pos++] = c;
     port->keybuf[port->keybuf_pos] = 0;
@@ -273,4 +277,24 @@ int fancy_read(struct port *port, char c, uint16_t *buf, int len) {
     port->keybuf[0] = 0;    
    // port_printf(port, "Special key %s\r\n", key_names[buf[0] & 0xFF]);
     return 1;
+}
+
+int safe_strlen(const char *c, const char *file, int line) {
+    if (c == NULL) {
+        DBG("SNUL %s %d\r\n", file, line);
+        return 0;
+    }
+    
+    bool valid = false;
+    
+    if (c >= 0x80000000 && c <= 0x8001FFFF) valid = true;
+    if (c >= 0x9D000000 && c <= 0x9D07FFFF) valid = true;
+    if (c >= 0xA0000000 && c <= 0xA001FFFF) valid = true;
+    if (c >= 0xBD000000 && c <= 0xBD07FFFF) valid = true;
+
+    if (!valid) {
+        DBG("BPTR %p %s %d\r\n", c, file, line);
+        return 0;
+    }    
+    return strlen(c);    
 }

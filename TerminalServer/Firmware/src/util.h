@@ -14,5 +14,6 @@ extern bool validate_mac(char *mac);
 extern bool validate_ip(char *ip);
 extern bool validate_netmask(char *ip);
 extern int fancy_read(struct port *port, char c, uint16_t *buf, int len);
+extern int safe_strlen(const char *c, const char *file, int line);
 
 #endif

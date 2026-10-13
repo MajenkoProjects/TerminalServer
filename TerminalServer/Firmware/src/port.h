@@ -18,6 +18,7 @@
 #define NUM_HISTORY         4
 #define PORT_MAX_NAME       8
 #define CONSOLE ports
+#define WATERMARK 8
 
 enum parity {
     PARITY_NONE,
@@ -78,6 +79,9 @@ enum break_mode {
     BREAK_REMOTE
 };
 
+#define PORT_RAW 0x01
+
+
 #define LOCAL_SWITCH_NONE -1
 #define LOCAL_SWITCH_ERROR -2
 
@@ -96,11 +100,12 @@ struct port {
     enum port_type type;
     enum port_mode mode;
     enum port_mode previous_mode;
+    uint8_t flags;
     StreamBufferHandle_t read_buffer;
     StreamBufferHandle_t write_buffer;
     void *port_data;
+    void *access_data;
     char commands[NUM_HISTORY][MAX_COMMAND];
-    uint8_t misc[64];
     int cmdno;
     enum command_states cstate;
     int cpos;
@@ -161,9 +166,14 @@ extern void close_port(struct port *port);
 extern struct port *add_port(enum port_type type, void *data);
 extern void delete_port(struct port *port);
 
+extern int port_write(struct port *port, uint8_t *data, size_t len);
+extern int port_read(struct port *port, uint8_t *data, size_t len);    
+
+
 extern int port_read_byte(struct port *port);
 extern int port_write_byte(struct port *port, uint8_t b);
 extern int port_available(struct port *port);
+extern int port_free_space(struct port *port);
 extern int port_printf(struct port *port, const char *fmt, ...);
 extern int port_rprintf(struct port *port, const char *fmt, ...);
 extern void port_flush(struct port *port);

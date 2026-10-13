@@ -7,6 +7,7 @@
 #include "uart.h"
 #include "util.h"
 #include "settings.h"
+#include "mdns.h"
 
 TaskHandle_t telnet_out_thread_handle;
 
@@ -129,7 +130,7 @@ void telnet_out_transfer_data(struct port *port) {
                                     while (TCPIP_TCP_Put(data->socket, TELOPT_SB) == 0) {};
                                     while (TCPIP_TCP_Put(data->socket, TELOPT_TTYPE) == 0) {};
                                     while (TCPIP_TCP_Put(data->socket, SB_IS) == 0) {};
-                                    for (int i = 0; i < strlen(data->parent->ttype); i++) {
+                                    for (int i = 0; i < safe_strlen(data->parent->ttype, __FILE__, __LINE__); i++) {
                                         while (TCPIP_TCP_Put(data->socket, data->parent->ttype[i]) == 0) {};
                                     }
                                     while (TCPIP_TCP_Put(data->socket, TELOPT_IAC) == 0) {};
@@ -148,7 +149,7 @@ void telnet_out_transfer_data(struct port *port) {
                                     while (TCPIP_TCP_Put(data->socket, TELOPT_SB) == 0) {};
                                     while (TCPIP_TCP_Put(data->socket, TELOPT_SPEED) == 0) {};
                                     while (TCPIP_TCP_Put(data->socket, SB_IS) == 0) {};
-                                    for (int i = 0; i < strlen(scratch); i++) {
+                                    for (int i = 0; i < safe_strlen(scratch, __FILE__, __LINE__); i++) {
                                         while (TCPIP_TCP_Put(data->socket, scratch[i]) == 0) {};
                                     }
                                     while (TCPIP_TCP_Put(data->socket, TELOPT_IAC) == 0) {};
@@ -311,16 +312,29 @@ void telnet_out_task() {
             TCP_SOCKET_INFO info;
             TCPIP_TCP_SocketInfoGet(data->socket, &info);
             uint8_t this_byte;
+            uint16_t tmpport;
             
             //   port_printf(CONSOLE, "_%d_ ", info.rxPending);
           //  vTaskDelay(10);
             switch (data->state) {
                 case TO_DNS_PRECHECK: // Check to see if either the fqdn or subdomain are cached.
                     
+                    data->addr.v4Add.Val = mdns_get_service(data->hostname, &tmpport);
+                    if (data->addr.v4Add.Val != 0xFFFFFFFF) {
+                        if (data->port == 0) {
+                            data->port = tmpport;
+                        }
+                        data->state = TO_FOUND_HOST;
+                        break;
+                    }
+                    
+                    if (data->port == 0) data->port = 23;
+                    
                     // First check to see if it's an IP address
                     if (validate_ip(data->hostname)) {
                         TCPIP_Helper_StringToIPAddress(data->hostname, &data->addr.v4Add);
                         data->state = TO_FOUND_HOST;
+                        break;
                     }
                     
                     data->dns_result = TCPIP_DNS_IsResolved(data->hostname, &data->addr, TCPIP_DNS_TYPE_A);
@@ -563,7 +577,7 @@ COMMAND(telnet) {
         data->port = strtoul(colon+1, NULL, 0);
     } else {
         strncpy(data->hostname, argv[0], 63);
-        data->port = 23;
+        data->port = 0;
     }
     
     data->state = TO_DNS_PRECHECK;

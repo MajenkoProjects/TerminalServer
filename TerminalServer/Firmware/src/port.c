@@ -48,7 +48,7 @@ const struct port_access_functions port_access_functions[] = {
         .init = NULL
     },
     {   // MODEM
-        .init = NULL,
+        .init = &modem_init,
         .process = &modem_process
     },
     {   // TU58
@@ -80,6 +80,10 @@ int port_read(struct port *port, uint8_t *data, size_t len) {
     return xStreamBufferReceive(port->read_buffer, data, avail, 1);
 }
 
+int port_free_space(struct port *port) {
+    return xStreamBufferSpacesAvailable(port->write_buffer);
+}
+
 int port_read_byte(struct port *port) {
     if (xStreamBufferBytesAvailable(port->read_buffer) == 0) return -1;
     uint8_t b;
@@ -106,12 +110,13 @@ struct port *add_port(enum port_type type, void *data) {
             scan->type = type;
             scan->mode = MODE_IDLE;
             scan->access = ACCESS_LOCAL;
+            scan->flags = 0;
             scan->local_switch = LOCAL_SWITCH_NONE;
             scan->forward_switch = LOCAL_SWITCH_NONE;
             scan->backward_switch = LOCAL_SWITCH_NONE;
             scan->port_data = data;
-            scan->low_water = 16;
-            scan->high_water = CIRCULAR_BUFFER_SIZE - 16;
+            scan->low_water = WATERMARK;
+            scan->high_water = CIRCULAR_BUFFER_SIZE - WATERMARK;
             scan->waterlevel = 0;
             snprintf(scan->name, 9, "Port_%d", scan->no);
             scan->name[8] = 0;
@@ -151,12 +156,13 @@ struct port *add_port(enum port_type type, void *data) {
     newport->type = type;
     newport->mode = MODE_IDLE;
     newport->access = ACCESS_LOCAL;
+    newport->flags = 0;
     newport->local_switch = LOCAL_SWITCH_NONE;
     newport->forward_switch = LOCAL_SWITCH_NONE;
     newport->backward_switch = LOCAL_SWITCH_NONE;
     newport->port_data = data;
-    newport->low_water = 16;
-    newport->high_water = CIRCULAR_BUFFER_SIZE - 16;
+    newport->low_water = WATERMARK;
+    newport->high_water = CIRCULAR_BUFFER_SIZE - WATERMARK;
     newport->waterlevel = 0;
     newport->fn_stop = NULL;
     newport->fn_start = NULL;
@@ -392,8 +398,8 @@ const char *port_type(struct port *port) {
 
 void set_terminal_type(struct port *port, const char *ttype) {
   //  if (xSemaphoreTake(port->mutex, MUTEX_TICKS) == pdTRUE) {
-        char *ucname = alloca(strlen(ttype) + 1);
-        for (int i = 0; i < strlen(ttype); i++) {
+        char *ucname = alloca(safe_strlen(ttype, __FILE__, __LINE__) + 1);
+        for (int i = 0; i < safe_strlen(ttype, __FILE__, __LINE__); i++) {
             ucname[i] = toupper(ttype[i]);
             ucname[i+1] = 0;
         }
@@ -412,7 +418,7 @@ void set_terminal_type(struct port *port, const char *ttype) {
         // Now look for a prefix match for terminal types that allow it
         for (int i = 0; ttype_map[i].name != 0; i++) {
             if (ttype_map[i].prefix == true) {
-                if (strncmp(ttype_map[i].name, ucname, strlen(ttype_map[i].name)) == 0) {
+                if (strncmp(ttype_map[i].name, ucname, safe_strlen(ttype_map[i].name, __FILE__, __LINE__)) == 0) {
                     port->tinfo = ttype_map[i].ttype;
                     return;
                 }

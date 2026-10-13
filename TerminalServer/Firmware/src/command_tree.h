@@ -19,8 +19,14 @@ static const struct command show_all_sub[] = {
     END_OF_LIST
 };
 
+static const struct command show_discovered_sub[] = {
+    {"SERVICES",        &show_discovered_services,      0,              NULL,                               NULL},
+    END_OF_LIST
+};
+
 static const struct command show_sub[] = {
     {"ALL",             NULL,                           0,              show_all_sub,                       NULL},
+    {"DISCOVERED",      NULL,                           0,              show_discovered_sub,                NULL},
     {"PORT",            &show_port_characteristics,     CMD_TARGET,     show_port_sub,                      HELP_SHOW_PORT_CHARACTERISTICS},
     {"SERVER",          &show_server,                   0,              NULL,                               HELP_SHOW_SERVER},
     {"SESSIONS",        &show_sessions,                 CMD_TARGET,     NULL,                               HELP_SHOW_SESSIONS},

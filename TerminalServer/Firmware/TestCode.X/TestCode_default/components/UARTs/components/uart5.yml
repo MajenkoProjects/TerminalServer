@@ -121,7 +121,7 @@ data:
         type: Attributes
       - children:
         - attributes:
-            value: '8'
+            value: '64'
           type: User
         type: Values
       type: Integer

@@ -83,144 +83,147 @@ void telnet_in_transfer_data(struct port *port) {
     // circular buffer space
     if (available_bytes > free_bytes) available_bytes = free_bytes;
 
-    // Grab the data from the socket and put it in our processing buffer
-    TCPIP_TCP_ArrayGet(socket->socket, incoming_buffer, available_bytes);
+    if (available_bytes > 0) {
 
-    // Process each byte in turn
-    for (int byteno = 0; byteno < available_bytes; byteno++) {
-        uint8_t this_byte = incoming_buffer[byteno];
-        //DBG("%02x ", incoming_buffer[byteno]);
-        if (data->iac_sb) {
-            switch (this_byte) {
-                case TELOPT_IAC:
-                    if (data->iac_sb_iac) {
+        // Grab the data from the socket and put it in our processing buffer
+        TCPIP_TCP_ArrayGet(socket->socket, incoming_buffer, available_bytes);
+
+        // Process each byte in turn
+        for (int byteno = 0; byteno < available_bytes; byteno++) {
+            uint8_t this_byte = incoming_buffer[byteno];
+            //DBG("%02x ", incoming_buffer[byteno]);
+            if (data->iac_sb) {
+                switch (this_byte) {
+                    case TELOPT_IAC:
+                        if (data->iac_sb_iac) {
+                            data->iac_sub[data->iac_sub_pos++] = this_byte;
+                            data->iac_sub[data->iac_sub_pos] = 0;
+                            if (data->iac_sub_pos >= 40) {
+                                data->iac_sb = false;
+                                data->iac_pos = 0;    
+                            }                                        
+                        } else {
+                            data->iac_sb_iac = true;
+                        }
+                        break;
+
+                    case TELOPT_SE:
+                        switch (data->iac_sub[0]) {
+                            case TELOPT_NAWS:
+                                port->columns = (data->iac_sub[1] << 8) | data->iac_sub[2];
+                                port->lines = (data->iac_sub[3] << 8) | data->iac_sub[4];
+                                break;
+                            case TELOPT_TTYPE:
+                                for (int i = 2; i < data->iac_sub_pos; i++) {
+                                    int x = i - 2;
+                                    if (x < 16) {
+                                        port->ttype[x] = data->iac_sub[i];
+                                        port->ttype[x+1] = 0;
+                                    }
+                                    set_terminal_type(port, port->ttype);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        data->iac_sb = false;
+                        data->iac_pos = 0;
+                        break;
+                    default:
                         data->iac_sub[data->iac_sub_pos++] = this_byte;
                         data->iac_sub[data->iac_sub_pos] = 0;
                         if (data->iac_sub_pos >= 40) {
                             data->iac_sb = false;
                             data->iac_pos = 0;    
-                        }                                        
-                    } else {
-                        data->iac_sb_iac = true;
-                    }
-                    break;
-
-                case TELOPT_SE:
-                    switch (data->iac_sub[0]) {
-                        case TELOPT_NAWS:
-                            port->columns = (data->iac_sub[1] << 8) | data->iac_sub[2];
-                            port->lines = (data->iac_sub[3] << 8) | data->iac_sub[4];
-                            break;
-                        case TELOPT_TTYPE:
-                            for (int i = 2; i < data->iac_sub_pos; i++) {
-                                int x = i - 2;
-                                if (x < 16) {
-                                    port->ttype[x] = data->iac_sub[i];
-                                    port->ttype[x+1] = 0;
-                                }
-                                set_terminal_type(port, port->ttype);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    data->iac_sb = false;
-                    data->iac_pos = 0;
-                    break;
-                default:
-                    data->iac_sub[data->iac_sub_pos++] = this_byte;
-                    data->iac_sub[data->iac_sub_pos] = 0;
-                    if (data->iac_sub_pos >= 40) {
-                        data->iac_sb = false;
-                        data->iac_pos = 0;    
-                    }
-                    break;
-            }
-        } else {
-            switch (data->iac_pos) {
-                case 0: 
-                    if (this_byte == TELOPT_IAC) {
-                        data->iac[data->iac_pos++] = TELOPT_IAC;
-                    } else {
-                        xStreamBufferSend(port->read_buffer, &this_byte, 1, 1);
-                    }
-                    break;
-
-                case 1:
-                    switch (this_byte) {
-                        case TELOPT_IAC:
+                        }
+                        break;
+                }
+            } else {
+                switch (data->iac_pos) {
+                    case 0: 
+                        if (this_byte == TELOPT_IAC) {
+                            data->iac[data->iac_pos++] = TELOPT_IAC;
+                        } else {
                             xStreamBufferSend(port->read_buffer, &this_byte, 1, 1);
-                            data->iac_pos = 0;                                       
-                            break;
-                        case TELOPT_SB:
-                            data->iac_sb = true;
-                            data->iac_sub_pos = 0;
-                            break;
-                        case TELOPT_BREAK:
-                            data->iac_pos = 0;
-                            switch (port->breakmode) {
-                                case BREAK_LOCAL:
-                                    port_printf(port, "+++ BREAK +++\r\n\n");
-                                    port->mode = MODE_LOCAL;
-                                    break;
-                                case BREAK_REMOTE:
-                                    if (port->active_session) {
-                                        port->active_session->target->send_break = true;
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        default:
-                            data->iac[data->iac_pos++] = this_byte;
-                            break;
-                    }
-                    break;
+                        }
+                        break;
 
-                case 2:
-                    switch (this_byte) {
-                        default:
-                            data->iac[data->iac_pos++] = this_byte;
-                            switch (data->iac[1]) {
-                                case TELOPT_WILL:
-                                    switch (data->iac[2]) {
-                                        case TELOPT_LINEMODE:
-                                            SEND_DONT(TELOPT_LINEMODE);
-                                            SEND_DONT(TELOPT_ECHO);
-                                            SEND_WILL(TELOPT_ECHO);
-                                            break;
-                                        case TELOPT_TTYPE:
-                                            SEND_DO(TELOPT_TTYPE);
-                                            SEND_SB_SEND(TELOPT_TTYPE);
-                                            break;
-                                        case TELOPT_NAWS:
-                                            SEND_DO(TELOPT_NAWS);
-                                            break;
-                                        default:
-                                            break;
+                    case 1:
+                        switch (this_byte) {
+                            case TELOPT_IAC:
+                                xStreamBufferSend(port->read_buffer, &this_byte, 1, 1);
+                                data->iac_pos = 0;                                       
+                                break;
+                            case TELOPT_SB:
+                                data->iac_sb = true;
+                                data->iac_sub_pos = 0;
+                                break;
+                            case TELOPT_BREAK:
+                                data->iac_pos = 0;
+                                switch (port->breakmode) {
+                                    case BREAK_LOCAL:
+                                        port_printf(port, "+++ BREAK +++\r\n\n");
+                                        port->mode = MODE_LOCAL;
+                                        break;
+                                    case BREAK_REMOTE:
+                                        if (port->active_session) {
+                                            port->active_session->target->send_break = true;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                break;
+                            default:
+                                data->iac[data->iac_pos++] = this_byte;
+                                break;
+                        }
+                        break;
 
-                                    }
-                                    break;
-                                case TELOPT_WONT:
-                                    break;
-                                case TELOPT_DO:
-                                    switch (data->iac[2]) {
-                                        case TELOPT_SUPPRESS_GA:
-                                            SEND_WILL(TELOPT_SUPPRESS_GA);
-                                            SEND_DO(TELOPT_SUPPRESS_GA);
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    break;
-                                case TELOPT_DONT:
-                                    break;
-                                default:
-                                    break;
-                            }
-                            data->iac_pos = 0;
-                    }
+                    case 2:
+                        switch (this_byte) {
+                            default:
+                                data->iac[data->iac_pos++] = this_byte;
+                                switch (data->iac[1]) {
+                                    case TELOPT_WILL:
+                                        switch (data->iac[2]) {
+                                            case TELOPT_LINEMODE:
+                                                SEND_DONT(TELOPT_LINEMODE);
+                                                SEND_DONT(TELOPT_ECHO);
+                                                SEND_WILL(TELOPT_ECHO);
+                                                break;
+                                            case TELOPT_TTYPE:
+                                                SEND_DO(TELOPT_TTYPE);
+                                                SEND_SB_SEND(TELOPT_TTYPE);
+                                                break;
+                                            case TELOPT_NAWS:
+                                                SEND_DO(TELOPT_NAWS);
+                                                break;
+                                            default:
+                                                break;
+
+                                        }
+                                        break;
+                                    case TELOPT_WONT:
+                                        break;
+                                    case TELOPT_DO:
+                                        switch (data->iac[2]) {
+                                            case TELOPT_SUPPRESS_GA:
+                                                SEND_WILL(TELOPT_SUPPRESS_GA);
+                                                SEND_DO(TELOPT_SUPPRESS_GA);
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        break;
+                                    case TELOPT_DONT:
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                data->iac_pos = 0;
+                        }
+                }
             }
         }
     }
@@ -232,6 +235,7 @@ void telnet_in_transfer_data(struct port *port) {
 
     // Number of bytes we have to send
     available_bytes = xStreamBufferBytesAvailable(port->write_buffer);
+    if (available_bytes == 0) return;
     // Amount of space to send into
     free_bytes = TCPIP_TCP_PutIsReady(socket->socket);
 

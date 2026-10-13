@@ -59,7 +59,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/FreeRTOSConfig.h
   hash: 7273e630b7d60ec973d9090d594ff13bddff3041ca1a0d3a549dd0b18844e10b
 - file: ../src/config/default/configuration.h
-  hash: 1902db97766b48af110d08d4a39351ca94cecfac68934b60b266f18e8a521cb7
+  hash: 91950c4d2b287b9cbdd6d9c184cb028b0a7f3692e9056dff78599eb083acacc3
 - file: ../src/config/default/definitions.h
   hash: e04f030d8a9aa1f2acd180a96acfc17f405b0e10eb563143fec767b546ee9f26
 - file: ../src/config/default/device.h
@@ -735,7 +735,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/peripheral/evic/plib_evic.h
   hash: 38dbf2913f1b768b945ec0ed50c01f65b8929b1b2765893be843d02c495cdfae
 - file: ../src/config/default/peripheral/gpio/plib_gpio.c
-  hash: 5c67cf5674fa40cccfd1ad82db8bb12d342315914a1d4108172206c1598b4a7a
+  hash: d63bc1bc1db17af8b7b1e032ff106f0c7fba3837e0fe295f411cd8974c0e750a
 - file: ../src/config/default/peripheral/gpio/plib_gpio.h
   hash: 8ef62c7b0863c51d5ca4c66edab375e29a0a84a9bae4291a4d7c8fa984756a40
 - file: ../src/config/default/peripheral/i2c/master/plib_i2c2_master.c
@@ -755,27 +755,27 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h
   hash: 844a71566e886cd1f28024000d440ac48841cdb4f4059f5feefac8e4334f12ef
 - file: ../src/config/default/peripheral/uart/plib_uart1.c
-  hash: 72b90aa379396e53c5d05cf6ae919766afe207f42f53b1b98bffff96262cc33a
+  hash: 20806f14daafc34db0d5f39bb3e720543644959a6d9465796e2743ca3b386257
 - file: ../src/config/default/peripheral/uart/plib_uart1.h
   hash: ff43f7bf0e69e0ba38808e74928881565483b9683a5afabad274a1c45c40697d
 - file: ../src/config/default/peripheral/uart/plib_uart2.c
-  hash: 9b43c896051b6b14b083b752cf8378811a0d6b36ee31115b3449f6d69671e33d
+  hash: f539224d1a0c056fedbd1c1a622b3ad0e9a27f8c492f4de93a1fb5dc543d5b28
 - file: ../src/config/default/peripheral/uart/plib_uart2.h
   hash: 03ea3484c53652149840257cf343a8e745b898271bc0fbfd672fa44f7dc07618
 - file: ../src/config/default/peripheral/uart/plib_uart3.c
-  hash: fbd6ea8d7d22b2522b51090ad8861d9fc1e8a8c1ee33a4b2a18655bc7ac04d0d
+  hash: 8fd556f975cc3733ae5843c9c5868594fd29acd940b7f79ea10c7083b79ac09e
 - file: ../src/config/default/peripheral/uart/plib_uart3.h
   hash: 00befad12cf027809936fdbca66a322a5c606ba1911f2b81b1b8cca1a5c4609e
 - file: ../src/config/default/peripheral/uart/plib_uart4.c
-  hash: 0a061be2e9f17950036cf9449dd26de323d9f2e0c2872e2661d0ae6c280a8edf
+  hash: 630a6cb2b0e0e25a83a9326b960c58c4ccd5ba7f948638327ecdc32485e8a4ce
 - file: ../src/config/default/peripheral/uart/plib_uart4.h
   hash: 9fa930978b07ac6d7fad0eca5bb377fe9934f9e76e11fb05ca34954a7f118a12
 - file: ../src/config/default/peripheral/uart/plib_uart5.c
-  hash: 363ef65037a3758bc0c63311df5db0fd84dcb89ed19361061120a062c357aed3
+  hash: 668f11321583ec5e56f9a24e196963d6d72fd0c28e796c3795afe3f465c2d6b7
 - file: ../src/config/default/peripheral/uart/plib_uart5.h
   hash: 5cf2eb05e907c6613db70932badfdabef9be4c073501b80d259ae1d43f00ff21
 - file: ../src/config/default/peripheral/uart/plib_uart6.c
-  hash: 9ca2ddd7d10396730bed3350d08d574912060e3e49e66be2d3167898dd8bbe91
+  hash: b8dfca2a5fa7fc6a018b0c2d2015c29d4b783bd5a0f5b52937732787b8c188f0
 - file: ../src/config/default/peripheral/uart/plib_uart6.h
   hash: bdb9bc2075057832d48e9a786c42c90c6107098f0d1833b46a309a22e76bc91d
 - file: ../src/config/default/peripheral/uart/plib_uart_common.h
@@ -861,7 +861,7 @@ generatedFileHashHistoryMap:
 - file: ../src/config/default/system_definitions.h
   hash: 612bd2e1561e9222079ce81f842ab47e962671dfce335e26dd1e53d71602e9e5
 - file: ../src/config/default/tasks.c
-  hash: 2dca0ba9e9d05d80e444d9150036ac7a2364e95889eea819a9c0d63f4d394df9
+  hash: 2490ad3d2a3a853e61d48148d2f4da10368a1453280322c4adf813bc9745e401
 - file: ../src/config/default/toolchain_specifics.h
   hash: f6f3282ecb4ad8b5ba3487b7d7b8f6cfa3f977240726af07eaab058caf904381
 - file: ../src/config/default/usb/src/usb_device.c

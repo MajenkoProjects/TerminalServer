@@ -27,7 +27,7 @@ COMMAND(tapes_mount) {
         ano++;
     }
     
-    if (strncasecmp(argv[ano], "PORT", strlen(argv[ano])) != 0) {
+    if (strncasecmp(argv[ano], "PORT", safe_strlen(argv[ano], __FILE__, __LINE__)) != 0) {
         return ERR_UNKNOWN;
     }
     
@@ -40,8 +40,8 @@ COMMAND(tapes_mount) {
     portno = strtoul(argv[ano], NULL, 10);
     ano++;
     
-    if (strncasecmp(argv[ano], "DEVICE", strlen(argv[ano])) != 0) {
-        if (strncasecmp(argv[ano], "UNIT", strlen(argv[ano])) != 0) {
+    if (strncasecmp(argv[ano], "DEVICE", safe_strlen(argv[ano], __FILE__, __LINE__)) != 0) {
+        if (strncasecmp(argv[ano], "UNIT", safe_strlen(argv[ano], __FILE__, __LINE__)) != 0) {
             return ERR_UNKNOWN;
         }
     }

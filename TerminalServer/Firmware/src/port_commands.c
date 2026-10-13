@@ -29,7 +29,7 @@ COMMAND(port_define_speed) {
 COMMAND(port_define_name) {
     OPT_TARGET
     if (argc != 1) return ERR_INCOMPLETE;
-    setting_set(MODULE_PORT, SETTING_PORT_NAME, target->no, strlen(argv[0]), (uint8_t *)argv[0]);
+    setting_set(MODULE_PORT, SETTING_PORT_NAME, target->no, safe_strlen(argv[0], __FILE__, __LINE__), (uint8_t *)argv[0]);
     return ERR_OK;
 }
 COMMAND(show_port_characteristics) {
@@ -244,13 +244,13 @@ COMMAND(port_define_terminal_type) {
         return ERR_INCOMPLETE;
     }
     
-    char *ucname = alloca(strlen(argv[0]) + 1);
-    for (int i = 0; i < strlen(argv[0]); i++) {
+    char *ucname = alloca(safe_strlen(argv[0], __FILE__, __LINE__) + 1);
+    for (int i = 0; i < safe_strlen(argv[0], __FILE__, __LINE__); i++) {
         ucname[i] = toupper(argv[0][i]);
         ucname[i+1] = 0;
     }
 
-    setting_set(MODULE_PORT, SETTING_PORT_TERMINAL_TYPE, target->no, strlen(ucname), (uint8_t *)ucname);
+    setting_set(MODULE_PORT, SETTING_PORT_TERMINAL_TYPE, target->no, safe_strlen(ucname, __FILE__, __LINE__), (uint8_t *)ucname);
     return ERR_OK;
 }
 COMMAND(port_set_local_switch) {

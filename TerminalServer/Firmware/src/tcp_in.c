@@ -39,12 +39,14 @@ void tcp_in_transfer_data(struct port *port) {
     // circular buffer space
     if (available_bytes > free_bytes) available_bytes = free_bytes;
 
-    // Grab the data from the socket and put it in our processing buffer
-    TCPIP_TCP_ArrayGet(socket->socket, incoming_buffer, available_bytes);
+    if (available_bytes > 0) {
 
-    
-    xStreamBufferSend(port->read_buffer, incoming_buffer, available_bytes, 1);
+        // Grab the data from the socket and put it in our processing buffer
+        TCPIP_TCP_ArrayGet(socket->socket, incoming_buffer, available_bytes);
 
+
+        xStreamBufferSend(port->read_buffer, incoming_buffer, available_bytes, 1);
+    }
     // Now we do similar with outgoing data from the circular
     // buffer to the server. Easier this time, nothing to
     // process - just read and pipe through to the other end.
@@ -58,8 +60,11 @@ void tcp_in_transfer_data(struct port *port) {
     // Truncate byte count to what space there is
     if (available_bytes > free_bytes) available_bytes = free_bytes;
 
-    xStreamBufferReceive(port->write_buffer, incoming_buffer, available_bytes, 1);
-    TCPIP_TCP_ArrayPut(socket->socket, incoming_buffer, available_bytes);
+    if (available_bytes > 0) {
+
+        xStreamBufferReceive(port->write_buffer, incoming_buffer, available_bytes, 1);
+        TCPIP_TCP_ArrayPut(socket->socket, incoming_buffer, available_bytes);
+    }
 }
 
 void tcp_in_task() {
@@ -95,6 +100,7 @@ void tcp_in_task() {
                     data = calloc(1, sizeof(struct tcp_in_data));
                     data->socket = socket;
                     socket->port = add_port(PORT_TCP_IN, data);
+                    socket->port->flags |= PORT_RAW;
                     socket->port->fn_close = &tcp_in_close_port;
                     socket->port->fn_flush = &tcp_in_transfer_data;
                     socket->port->fn_yield = &tcp_in_transfer_data;

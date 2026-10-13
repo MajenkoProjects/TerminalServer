@@ -22,8 +22,8 @@ data:
     - children:
       - attributes:
           id: uart4
-          x: '234'
-          y: '384'
+          x: '239'
+          y: '382'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
@@ -121,7 +121,7 @@ data:
         type: Attributes
       - children:
         - attributes:
-            value: '8'
+            value: '64'
           type: User
         type: Values
       type: Integer

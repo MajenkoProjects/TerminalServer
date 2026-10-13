@@ -6,6 +6,7 @@
 #include "uart.h"
 #include "usb.h"
 #include "network.h"
+#include "util.h"
 
 #include "config/default/peripheral/i2c/master/plib_i2c2_master.h"
 
@@ -189,11 +190,11 @@ COMMAND(system_define_name) {
         return ERR_SPACES;
     }
     
-    if (strlen(argv[0]) > 32) {
+    if (safe_strlen(argv[0], __FILE__, __LINE__) > 32) {
         return ERR_TOOLONG;
     }
     
-    setting_set(MODULE_SYSTEM, SETTINGS_SYSTEM_NAME, 0, strlen(argv[0]), (uint8_t *)argv[0]);
+    setting_set(MODULE_SYSTEM, SETTINGS_SYSTEM_NAME, 0, safe_strlen(argv[0], __FILE__, __LINE__), (uint8_t *)argv[0]);
     return ERR_OK;
 }
 
@@ -206,11 +207,11 @@ COMMAND(system_define_domain) {
         return ERR_SPACES;
     }
     
-    if (strlen(argv[0]) > 63) {
+    if (safe_strlen(argv[0], __FILE__, __LINE__) > 63) {
         return ERR_TOOLONG;
     }
     
-    setting_set(MODULE_SYSTEM, SETTINGS_SYSTEM_DOMAIN, 0, strlen(argv[0]), (uint8_t *)argv[0]);
+    setting_set(MODULE_SYSTEM, SETTINGS_SYSTEM_DOMAIN, 0, safe_strlen(argv[0], __FILE__, __LINE__), (uint8_t *)argv[0]);
     return ERR_OK;
 }
 
